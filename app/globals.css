@@ -1,0 +1,90 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: var(--font-geist-sans), 'Geist Fallback';
+  --font-mono: var(--font-geist-mono), 'Geist Mono Fallback';
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  /* performance states */
+  --color-good: var(--good);
+  --color-warn: var(--warn);
+  --color-alert: var(--alert);
+  --color-info: var(--info);
+
+  /* speed zones */
+  --color-z1: var(--z1);
+  --color-z2: var(--z2);
+  --color-z3: var(--z3);
+  --color-z4: var(--z4);
+  --color-z5: var(--z5);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+}
+
+:root {
+  color-scheme: dark;
+  --background: oklch(0 0 0);
+  --foreground: oklch(0.98 0 0);
+  --surface: oklch(0.16 0 0);
+  --surface-foreground: oklch(0.98 0 0);
+  --card: oklch(0.13 0 0);
+  --card-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.22 0 0);
+  --muted-foreground: oklch(0.62 0 0);
+  --border: oklch(1 0 0 / 8%);
+
+  --good: oklch(0.78 0.18 142);
+  --warn: oklch(0.83 0.16 90);
+  --alert: oklch(0.66 0.22 27);
+  --info: oklch(0.7 0.14 240);
+
+  --z1: oklch(0.6 0 0);
+  --z2: oklch(0.78 0.18 142);
+  --z3: oklch(0.83 0.16 90);
+  --z4: oklch(0.7 0.19 45);
+  --z5: oklch(0.62 0.24 27);
+
+  --radius: 0.75rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

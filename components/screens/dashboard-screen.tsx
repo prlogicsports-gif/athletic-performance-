@@ -1,0 +1,218 @@
+"use client"
+
+import Image from "next/image"
+import { motion } from "framer-motion"
+import { ChevronDown, TrendingUp } from "lucide-react"
+import {
+  teamMetrics,
+  loadZones,
+  teamComparison,
+  positionComparison,
+  accumulatedLoad,
+  internalRanking,
+  weekAlerts,
+  athletes,
+} from "@/lib/data"
+import { MetricIcon } from "../metric-icon"
+import { DonutLoad, Bar, LineChart } from "../viz"
+import { cn } from "@/lib/utils"
+import type { Screen } from "@/lib/nav"
+
+const fade = (delay = 0) => ({
+  initial: { opacity: 0, y: 18 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5, delay },
+})
+
+function SectionLabel({ children, sub }: { children: React.ReactNode; sub?: string }) {
+  return (
+    <div className="mb-4 flex items-baseline gap-2">
+      <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground">{children}</h3>
+      {sub && <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{sub}</span>}
+    </div>
+  )
+}
+
+export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: string) => void }) {
+  return (
+    <div className="px-6 pb-20 pt-2 md:px-10">
+      {/* header row */}
+      <motion.div {...fade(0)} className="flex items-center gap-2">
+        <h2 className="text-base font-semibold uppercase tracking-[0.14em]">Visão geral da equipe</h2>
+        <ChevronDown className="size-4 text-muted-foreground" />
+        <span className="ml-3 flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-xs text-muted-foreground">
+          Temporada 2024 <ChevronDown className="size-3" />
+        </span>
+      </motion.div>
+
+      {/* metrics + donut */}
+      <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+        <div className="grid flex-1 grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 xl:grid-cols-5">
+          {teamMetrics.map((m, i) => (
+            <motion.div key={m.label} {...fade(0.05 * i)} className="flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <MetricIcon type={m.icon} className="size-4 text-alert" />
+                <span className="text-[10px] uppercase tracking-[0.14em]">{m.label}</span>
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-3xl font-bold tracking-tight">{m.value}</span>
+                {m.unit && <span className="text-sm text-muted-foreground">{m.unit}</span>}
+              </div>
+              <span className="flex items-center gap-1 text-[11px] text-good">
+                <TrendingUp className="size-3" />
+                {m.delta} <span className="text-muted-foreground">vs semana anterior</span>
+              </span>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div {...fade(0.2)} className="flex items-center gap-5">
+          <DonutLoad
+            segments={loadZones.map((z) => ({ pct: z.pct, token: z.token }))}
+            centerValue="312"
+            centerLabel="UA"
+          />
+          <div className="flex flex-col gap-1.5">
+            <span className="mb-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+              Distribuição de carga
+            </span>
+            {loadZones.map((z) => (
+              <div key={z.label} className="flex items-center gap-2 text-[11px]">
+                <span className="size-2 rounded-full" style={{ backgroundColor: `var(--${z.token})` }} />
+                <span className="w-28 text-muted-foreground">{z.label}</span>
+                <span className="font-medium tabular-nums">{z.pct}%</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+
+      {/* player strip */}
+      <motion.div {...fade(0.25)} className="mt-10 flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+        {athletes.map((a) => {
+          const featured = a.id === "giroud"
+          return (
+            <button
+              key={a.id}
+              onClick={() => onSelectAthlete(a.id)}
+              className={cn(
+                "group relative flex w-36 shrink-0 flex-col items-center overflow-hidden rounded-2xl bg-gradient-to-b from-surface to-card pt-3 text-center transition-transform hover:-translate-y-1",
+                featured && "ring-1 ring-foreground/30",
+              )}
+            >
+              <div className="flex w-full items-center justify-between px-3 text-[10px] text-muted-foreground">
+                <span className="font-bold text-foreground">{a.number}</span>
+                <span>{a.positionShort}</span>
+              </div>
+              <div className="relative h-28 w-full">
+                <Image src={a.photo || "/placeholder.svg"} alt={a.lastName} fill className="object-cover object-top" />
+                <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-card to-transparent" />
+              </div>
+              <div className="flex w-full flex-col gap-1 px-3 pb-3">
+                <span className="text-sm font-semibold">{a.firstName[0]}. {a.lastName}</span>
+                <span className="text-lg font-bold leading-none">{a.distance} <span className="text-xs font-normal text-muted-foreground">km</span></span>
+                <span className="text-[9px] uppercase tracking-wider text-muted-foreground">Zona {a.zone}</span>
+                <Bar pct={a.zone * 20} token={a.zoneState} />
+              </div>
+            </button>
+          )
+        })}
+      </motion.div>
+
+      {/* analytics grid */}
+      <div className="mt-12 grid grid-cols-1 gap-x-10 gap-y-12 lg:grid-cols-3">
+        {/* team comparison */}
+        <motion.div {...fade(0.1)}>
+          <SectionLabel sub="médias">Comparativo da equipe</SectionLabel>
+          <div className="flex flex-col gap-4">
+            {teamComparison.map((c, i) => (
+              <div key={c.label} className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-muted-foreground">{c.label}</span>
+                  <span className="font-medium text-good">{c.delta}</span>
+                </div>
+                <Bar pct={(c.now / c.max) * 100} token="good" delay={0.1 * i} />
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* accumulated load */}
+        <motion.div {...fade(0.15)}>
+          <SectionLabel sub="UA">Carga acumulada</SectionLabel>
+          <LineChart now={accumulatedLoad.now} prev={accumulatedLoad.prev} days={accumulatedLoad.days} />
+          <div className="mt-3 flex gap-4 text-[10px] uppercase tracking-wide text-muted-foreground">
+            <span className="flex items-center gap-1.5"><span className="h-px w-4 bg-good" />Esta semana · 312 UA</span>
+            <span className="flex items-center gap-1.5"><span className="h-px w-4 border-t border-dashed border-muted-foreground" />Anterior · 268 UA</span>
+          </div>
+        </motion.div>
+
+        {/* position comparison */}
+        <motion.div {...fade(0.2)}>
+          <SectionLabel sub="distância">Comparativo por posição</SectionLabel>
+          <div className="flex flex-col gap-4">
+            {positionComparison.map((p, i) => (
+              <div key={p.pos} className="flex items-center gap-3">
+                <span className="w-12 text-xs font-semibold">{p.pos}</span>
+                <Bar pct={(p.dist / p.max) * 100} token="good" delay={0.08 * i} />
+                <span className="w-12 text-right text-xs tabular-nums">{p.dist} km</span>
+                <span className="w-4 text-right text-[10px] text-muted-foreground">{p.athletes}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* thermography */}
+        <motion.div {...fade(0.25)}>
+          <SectionLabel>Termografia — comparativo</SectionLabel>
+          <div className="flex items-end gap-6">
+            <div className="flex flex-col items-center gap-2">
+              <Image src="/thermography.png" alt="Termografia esta semana" width={160} height={120} className="h-32 w-auto object-contain" />
+              <span className="text-[10px] text-muted-foreground">Esta semana</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 opacity-80">
+              <Image src="/thermography.png" alt="Média pessoal" width={160} height={120} className="h-32 w-auto object-contain" />
+              <span className="text-[10px] text-muted-foreground">Média pessoal</span>
+            </div>
+          </div>
+          <div className="mt-3 flex items-center gap-2 text-[9px] uppercase tracking-wider text-muted-foreground">
+            Baixa
+            <span className="h-1.5 w-32 rounded-full" style={{ background: "linear-gradient(90deg, var(--info), var(--good), var(--warn), var(--alert))" }} />
+            Alta
+          </div>
+        </motion.div>
+
+        {/* internal ranking */}
+        <motion.div {...fade(0.3)}>
+          <SectionLabel sub="esta semana">Ranking interno</SectionLabel>
+          <div className="flex flex-col gap-3">
+            {internalRanking.map((r) => (
+              <div key={r.pos} className="flex items-center gap-3">
+                <span className="w-4 text-xs text-muted-foreground">{r.pos}</span>
+                <span className="w-28 text-sm">{r.name}</span>
+                <Bar pct={r.pct} token="good" />
+                <span className="w-14 text-right text-xs tabular-nums">{r.value}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* alerts */}
+        <motion.div {...fade(0.35)}>
+          <SectionLabel sub="esta semana">Alertas</SectionLabel>
+          <div className="flex flex-col gap-3">
+            {weekAlerts.map((a, i) => (
+              <div key={i} className="flex items-center gap-3 text-sm">
+                <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: `var(--${a.state})` }} />
+                <span className="text-muted-foreground">{a.text}</span>
+              </div>
+            ))}
+            <button className="mt-2 self-start text-xs font-medium text-foreground underline-offset-4 hover:underline">
+              Ver todos os alertas →
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
