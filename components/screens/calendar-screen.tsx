@@ -22,7 +22,17 @@ export function CalendarScreen() {
   const [view, setView] = useState("Mês")
 
   return (
-    <div className="relative mx-auto max-w-4xl px-4 pb-8 md:px-8">
+    <div className="relative overflow-hidden px-4 pb-8 md:px-8">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[58%] opacity-35">
+        <Image src="/calendar-stadium-bg.png" alt="Arena do Athletic" fill priority className="object-cover object-center" />
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-background to-transparent" />
+        <div className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background to-transparent" />
+        <div className="absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background to-transparent" />
+        <div className="absolute inset-0 bg-background/35" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-4xl">
       {/* toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -123,9 +133,9 @@ export function CalendarScreen() {
         })}
       </div>
 
-      {/* legend + photo */}
-      <div className="relative -mt-16 min-h-80 overflow-hidden">
-        <div className="relative z-30 mt-20 flex flex-wrap gap-x-8 gap-y-3">
+      {/* legend */}
+      <div className="relative -mt-3 min-h-28">
+        <div className="relative z-30 mt-8 flex flex-wrap gap-x-8 gap-y-3">
           {(Object.keys(dayTypeMeta) as DayType[]).map((t) => (
             <span key={t} className="flex items-center gap-2 text-[10px] uppercase tracking-wide text-muted-foreground">
               <span className="size-2 rounded-full" style={{ backgroundColor: `var(--${dayTypeMeta[t].token})` }} />
@@ -133,11 +143,7 @@ export function CalendarScreen() {
             </span>
           ))}
         </div>
-        <div className="pointer-events-none absolute -bottom-14 left-1/2 z-20 h-96 w-full max-w-2xl -translate-x-1/2 opacity-90">
-          <Image src="/calendar-team.png" alt="Jogadores do Athletic" fill className="object-contain object-bottom" />
-          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-background to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent" />
-        </div>
+      </div>
       </div>
     </div>
   )
