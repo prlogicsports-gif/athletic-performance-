@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { athletes, positionFilters } from "@/lib/data"
 import { cn } from "@/lib/utils"
+import { spring } from "@/lib/motion"
 
 const squadTabs = ["Elenco", "Comissão Técnica"]
 
@@ -72,7 +73,18 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
       </div>
 
       {/* carousel */}
-      <div className={cn("relative mt-4 flex items-center justify-center overflow-hidden [perspective:2200px]", carouselHeight)}>
+      <motion.div
+        className={cn("relative mt-4 flex items-center justify-center overflow-hidden [perspective:1800px] [transform-style:preserve-3d]", carouselHeight)}
+        drag="x"
+        dragMomentum
+        dragElastic={0.08}
+        dragSnapToOrigin
+        dragConstraints={{ left: 0, right: 0 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.x < -45) go(1)
+          if (info.offset.x > 45) go(-1)
+        }}
+      >
         {list.map((a, i) => {
           let offset = i - active
           if (offset > list.length / 2) offset -= list.length
@@ -83,17 +95,18 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
           return (
             <motion.button
               key={a.id}
+              layoutId={`athlete-card-${a.id}`}
               onClick={() => (isCenter ? onSelectAthlete(a.id) : setActive(i))}
               className="absolute origin-center overflow-hidden rounded-[28px]"
               style={cardSize}
               animate={{
                 x: offset * xStep,
-                scale: abs === 0 ? 1 : abs === 1 ? 0.78 : 0.6,
-                opacity: abs === 0 ? 1 : abs === 1 ? 0.55 : 0.18,
+                scale: abs === 0 ? 1 : abs === 1 ? 0.82 : 0.65,
+                opacity: abs === 0 ? 1 : abs === 1 ? 0.7 : 0.35,
                 filter: abs === 0 ? "blur(0px)" : abs === 1 ? "blur(1px)" : "blur(5px)",
                 zIndex: 50 - abs,
                 rotateY: offset * -14,
-                translateZ: abs === 0 ? 120 : abs === 1 ? -40 : -180,
+                translateZ: abs === 0 ? 120 : abs === 1 ? -30 : -80,
               }}
               whileHover={
                 isCenter
@@ -102,15 +115,11 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
                       y: compact ? -4 : -10,
                     }
                   : {
-                      scale: compact ? 0.8 : 0.82,
+                      scale: compact ? 0.84 : 0.86,
+                      opacity: 0.82,
                     }
               }
-              transition={{
-                type: "spring",
-                stiffness: 180,
-                damping: 22,
-                mass: 0.9,
-              }}
+              transition={spring}
             >
               <div
                 className={cn(
@@ -118,34 +127,37 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
                   isCenter && "ring-1 ring-foreground/30 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]",
                 )}
               >
-                <Image
-                  src={a.photo || "/placeholder.svg"}
-                  alt={`${a.firstName} ${a.lastName}`}
-                  fill
-                  priority={isCenter}
-                  className="object-cover object-top"
-                />
+                <motion.div layoutId={`athlete-photo-${a.id}`} className="absolute inset-0">
+                  <Image
+                    src={a.photo || "/placeholder.svg"}
+                    alt={`${a.firstName} ${a.lastName}`}
+                    fill
+                    priority={isCenter}
+                    className="object-cover object-top"
+                  />
+                </motion.div>
                 <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-background via-background/80 to-transparent" />
 
                 {/* number */}
-                <div
+                <motion.div
+                  layoutId={`athlete-number-${a.id}`}
                   className={cn(
                     "absolute right-5 top-6 flex items-center justify-center rounded-full border border-foreground/40 bg-background/40 backdrop-blur-sm",
                     isCenter ? "size-10 text-lg" : "size-8 text-xs",
                   )}
                 >
                   <span className="font-bold">{a.number}</span>
-                </div>
+                </motion.div>
 
                 {/* name */}
                 <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1 px-4 pb-5 text-center">
                   <span className={cn("font-medium", isCenter ? "text-sm" : "text-[11px]")}>{a.firstName}</span>
-                  <span className={cn("font-bold leading-none tracking-tight", isCenter ? "text-3xl" : "text-lg")}>
+                  <motion.span layoutId={`athlete-name-${a.id}`} className={cn("font-bold leading-none tracking-tight", isCenter ? "text-3xl" : "text-lg")}>
                     {a.lastName}
-                  </span>
-                  <span className="mt-0.5 text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
+                  </motion.span>
+                  <motion.span layoutId={`athlete-position-${a.id}`} className="mt-0.5 text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
                     {a.position}
-                  </span>
+                  </motion.span>
                 </div>
               </div>
             </motion.button>
@@ -167,7 +179,7 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
         >
           <ChevronRight className="size-5" />
         </button>
-      </div>
+      </motion.div>
 
       {/* dots + hint */}
       <div className="mt-2 flex flex-col items-center gap-3">

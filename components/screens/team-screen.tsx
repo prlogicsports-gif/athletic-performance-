@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { athletes } from "@/lib/data"
+import { spring } from "@/lib/motion"
 
 const staff = [
   { name: "R. Mancini", role: "Treinador", photo: "/athletes/hero-profile.png", focus: "Modelo tático", load: "92%", status: "Campo" },
@@ -10,13 +11,6 @@ const staff = [
   { name: "L. Duarte", role: "Fisiologia", photo: "/athletes/player-5.png", focus: "Recuperação", load: "81%", status: "Apolo" },
   { name: "M. Paiva", role: "Análise", photo: "/athletes/player-6.png", focus: "Vídeo e dados", load: "96%", status: "Live" },
 ]
-
-const spring = {
-  type: "spring",
-  stiffness: 180,
-  damping: 22,
-  mass: 0.9,
-} as const
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 14 },

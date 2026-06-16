@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { ChevronDown, TrendingUp } from "lucide-react"
@@ -17,12 +18,36 @@ import { MetricIcon } from "../metric-icon"
 import { DonutLoad, Bar, LineChart } from "../viz"
 import { cn } from "@/lib/utils"
 import type { Screen } from "@/lib/nav"
+import { spring, staggerContainer, staggerItem } from "@/lib/motion"
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 18 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, delay },
+  transition: { ...spring, delay },
 })
+
+function CountUp({ value }: { value: string }) {
+  const target = Number.parseFloat(value.replace(",", "."))
+  const [current, setCurrent] = useState(0)
+
+  useEffect(() => {
+    if (Number.isNaN(target)) return
+    let frame = 0
+    const total = 42
+    const id = window.setInterval(() => {
+      frame += 1
+      const progress = 1 - Math.pow(1 - frame / total, 3)
+      setCurrent(target * Math.min(progress, 1))
+      if (frame >= total) window.clearInterval(id)
+    }, 16)
+    return () => window.clearInterval(id)
+  }, [target])
+
+  if (Number.isNaN(target)) return <>{value}</>
+
+  const decimals = value.includes(".") || value.includes(",") ? 1 : 0
+  return <>{current.toFixed(decimals)}</>
+}
 
 function SectionLabel({ children, sub }: { children: React.ReactNode; sub?: string }) {
   return (
@@ -35,7 +60,7 @@ function SectionLabel({ children, sub }: { children: React.ReactNode; sub?: stri
 
 export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: string) => void }) {
   return (
-    <div className="px-4 pb-16 pt-1 md:px-8">
+    <motion.div variants={staggerContainer} initial="initial" animate="animate" className="px-4 pb-16 pt-1 md:px-8">
       {/* header row */}
       <motion.div {...fade(0)} className="flex items-center gap-2">
         <h2 className="text-sm font-semibold uppercase tracking-[0.14em]">Visão geral da equipe</h2>
@@ -49,13 +74,13 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
       <div className="mt-6 flex flex-col gap-7 lg:flex-row lg:items-start lg:justify-between">
         <div className="grid flex-1 grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 xl:grid-cols-5">
           {teamMetrics.map((m, i) => (
-            <motion.div key={m.label} {...fade(0.05 * i)} className="flex flex-col gap-2">
+            <motion.div key={m.label} variants={staggerItem} transition={{ ...spring, delay: 0.04 * i }} className="flex flex-col gap-2">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <MetricIcon type={m.icon} className="size-4 text-alert" />
                 <span className="text-[10px] uppercase tracking-[0.14em]">{m.label}</span>
               </div>
               <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold tracking-tight">{m.value}</span>
+                <span className="text-2xl font-bold tracking-tight"><CountUp value={m.value} /></span>
                 {m.unit && <span className="text-xs text-muted-foreground">{m.unit}</span>}
               </div>
               <span className="flex items-center gap-1 text-[11px] text-good">
@@ -92,11 +117,13 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
         {athletes.map((a) => {
           const featured = a.id === "giroud"
           return (
-            <button
+            <motion.button
               key={a.id}
               onClick={() => onSelectAthlete(a.id)}
+              whileHover={{ y: -6, scale: 1.02 }}
+              transition={spring}
               className={cn(
-                "group relative flex w-32 shrink-0 flex-col items-center overflow-hidden rounded-2xl bg-gradient-to-b from-surface to-card pt-2.5 text-center transition-transform hover:-translate-y-1",
+                "group relative flex w-32 shrink-0 flex-col items-center overflow-hidden rounded-2xl bg-gradient-to-b from-surface to-card pt-2.5 text-center will-change-transform",
                 featured && "ring-1 ring-foreground/30",
               )}
             >
@@ -114,7 +141,7 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
                 <span className="text-[9px] uppercase tracking-wider text-muted-foreground">Zona {a.zone}</span>
                 <Bar pct={a.zone * 20} token={a.zoneState} />
               </div>
-            </button>
+            </motion.button>
           )
         })}
       </motion.div>
@@ -213,6 +240,6 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
           </div>
         </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }

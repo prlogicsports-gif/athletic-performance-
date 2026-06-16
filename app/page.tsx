@@ -13,6 +13,7 @@ import { ProfileScreen } from "@/components/screens/profile-screen"
 import { CalendarScreen } from "@/components/screens/calendar-screen"
 import { ReportsScreen } from "@/components/screens/reports-screen"
 import type { Screen } from "@/lib/nav"
+import { pageTransition, spring } from "@/lib/motion"
 
 export default function Page() {
   const [screen, setScreen] = useState<Screen>("splash")
@@ -31,9 +32,9 @@ export default function Page() {
         ) : (
           <motion.div
             key="app"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, scale: 0.99 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={spring}
           >
             <SiteHeader />
             <TabNav screen={screen} onNavigate={setScreen} />
@@ -41,10 +42,8 @@ export default function Page() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={screen + athleteId}
-                initial={{ opacity: 0, y: 24, filter: "blur(6px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -16, filter: "blur(6px)" }}
-                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                {...pageTransition}
+                transition={spring}
               >
                 {screen === "dashboard" && <DashboardScreen onSelectAthlete={selectAthlete} />}
                 {screen === "team" && <TeamScreen />}

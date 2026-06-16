@@ -3,13 +3,7 @@
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { athletes } from "@/lib/data"
-
-const spring = {
-  type: "spring",
-  stiffness: 180,
-  damping: 22,
-  mass: 0.9,
-} as const
+import { spring } from "@/lib/motion"
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 14 },

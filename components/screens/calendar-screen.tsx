@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react"
 import { calendarDays, weekDayLabels, dayTypeMeta, type DayType } from "@/lib/data"
 import { cn } from "@/lib/utils"
+import { spring } from "@/lib/motion"
 
 const views = ["Mês", "Semana", "Lista"]
 
@@ -61,7 +62,7 @@ export function CalendarScreen() {
                 )}
               >
                 {view === v && (
-                  <motion.span layoutId="cal-view" className="absolute inset-0 rounded-[5px] bg-foreground" transition={{ type: "spring", stiffness: 180, damping: 22, mass: 0.9 }} />
+                  <motion.span layoutId="cal-view" className="absolute inset-0 rounded-[5px] bg-foreground" transition={spring} />
                 )}
                 <span className="relative z-10">{v}</span>
               </button>
@@ -92,9 +93,10 @@ export function CalendarScreen() {
           return (
             <motion.div
               key={i}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: Math.min(i * 0.008, 0.4) }}
+              initial={{ opacity: 0, y: 8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              whileHover={d ? { scale: 1.02, backgroundColor: "rgba(255,255,255,0.055)" } : undefined}
+              transition={{ ...spring, delay: Math.min(i * 0.008, 0.4) }}
               className={cn(
                 "min-h-12 p-1.5 sm:min-h-14",
                 !isLastCol && "border-r border-foreground/10",

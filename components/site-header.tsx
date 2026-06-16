@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { PrLogo } from "./pr-logo"
+import { softSpring, spring } from "@/lib/motion"
 
 function useClock() {
   const [time, setTime] = useState("14:32:07")
@@ -25,7 +26,12 @@ export function SiteHeader() {
   const time = useClock()
   return (
     <header className="safe-x safe-header-top relative grid grid-cols-[1fr_auto_1fr] items-start bg-[#000000] px-4 pt-2 md:px-8 md:pt-3">
-      <div className="flex flex-col gap-0.5 pt-1">
+      <motion.div
+        className="flex flex-col gap-0.5 pt-1"
+        initial={{ opacity: 0, x: -14 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={softSpring}
+      >
         <div className="flex items-center gap-2">
           <span className="flex items-center gap-1.5 text-[9px] font-semibold tracking-[0.16em] text-foreground md:text-[10px]">
             <motion.span
@@ -40,9 +46,14 @@ export function SiteHeader() {
         <span className="max-w-[112px] text-[9px] text-foreground/45 md:max-w-none md:text-[10px]">
           Treino tático • Campo A
         </span>
-      </div>
+      </motion.div>
 
-      <div className="relative -mt-1 flex h-12 w-12 justify-center overflow-hidden sm:h-14 sm:w-14 md:h-16 md:w-16 lg:h-[72px] lg:w-[72px]">
+      <motion.div
+        className="relative -mt-1 flex h-12 w-12 justify-center overflow-hidden sm:h-14 sm:w-14 md:h-16 md:w-16 lg:h-[72px] lg:w-[72px]"
+        initial={{ opacity: 0, scale: 0.92, y: -4 }}
+        animate={{ opacity: 1, scale: 1, y: [0, -3, 0] }}
+        transition={{ ...spring, y: { duration: 6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" } }}
+      >
         <Image
           src="/ac-logo-mark.png"
           alt="Athletic Club"
@@ -51,9 +62,16 @@ export function SiteHeader() {
           priority
           className="absolute left-1/2 top-1/2 h-auto w-[144px] max-w-none -translate-x-1/2 -translate-y-1/2 sm:w-[168px] md:w-[192px] lg:w-[216px]"
         />
-      </div>
+      </motion.div>
 
-      <PrLogo className="justify-self-end" />
+      <motion.div
+        className="justify-self-end"
+        initial={{ opacity: 0, x: 14 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ ...softSpring, delay: 0.08 }}
+      >
+        <PrLogo />
+      </motion.div>
     </header>
   )
 }

@@ -15,11 +15,12 @@ import { MetricIcon } from "../metric-icon"
 import { Ring } from "../viz"
 import { cn } from "@/lib/utils"
 import type { Screen } from "@/lib/nav"
+import { spring } from "@/lib/motion"
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, delay },
+  transition: { ...spring, delay },
 })
 
 function BrazilFlag() {
@@ -61,13 +62,13 @@ export function ProfileScreen({
         {/* left */}
         <div>
           <motion.div {...fade(0)} className="flex items-center gap-3 text-xs">
-            <span className="text-xl font-bold">{a.number}</span>
-            <span className="uppercase tracking-wide text-muted-foreground">{a.position}</span>
+            <motion.span layoutId={`athlete-number-${a.id}`} className="text-xl font-bold">{a.number}</motion.span>
+            <motion.span layoutId={`athlete-position-${a.id}`} className="uppercase tracking-wide text-muted-foreground">{a.position}</motion.span>
             <BrazilFlag />
             <span>{a.country}</span>
           </motion.div>
 
-          <motion.h1 {...fade(0.05)} className="mt-2 text-4xl font-extrabold leading-none tracking-tight md:text-5xl">
+          <motion.h1 layoutId={`athlete-name-${a.id}`} {...fade(0.05)} className="mt-2 text-4xl font-extrabold leading-none tracking-tight md:text-5xl">
             {a.firstName} <span className="block md:inline">{a.lastName}</span>
           </motion.h1>
 
@@ -142,11 +143,12 @@ export function ProfileScreen({
         </div>
 
         {/* right: photo + rings */}
-        <div className="relative flex items-start justify-center">
+        <motion.div layoutId={`athlete-card-${a.id}`} className="relative flex items-start justify-center">
           <motion.div
+            layoutId={`athlete-photo-${a.id}`}
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
+            transition={spring}
             className="relative h-[400px] w-full max-w-sm"
           >
             <Image
@@ -168,7 +170,7 @@ export function ProfileScreen({
               </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* bottom info strip */}

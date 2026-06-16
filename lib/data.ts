@@ -1,5 +1,23 @@
 export type ZoneState = "good" | "warn" | "alert"
 
+export type CatapultPlaceholder = {
+  distance: number
+  maxSpeed: number
+  sprints: number
+  playerLoad: number
+  accelerations: number
+  decelerations: number
+}
+
+export type ApolloPlaceholder = {
+  recovery: number
+  wellness: number
+  sleep: number
+  fatigue: number
+  soreness: number
+  thermography: "normal" | "monitorar" | "alerta"
+}
+
 export type Athlete = {
   id: string
   number: number
@@ -16,9 +34,29 @@ export type Athlete = {
   zoneState: ZoneState
   height: string
   weight: string
+  catapult: CatapultPlaceholder
+  apollo: ApolloPlaceholder
 }
 
-export const athletes: Athlete[] = [
+const baseCatapult = (distance: number, zone: number): CatapultPlaceholder => ({
+  distance,
+  maxSpeed: 24 + zone * 1.4,
+  sprints: Math.round(distance * 5.4),
+  playerLoad: Math.round(distance * 34),
+  accelerations: Math.round(distance * 7.2),
+  decelerations: Math.round(distance * 6.4),
+})
+
+const baseApollo = (zoneState: ZoneState): ApolloPlaceholder => ({
+  recovery: zoneState === "alert" ? 64 : zoneState === "warn" ? 76 : 88,
+  wellness: zoneState === "alert" ? 68 : zoneState === "warn" ? 79 : 90,
+  sleep: zoneState === "alert" ? 6.2 : zoneState === "warn" ? 7.1 : 8.0,
+  fatigue: zoneState === "alert" ? 72 : zoneState === "warn" ? 54 : 31,
+  soreness: zoneState === "alert" ? 66 : zoneState === "warn" ? 42 : 24,
+  thermography: zoneState === "alert" ? "alerta" : zoneState === "warn" ? "monitorar" : "normal",
+})
+
+const athleteBase: Omit<Athlete, "catapult" | "apollo">[] = [
   {
     id: "giroud",
     number: 18,
@@ -123,6 +161,12 @@ export const athletes: Athlete[] = [
   },
 ]
 
+export const athletes: Athlete[] = athleteBase.map((athlete) => ({
+  ...athlete,
+  catapult: baseCatapult(athlete.distance, athlete.zone),
+  apollo: baseApollo(athlete.zoneState),
+}))
+
 export const positionFilters = [
   "Todos",
   "Goleiros",
@@ -146,6 +190,34 @@ export const teamMetrics: TeamMetric[] = [
   { label: "Carga de treino", value: "312", unit: "UA", delta: "+8.7%", icon: "load" },
   { label: "Tempo de sessão", value: "62", unit: "min", delta: "+5.4%", icon: "time" },
 ]
+
+export const teamMetricsPlaceholders = {
+  averages: {
+    distance: 8.4,
+    maxSpeed: 28.7,
+    sprints: 182,
+    playerLoad: 312,
+    recovery: 81,
+  },
+  positionAverages: {
+    atacantes: 8.9,
+    defensores: 8.3,
+    "meio-campistas": 8.2,
+    goleiros: 6.4,
+  },
+  comparisons: {
+    previousWeekLoad: 268,
+    currentWeekLoad: 312,
+    previousWeekDistance: 7.8,
+    currentWeekDistance: 8.4,
+  },
+  alerts: {
+    highLoad: 2,
+    lowRecovery: 1,
+    thermography: 1,
+    fatigueRisk: 1,
+  },
+}
 
 export const loadZones = [
   { label: "Z1 (0-7 km/h)", pct: 8, token: "z1" },
