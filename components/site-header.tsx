@@ -24,7 +24,7 @@ function useClock() {
 export function SiteHeader() {
   const time = useClock()
   return (
-    <header className="relative grid grid-cols-[1fr_auto_1fr] items-start bg-[#000000] px-5 pt-4 md:px-10 md:pt-5">
+    <header className="relative grid grid-cols-[1fr_auto_1fr] items-start bg-[#000000] px-5 pt-2 md:px-10 md:pt-3">
       <div className="flex flex-col gap-1 pt-1">
         <div className="flex items-center gap-2 md:gap-3">
           <span className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.18em] text-foreground md:text-xs">
@@ -42,14 +42,14 @@ export function SiteHeader() {
         </span>
       </div>
 
-      <div className="relative flex h-16 w-16 justify-center overflow-hidden sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-[104px] lg:w-[104px]">
+      <div className="relative -mt-1 flex h-12 w-12 justify-center overflow-hidden sm:h-14 sm:w-14 md:h-16 md:w-16 lg:h-[72px] lg:w-[72px]">
         <Image
           src="/ac-logo-mark.png"
           alt="Athletic Club"
           width={512}
           height={512}
           priority
-          className="absolute left-1/2 top-1/2 h-auto w-[190px] max-w-none -translate-x-1/2 -translate-y-1/2 sm:w-[238px] md:w-[286px] lg:w-[310px]"
+          className="absolute left-1/2 top-1/2 h-auto w-[144px] max-w-none -translate-x-1/2 -translate-y-1/2 sm:w-[168px] md:w-[192px] lg:w-[216px]"
         />
       </div>
 

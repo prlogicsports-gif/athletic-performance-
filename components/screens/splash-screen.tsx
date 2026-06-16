@@ -9,7 +9,7 @@ export function SplashScreen({ onEnter }: { onEnter: (s: Screen) => void }) {
     <motion.button
       type="button"
       onClick={() => onEnter("dashboard")}
-      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#000000]"
+      className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-[#000000]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 1.04, filter: "blur(8px)" }}
@@ -24,6 +24,14 @@ export function SplashScreen({ onEnter }: { onEnter: (s: Screen) => void }) {
         sizes="100vw"
         className="object-contain object-center"
       />
+      <motion.span
+        className="absolute bottom-8 text-[10px] font-medium uppercase tracking-[0.32em] text-foreground/45"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.1, duration: 1 }}
+      >
+        Toque para iniciar
+      </motion.span>
     </motion.button>
   )
 }
