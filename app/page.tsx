@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { SiteHeader } from "@/components/site-header"
+import { SiteFooter } from "@/components/site-footer"
 import { TabNav } from "@/components/tab-nav"
 import { SplashScreen } from "@/components/screens/splash-screen"
 import { DashboardScreen } from "@/components/screens/dashboard-screen"
@@ -53,6 +54,7 @@ export default function Page() {
                 {screen === "reports" && <ReportsScreen />}
               </motion.div>
             </AnimatePresence>
+            <SiteFooter />
           </motion.div>
         )}
       </AnimatePresence>

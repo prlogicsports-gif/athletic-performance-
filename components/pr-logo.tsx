@@ -1,18 +1,34 @@
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 
-export function PrLogo({ className }: { className?: string }) {
+export function PrLogo({
+  className,
+  size = "header",
+}: {
+  className?: string
+  size?: "header" | "footer"
+}) {
+  const isFooter = size === "footer"
+
   return (
-    <div className={cn("flex w-12 flex-col items-center gap-0 pt-0.5 text-center md:w-14", className)}>
-      <span className="text-[4px] font-medium leading-none tracking-[0.16em] text-foreground/35 md:text-[5px]">POWERED BY</span>
+    <div
+      className={cn(
+        "flex flex-col items-center gap-0 text-center",
+        isFooter ? "w-20" : "w-14 pt-0.5 md:w-16",
+        className,
+      )}
+    >
+      <span className={cn("font-medium leading-none tracking-[0.16em] text-foreground/35", isFooter ? "text-[6px]" : "text-[5px]")}>
+        POWERED BY
+      </span>
       <Image
-        src="/pr-logo-outline.png"
+        src="/pr-logo-solid.png"
         alt="PR Logic Sports"
-        width={44}
-        height={44}
-        className="h-auto w-8 object-contain md:w-10 lg:w-11"
+        width={80}
+        height={80}
+        className={cn("h-auto object-contain", isFooter ? "w-14" : "w-10 md:w-12 lg:w-14")}
       />
-      <span className="text-[4px] font-semibold leading-none tracking-[0.12em] text-foreground/55 md:text-[5px]">
+      <span className={cn("font-semibold leading-none tracking-[0.12em] text-foreground/55", isFooter ? "text-[6px]" : "text-[5px]")}>
         PR LOGIC SPORTS
       </span>
     </div>
