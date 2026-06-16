@@ -6,9 +6,11 @@ import { SiteHeader } from "@/components/site-header"
 import { TabNav } from "@/components/tab-nav"
 import { SplashScreen } from "@/components/screens/splash-screen"
 import { DashboardScreen } from "@/components/screens/dashboard-screen"
+import { TeamScreen } from "@/components/screens/team-screen"
 import { CarouselScreen } from "@/components/screens/carousel-screen"
 import { ProfileScreen } from "@/components/screens/profile-screen"
 import { CalendarScreen } from "@/components/screens/calendar-screen"
+import { ReportsScreen } from "@/components/screens/reports-screen"
 import type { Screen } from "@/lib/nav"
 
 export default function Page() {
@@ -44,9 +46,11 @@ export default function Page() {
                 transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
               >
                 {screen === "dashboard" && <DashboardScreen onSelectAthlete={selectAthlete} />}
+                {screen === "team" && <TeamScreen />}
                 {screen === "carousel" && <CarouselScreen onSelectAthlete={selectAthlete} />}
                 {screen === "profile" && <ProfileScreen athleteId={athleteId} onBack={setScreen} />}
                 {screen === "calendar" && <CalendarScreen />}
+                {screen === "reports" && <ReportsScreen />}
               </motion.div>
             </AnimatePresence>
           </motion.div>

@@ -22,11 +22,11 @@ export function CalendarScreen() {
   const [view, setView] = useState("Mês")
 
   return (
-    <div className="px-4 pb-14 md:px-8">
+    <div className="relative mx-auto max-w-6xl px-4 pb-12 md:px-8">
       {/* toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-bold uppercase tracking-tight">
+          <h2 className="text-xl font-bold uppercase tracking-tight md:text-2xl">
             Setembro <span className="font-light text-muted-foreground">2024</span>
           </h2>
           <div className="flex gap-1">
@@ -40,31 +40,31 @@ export function CalendarScreen() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="relative flex rounded-full bg-surface p-0.5">
+          <div className="relative flex rounded-md bg-surface/55 p-0.5">
             {views.map((v) => (
               <button
                 key={v}
                 onClick={() => setView(v)}
                 className={cn(
-                  "relative rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-wide transition-colors",
+                  "relative rounded-[5px] px-3 py-1 text-[10px] font-medium uppercase tracking-wide transition-colors",
                   view === v ? "text-background" : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 {view === v && (
-                  <motion.span layoutId="cal-view" className="absolute inset-0 rounded-full bg-foreground" transition={{ type: "spring", stiffness: 400, damping: 32 }} />
+                  <motion.span layoutId="cal-view" className="absolute inset-0 rounded-[5px] bg-foreground" transition={{ type: "spring", stiffness: 180, damping: 22, mass: 0.9 }} />
                 )}
                 <span className="relative z-10">{v}</span>
               </button>
             ))}
           </div>
-          <button className="flex items-center gap-2 rounded-full bg-surface px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground">
+          <button className="flex items-center gap-2 rounded-md bg-surface/55 px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground">
             <SlidersHorizontal className="size-3.5" /> Filtros
           </button>
         </div>
       </div>
 
       {/* weekday header */}
-      <div className="mt-6 grid grid-cols-7 gap-px">
+      <div className="mt-5 grid grid-cols-7 gap-px">
         {weekDayLabels.map((d) => (
           <div key={d} className="pb-3 text-center text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
             {d}
@@ -73,7 +73,7 @@ export function CalendarScreen() {
       </div>
 
       {/* grid */}
-      <div className="grid grid-cols-7 overflow-hidden rounded-xl border border-border">
+      <div className="relative z-10 grid grid-cols-7 overflow-hidden rounded-lg border border-foreground/10 bg-background/20">
         {calendarDays.map((d, i) => {
           const isTrailing = d && d.day <= 6 && i > 33
           const meta = d?.type ? dayTypeMeta[d.type as DayType] : null
@@ -84,8 +84,8 @@ export function CalendarScreen() {
               animate={{ opacity: 1 }}
               transition={{ delay: Math.min(i * 0.008, 0.4) }}
               className={cn(
-                "min-h-20 border-b border-r border-border p-2 last:border-r-0",
-                d?.current && "bg-surface/60",
+                "min-h-16 border-b border-r border-foreground/10 p-2 last:border-r-0 sm:min-h-[74px]",
+                d?.current && "bg-foreground/[0.04]",
               )}
             >
               {d && (
@@ -120,7 +120,7 @@ export function CalendarScreen() {
       </div>
 
       {/* legend + photo */}
-      <div className="relative mt-6 overflow-hidden">
+      <div className="relative mt-6 min-h-56 overflow-hidden">
         <div className="relative z-10 flex flex-wrap gap-x-8 gap-y-3">
           {(Object.keys(dayTypeMeta) as DayType[]).map((t) => (
             <span key={t} className="flex items-center gap-2 text-[11px] uppercase tracking-wide text-muted-foreground">
@@ -129,10 +129,10 @@ export function CalendarScreen() {
             </span>
           ))}
         </div>
-        <div className="pointer-events-none absolute -bottom-10 right-0 h-64 w-full max-w-2xl opacity-70">
-          <Image src="/athletes/celebration.png" alt="Comemoração da equipe" fill className="object-contain object-bottom" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background" />
+        <div className="pointer-events-none absolute -bottom-16 left-1/2 h-80 w-full max-w-xl -translate-x-1/2 opacity-85">
+          <Image src="/calendar-team.png" alt="Jogadores do Athletic" fill className="object-contain object-bottom" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/5" />
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent" />
         </div>
       </div>
     </div>

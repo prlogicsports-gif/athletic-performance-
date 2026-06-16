@@ -9,14 +9,14 @@ type NavEntry = { id: string; label: string; icon: LucideIcon; screen: Screen }
 
 const leftItems: NavEntry[] = [
   { id: "dashboard", label: "DASHBOARD", icon: Home, screen: "dashboard" },
-  { id: "equipe", label: "EQUIPE", icon: Users, screen: "dashboard" },
+  { id: "equipe", label: "EQUIPE", icon: Users, screen: "team" },
   { id: "atletas", label: "ATLETAS", icon: User, screen: "carousel" },
 ]
 
 const rightItems: NavEntry[] = [
   { id: "sessoes", label: "SESSÕES", icon: Activity, screen: "dashboard" },
   { id: "calendario", label: "CALENDÁRIO", icon: CalendarDays, screen: "calendar" },
-  { id: "relatorios", label: "RELATÓRIOS", icon: FileText, screen: "dashboard" },
+  { id: "relatorios", label: "RELATÓRIOS", icon: FileText, screen: "reports" },
   { id: "alertas", label: "ALERTAS", icon: Bell, screen: "dashboard" },
 ]
 
@@ -24,7 +24,9 @@ const items = [...leftItems, ...rightItems]
 
 function activeIdFor(screen: Screen) {
   if (screen === "carousel" || screen === "profile") return "atletas"
+  if (screen === "team") return "equipe"
   if (screen === "calendar") return "calendario"
+  if (screen === "reports") return "relatorios"
   return "dashboard"
 }
 
@@ -60,7 +62,7 @@ export function TabNav({
 }) {
   const active = activeIdFor(screen)
   return (
-    <nav className="safe-x -mt-1 w-full max-w-full overflow-hidden bg-[#000000] px-4 pb-3 pt-0 md:grid md:grid-cols-[minmax(0,1fr)_100px_minmax(0,1fr)] md:px-8 md:pb-4 md:pt-1 lg:grid-cols-[minmax(0,1fr)_150px_minmax(0,1fr)]">
+    <nav className="safe-x -mt-2 w-full max-w-full overflow-hidden bg-[#000000] px-4 pb-2 pt-0 md:grid md:grid-cols-[minmax(0,1fr)_100px_minmax(0,1fr)] md:px-8 md:pb-3 md:pt-0 lg:grid-cols-[minmax(0,1fr)_150px_minmax(0,1fr)]">
       <div className="flex min-w-0 items-center gap-4 overflow-x-auto no-scrollbar md:justify-end md:gap-5 md:overflow-visible">
         {leftItems.map((item) => (
           <NavItem key={item.id} item={item} isActive={item.id === active} onNavigate={onNavigate} />

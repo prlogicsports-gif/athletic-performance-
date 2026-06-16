@@ -1,1 +1,1 @@
-export type Screen = "splash" | "dashboard" | "carousel" | "profile" | "calendar"
+export type Screen = "splash" | "dashboard" | "team" | "carousel" | "profile" | "calendar" | "reports"
