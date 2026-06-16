@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { motion } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import { ChevronDown, TrendingUp } from "lucide-react"
 import {
   teamMetrics,
@@ -19,6 +19,7 @@ import { DonutLoad, Bar, LineChart } from "../viz"
 import { cn } from "@/lib/utils"
 import type { Screen } from "@/lib/nav"
 import { spring, staggerContainer, staggerItem } from "@/lib/motion"
+import { AthleticFieldExperience, type FieldStage } from "@/components/field/athletic-field-experience"
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 18 },
@@ -59,6 +60,8 @@ function SectionLabel({ children, sub }: { children: React.ReactNode; sub?: stri
 }
 
 export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: string) => void }) {
+  const [fieldOpen, setFieldOpen] = useState<FieldStage | null>(null)
+
   return (
     <motion.div variants={staggerContainer} initial="initial" animate="animate" className="px-4 pb-16 pt-1 md:px-8">
       {/* header row */}
@@ -68,7 +71,21 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
         <span className="ml-2 flex items-center gap-1.5 rounded-full bg-surface px-2.5 py-0.5 text-[10px] text-muted-foreground">
           Temporada 2024 <ChevronDown className="size-3" />
         </span>
+        <button
+          type="button"
+          onClick={() => setFieldOpen("real")}
+          className="hidden"
+        >
+          Visualização de Campo
+        </button>
       </motion.div>
+      <button
+        type="button"
+        onClick={() => setFieldOpen("real")}
+        className="hidden"
+      >
+        Visualização de Campo
+      </button>
 
       {/* metrics + donut */}
       <div className="mt-6 flex flex-col gap-7 lg:flex-row lg:items-start lg:justify-between">
@@ -144,6 +161,54 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
             </motion.button>
           )
         })}
+        <motion.div
+          variants={staggerItem}
+          transition={spring}
+          className="relative flex h-[198px] w-64 shrink-0 overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform sm:w-72"
+        >
+          <button
+            type="button"
+            onClick={() => setFieldOpen("real")}
+            className="absolute inset-0 text-left"
+            aria-label="Abrir visualização de campo"
+          >
+            <Image
+              src="/calendar-stadium-bg.png"
+              alt="Arena Sicredi"
+              fill
+              sizes="288px"
+              className="object-cover object-center opacity-55 transition-transform duration-700 hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-background/30" />
+            <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background via-background/70 to-transparent" />
+            <div className="absolute bottom-4 left-4 right-4">
+              <span className="text-[8px] font-medium uppercase tracking-[0.22em] text-foreground/45">
+                Arena Sicredi
+              </span>
+              <h3 className="mt-1 text-sm font-semibold text-foreground">Visualização de Campo</h3>
+              <span className="mt-1 block text-[9px] uppercase tracking-[0.16em] text-foreground/45">
+                Real → 3D → Análise
+              </span>
+            </div>
+          </button>
+          <div className="absolute right-3 top-3 flex gap-1">
+            {[
+              ["real", "Real"],
+              ["model", "3D"],
+              ["analytics", "Plano"],
+            ].map(([stage, label]) => (
+              <button
+                key={stage}
+                type="button"
+                onClick={() => setFieldOpen(stage as FieldStage)}
+                className="rounded-full bg-background/60 px-2 py-1 text-[8px] font-medium uppercase tracking-[0.12em] text-foreground/55 backdrop-blur transition-colors hover:text-foreground"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </motion.div>
       </motion.div>
 
       {/* analytics grid */}
@@ -240,6 +305,9 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
           </div>
         </motion.div>
       </div>
+      <AnimatePresence>
+        {fieldOpen && <AthleticFieldExperience initialStage={fieldOpen} onClose={() => setFieldOpen(null)} />}
+      </AnimatePresence>
     </motion.div>
   )
 }
