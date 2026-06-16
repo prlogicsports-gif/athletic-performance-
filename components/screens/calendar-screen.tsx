@@ -22,7 +22,7 @@ export function CalendarScreen() {
   const [view, setView] = useState("Mês")
 
   return (
-    <div className="relative mx-auto max-w-5xl px-4 pb-10 md:px-8">
+    <div className="relative mx-auto max-w-4xl px-4 pb-8 md:px-8">
       {/* toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -73,9 +73,11 @@ export function CalendarScreen() {
       </div>
 
       {/* grid */}
-      <div className="relative z-10 grid grid-cols-7 overflow-hidden rounded-lg border border-foreground/10 bg-background/20">
+      <div className="relative z-10 grid grid-cols-7 bg-background/10">
         {calendarDays.map((d, i) => {
           const isTrailing = d && d.day <= 6 && i > 33
+          const isLastCol = i % 7 === 6
+          const isLastRow = i >= calendarDays.length - 7
           const meta = d?.type ? dayTypeMeta[d.type as DayType] : null
           return (
             <motion.div
@@ -84,7 +86,9 @@ export function CalendarScreen() {
               animate={{ opacity: 1 }}
               transition={{ delay: Math.min(i * 0.008, 0.4) }}
               className={cn(
-                "min-h-14 border-b border-r border-foreground/10 p-1.5 last:border-r-0 sm:min-h-16",
+                "min-h-12 p-1.5 sm:min-h-14",
+                !isLastCol && "border-r border-foreground/10",
+                !isLastRow && "border-b border-foreground/10",
                 d?.current && "bg-foreground/[0.04]",
               )}
             >
@@ -120,8 +124,8 @@ export function CalendarScreen() {
       </div>
 
       {/* legend + photo */}
-      <div className="relative -mt-10 min-h-72 overflow-hidden">
-        <div className="relative z-30 mt-16 flex flex-wrap gap-x-8 gap-y-3">
+      <div className="relative -mt-16 min-h-80 overflow-hidden">
+        <div className="relative z-30 mt-20 flex flex-wrap gap-x-8 gap-y-3">
           {(Object.keys(dayTypeMeta) as DayType[]).map((t) => (
             <span key={t} className="flex items-center gap-2 text-[10px] uppercase tracking-wide text-muted-foreground">
               <span className="size-2 rounded-full" style={{ backgroundColor: `var(--${dayTypeMeta[t].token})` }} />
@@ -129,11 +133,10 @@ export function CalendarScreen() {
             </span>
           ))}
         </div>
-        <div className="pointer-events-none absolute -bottom-12 left-1/2 z-20 h-80 w-full max-w-xl -translate-x-1/2 opacity-90">
+        <div className="pointer-events-none absolute -bottom-14 left-1/2 z-20 h-96 w-full max-w-2xl -translate-x-1/2 opacity-90">
           <Image src="/calendar-team.png" alt="Jogadores do Athletic" fill className="object-contain object-bottom" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
-          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-background to-transparent" />
+          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-background to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent" />
         </div>
       </div>
     </div>
