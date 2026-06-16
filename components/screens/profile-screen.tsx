@@ -49,37 +49,37 @@ export function ProfileScreen({
   const a = athletes.find((x) => x.id === athleteId) ?? athletes[0]
 
   return (
-    <div className="relative px-6 pb-20 md:px-10">
+    <div className="relative px-4 pb-16 md:px-8">
       <button
         onClick={() => onBack("carousel")}
-        className="flex items-center gap-2 text-sm font-medium uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground"
+        className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-4" /> Voltar
       </button>
 
-      <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-[1.2fr_1fr]">
+      <div className="mt-5 grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_1fr]">
         {/* left */}
         <div>
-          <motion.div {...fade(0)} className="flex items-center gap-3 text-sm">
-            <span className="text-2xl font-bold">{a.number}</span>
+          <motion.div {...fade(0)} className="flex items-center gap-3 text-xs">
+            <span className="text-xl font-bold">{a.number}</span>
             <span className="uppercase tracking-wide text-muted-foreground">{a.position}</span>
             <BrazilFlag />
             <span>{a.country}</span>
           </motion.div>
 
-          <motion.h1 {...fade(0.05)} className="mt-2 text-5xl font-extrabold leading-none tracking-tight md:text-6xl">
+          <motion.h1 {...fade(0.05)} className="mt-2 text-4xl font-extrabold leading-none tracking-tight md:text-5xl">
             {a.firstName} <span className="block md:inline">{a.lastName}</span>
           </motion.h1>
 
           {/* season performance */}
-          <motion.div {...fade(0.1)} className="mt-10">
+          <motion.div {...fade(0.1)} className="mt-8">
             <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               Desempenho na temporada
             </h3>
-            <div className="flex flex-wrap items-center gap-8">
+            <div className="flex flex-wrap items-center gap-6">
               {profileSeason.map((s) => (
                 <div key={s.label} className="flex flex-col">
-                  <span className="text-3xl font-bold">{s.value}</span>
+                  <span className="text-2xl font-bold">{s.value}</span>
                   <span className="text-[11px] uppercase tracking-wide text-muted-foreground">{s.label}</span>
                 </div>
               ))}
@@ -105,16 +105,16 @@ export function ProfileScreen({
           </motion.div>
 
           {/* physical metrics */}
-          <motion.div {...fade(0.15)} className="mt-10">
+          <motion.div {...fade(0.15)} className="mt-8">
             <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               Métricas físicas <span className="text-muted-foreground">(temporada)</span>
             </h3>
-            <div className="flex flex-wrap gap-x-10 gap-y-6">
+            <div className="flex flex-wrap gap-x-8 gap-y-5">
               {profilePhysical.map((m) => (
                 <div key={m.label} className="flex flex-col gap-1">
                   <MetricIcon type={m.icon} className="size-5 text-foreground" />
                   <div className="mt-1 flex items-baseline gap-1">
-                    <span className="text-2xl font-bold">{m.value}</span>
+                    <span className="text-xl font-bold">{m.value}</span>
                     {m.unit && <span className="text-xs text-muted-foreground">{m.unit}</span>}
                   </div>
                   <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{m.label}</span>
@@ -124,11 +124,11 @@ export function ProfileScreen({
           </motion.div>
 
           {/* next opponents */}
-          <motion.div {...fade(0.2)} className="mt-10">
+          <motion.div {...fade(0.2)} className="mt-8">
             <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               Próximos adversários — Série B
             </h3>
-            <div className="flex flex-wrap gap-6">
+            <div className="flex flex-wrap gap-5">
               {nextOpponents.map((o) => (
                 <div key={o.name} className="flex w-20 flex-col items-center gap-2 text-center">
                   <ClubBadge name={o.name} />
@@ -147,7 +147,7 @@ export function ProfileScreen({
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
-            className="relative h-[460px] w-full max-w-md"
+            className="relative h-[400px] w-full max-w-sm"
           >
             <Image
               src={a.id === "giroud" ? "/athletes/hero-profile.png" : a.photo}
@@ -158,10 +158,10 @@ export function ProfileScreen({
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-l from-transparent to-background/40" />
           </motion.div>
 
-          <div className="absolute right-0 top-2 flex flex-col gap-6">
+          <div className="absolute right-0 top-2 flex flex-col gap-4">
             {profileRings.map((r, i) => (
               <motion.div key={r.label} {...fade(0.3 + i * 0.1)} className="flex flex-col items-center gap-1">
-                <Ring pct={r.pct} token={r.token} size={84} />
+                <Ring pct={r.pct} token={r.token} size={72} />
                 <span className="w-24 text-center text-[10px] uppercase tracking-wide text-muted-foreground">
                   {r.label}
                 </span>
@@ -174,7 +174,7 @@ export function ProfileScreen({
       {/* bottom info strip */}
       <motion.div
         {...fade(0.4)}
-        className="mt-8 grid grid-cols-2 gap-6 border-t border-border pt-6 text-sm md:grid-cols-4"
+        className="mt-7 grid grid-cols-2 gap-5 border-t border-border pt-5 text-xs md:grid-cols-4"
       >
         <div className="flex flex-col gap-1">
           <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Nacionalidade</span>

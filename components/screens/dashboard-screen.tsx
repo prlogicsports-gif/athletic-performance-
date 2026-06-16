@@ -35,19 +35,19 @@ function SectionLabel({ children, sub }: { children: React.ReactNode; sub?: stri
 
 export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: string) => void }) {
   return (
-    <div className="px-6 pb-20 pt-2 md:px-10">
+    <div className="px-4 pb-16 pt-1 md:px-8">
       {/* header row */}
       <motion.div {...fade(0)} className="flex items-center gap-2">
-        <h2 className="text-base font-semibold uppercase tracking-[0.14em]">Visão geral da equipe</h2>
-        <ChevronDown className="size-4 text-muted-foreground" />
-        <span className="ml-3 flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-xs text-muted-foreground">
+        <h2 className="text-sm font-semibold uppercase tracking-[0.14em]">Visão geral da equipe</h2>
+        <ChevronDown className="size-3.5 text-muted-foreground" />
+        <span className="ml-2 flex items-center gap-1.5 rounded-full bg-surface px-2.5 py-0.5 text-[10px] text-muted-foreground">
           Temporada 2024 <ChevronDown className="size-3" />
         </span>
       </motion.div>
 
       {/* metrics + donut */}
-      <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
-        <div className="grid flex-1 grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 xl:grid-cols-5">
+      <div className="mt-6 flex flex-col gap-7 lg:flex-row lg:items-start lg:justify-between">
+        <div className="grid flex-1 grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 xl:grid-cols-5">
           {teamMetrics.map((m, i) => (
             <motion.div key={m.label} {...fade(0.05 * i)} className="flex flex-col gap-2">
               <div className="flex items-center gap-2 text-muted-foreground">
@@ -55,8 +55,8 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
                 <span className="text-[10px] uppercase tracking-[0.14em]">{m.label}</span>
               </div>
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold tracking-tight">{m.value}</span>
-                {m.unit && <span className="text-sm text-muted-foreground">{m.unit}</span>}
+                <span className="text-2xl font-bold tracking-tight">{m.value}</span>
+                {m.unit && <span className="text-xs text-muted-foreground">{m.unit}</span>}
               </div>
               <span className="flex items-center gap-1 text-[11px] text-good">
                 <TrendingUp className="size-3" />
@@ -66,7 +66,7 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
           ))}
         </div>
 
-        <motion.div {...fade(0.2)} className="flex items-center gap-5">
+        <motion.div {...fade(0.2)} className="flex items-center gap-4">
           <DonutLoad
             segments={loadZones.map((z) => ({ pct: z.pct, token: z.token }))}
             centerValue="312"
@@ -88,7 +88,7 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
       </div>
 
       {/* player strip */}
-      <motion.div {...fade(0.25)} className="mt-10 flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+      <motion.div {...fade(0.25)} className="mt-8 flex gap-3 overflow-x-auto pb-2 no-scrollbar">
         {athletes.map((a) => {
           const featured = a.id === "giroud"
           return (
@@ -96,7 +96,7 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
               key={a.id}
               onClick={() => onSelectAthlete(a.id)}
               className={cn(
-                "group relative flex w-36 shrink-0 flex-col items-center overflow-hidden rounded-2xl bg-gradient-to-b from-surface to-card pt-3 text-center transition-transform hover:-translate-y-1",
+                "group relative flex w-32 shrink-0 flex-col items-center overflow-hidden rounded-2xl bg-gradient-to-b from-surface to-card pt-2.5 text-center transition-transform hover:-translate-y-1",
                 featured && "ring-1 ring-foreground/30",
               )}
             >
@@ -104,13 +104,13 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
                 <span className="font-bold text-foreground">{a.number}</span>
                 <span>{a.positionShort}</span>
               </div>
-              <div className="relative h-28 w-full">
+              <div className="relative h-24 w-full">
                 <Image src={a.photo || "/placeholder.svg"} alt={a.lastName} fill className="object-cover object-top" />
                 <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-card to-transparent" />
               </div>
               <div className="flex w-full flex-col gap-1 px-3 pb-3">
-                <span className="text-sm font-semibold">{a.firstName[0]}. {a.lastName}</span>
-                <span className="text-lg font-bold leading-none">{a.distance} <span className="text-xs font-normal text-muted-foreground">km</span></span>
+                <span className="text-xs font-semibold">{a.firstName[0]}. {a.lastName}</span>
+                <span className="text-base font-bold leading-none">{a.distance} <span className="text-[10px] font-normal text-muted-foreground">km</span></span>
                 <span className="text-[9px] uppercase tracking-wider text-muted-foreground">Zona {a.zone}</span>
                 <Bar pct={a.zone * 20} token={a.zoneState} />
               </div>
@@ -120,7 +120,7 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
       </motion.div>
 
       {/* analytics grid */}
-      <div className="mt-12 grid grid-cols-1 gap-x-10 gap-y-12 lg:grid-cols-3">
+      <div className="mt-10 grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-3">
         {/* team comparison */}
         <motion.div {...fade(0.1)}>
           <SectionLabel sub="médias">Comparativo da equipe</SectionLabel>

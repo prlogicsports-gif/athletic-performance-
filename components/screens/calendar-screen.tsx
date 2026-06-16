@@ -22,11 +22,11 @@ export function CalendarScreen() {
   const [view, setView] = useState("Mês")
 
   return (
-    <div className="px-6 pb-16 md:px-10">
+    <div className="px-4 pb-14 md:px-8">
       {/* toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <h2 className="text-3xl font-bold uppercase tracking-tight">
+          <h2 className="text-2xl font-bold uppercase tracking-tight">
             Setembro <span className="font-light text-muted-foreground">2024</span>
           </h2>
           <div className="flex gap-1">
@@ -46,7 +46,7 @@ export function CalendarScreen() {
                 key={v}
                 onClick={() => setView(v)}
                 className={cn(
-                  "relative rounded-full px-4 py-1.5 text-xs font-medium uppercase tracking-wide transition-colors",
+                  "relative rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-wide transition-colors",
                   view === v ? "text-background" : "text-muted-foreground hover:text-foreground",
                 )}
               >
@@ -57,14 +57,14 @@ export function CalendarScreen() {
               </button>
             ))}
           </div>
-          <button className="flex items-center gap-2 rounded-full bg-surface px-4 py-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground">
+          <button className="flex items-center gap-2 rounded-full bg-surface px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground">
             <SlidersHorizontal className="size-3.5" /> Filtros
           </button>
         </div>
       </div>
 
       {/* weekday header */}
-      <div className="mt-8 grid grid-cols-7 gap-px">
+      <div className="mt-6 grid grid-cols-7 gap-px">
         {weekDayLabels.map((d) => (
           <div key={d} className="pb-3 text-center text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
             {d}
@@ -84,14 +84,14 @@ export function CalendarScreen() {
               animate={{ opacity: 1 }}
               transition={{ delay: Math.min(i * 0.008, 0.4) }}
               className={cn(
-                "min-h-24 border-b border-r border-border p-2.5 last:border-r-0",
+                "min-h-20 border-b border-r border-border p-2 last:border-r-0",
                 d?.current && "bg-surface/60",
               )}
             >
               {d && (
                 <>
                   <div className="flex items-center justify-between">
-                    <span className={cn("text-sm font-semibold", (isTrailing || !d.type) && i > 0 && !d.type ? "text-muted-foreground/50" : "")}>
+                    <span className={cn("text-xs font-semibold", (isTrailing || !d.type) && i > 0 && !d.type ? "text-muted-foreground/50" : "")}>
                       {d.day}
                     </span>
                     {d.match && <ClubBadge name={d.match} />}
@@ -100,7 +100,7 @@ export function CalendarScreen() {
                     <div className="mt-2 flex flex-col gap-1">
                       <span
                         className={cn(
-                          "text-xs font-medium",
+                          "text-[11px] font-medium",
                           d.type === "viagem" && "text-warn",
                           d.type === "recuperacao" && "text-info",
                           d.type === "jogo" && "font-semibold",
@@ -108,7 +108,7 @@ export function CalendarScreen() {
                       >
                         {d.title}
                       </span>
-                      {d.sub && <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{d.sub}</span>}
+                      {d.sub && <span className="text-[9px] uppercase tracking-wide text-muted-foreground">{d.sub}</span>}
                       <span className="mt-1 size-2 rounded-full" style={{ backgroundColor: `var(--${meta?.token})` }} />
                     </div>
                   )}
@@ -120,7 +120,7 @@ export function CalendarScreen() {
       </div>
 
       {/* legend + photo */}
-      <div className="relative mt-8 overflow-hidden">
+      <div className="relative mt-6 overflow-hidden">
         <div className="relative z-10 flex flex-wrap gap-x-8 gap-y-3">
           {(Object.keys(dayTypeMeta) as DayType[]).map((t) => (
             <span key={t} className="flex items-center gap-2 text-[11px] uppercase tracking-wide text-muted-foreground">

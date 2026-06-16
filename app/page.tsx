@@ -21,7 +21,7 @@ export default function Page() {
   }
 
   return (
-    <main className="h-screen overflow-hidden bg-background text-foreground">
+    <main className="min-h-screen overflow-x-hidden bg-background text-foreground">
       <AnimatePresence mode="wait">
         {screen === "splash" ? (
           <SplashScreen key="splash" onEnter={setScreen} />

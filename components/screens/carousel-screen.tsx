@@ -21,7 +21,7 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
   }
 
   return (
-    <div className="px-6 md:px-10">
+    <div className="px-4 md:px-8">
       {/* filters */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex gap-2">
@@ -30,7 +30,7 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
               key={t}
               onClick={() => setSquad(t)}
               className={cn(
-                "rounded-full px-4 py-1.5 text-xs font-medium uppercase tracking-wide transition-colors",
+                "rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-wide transition-colors",
                 squad === t ? "bg-foreground text-background" : "bg-surface text-muted-foreground hover:text-foreground",
               )}
             >
@@ -44,7 +44,7 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
               key={f}
               onClick={() => setFilter(f)}
               className={cn(
-                "rounded-full px-4 py-1.5 text-xs font-medium uppercase tracking-wide transition-colors",
+                "rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-wide transition-colors",
                 filter === f ? "bg-foreground text-background" : "bg-surface text-muted-foreground hover:text-foreground",
               )}
             >
@@ -55,7 +55,7 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
       </div>
 
       {/* carousel */}
-      <div className="relative mt-6 flex h-[560px] items-center justify-center [perspective:2200px]">
+      <div className="relative mt-4 flex h-[480px] items-center justify-center [perspective:2200px]">
         {list.map((a, i) => {
           let offset = i - active
           if (offset > list.length / 2) offset -= list.length
@@ -68,9 +68,9 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
               key={a.id}
               onClick={() => (isCenter ? onSelectAthlete(a.id) : setActive(i))}
               className="absolute origin-center overflow-hidden rounded-[28px]"
-              style={{ width: 360, height: 520 }}
+              style={{ width: 310, height: 450 }}
               animate={{
-                x: offset * 280,
+                x: offset * 240,
                 scale: abs === 0 ? 1 : abs === 1 ? 0.78 : 0.6,
                 opacity: abs === 0 ? 1 : abs === 1 ? 0.55 : 0.18,
                 filter: abs === 0 ? "blur(0px)" : abs === 1 ? "blur(1px)" : "blur(5px)",
@@ -114,19 +114,19 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
                 <div
                   className={cn(
                     "absolute right-5 top-6 flex items-center justify-center rounded-full border border-foreground/40 bg-background/40 backdrop-blur-sm",
-                    isCenter ? "size-16 text-2xl" : "size-10 text-base",
+                    isCenter ? "size-12 text-xl" : "size-9 text-sm",
                   )}
                 >
                   <span className="font-bold">{a.number}</span>
                 </div>
 
                 {/* name */}
-                <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1 px-5 pb-7 text-center">
-                  <span className={cn("font-medium", isCenter ? "text-xl" : "text-sm")}>{a.firstName}</span>
-                  <span className={cn("font-bold leading-none tracking-tight", isCenter ? "text-5xl" : "text-2xl")}>
+                <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1 px-4 pb-6 text-center">
+                  <span className={cn("font-medium", isCenter ? "text-base" : "text-xs")}>{a.firstName}</span>
+                  <span className={cn("font-bold leading-none tracking-tight", isCenter ? "text-4xl" : "text-xl")}>
                     {a.lastName}
                   </span>
-                  <span className="mt-1 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                  <span className="mt-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                     {a.position}
                   </span>
                 </div>
