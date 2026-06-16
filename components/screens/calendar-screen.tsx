@@ -22,19 +22,19 @@ export function CalendarScreen() {
   const [view, setView] = useState("Mês")
 
   return (
-    <div className="relative mx-auto max-w-6xl px-4 pb-12 md:px-8">
+    <div className="relative mx-auto max-w-5xl px-4 pb-10 md:px-8">
       {/* toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <h2 className="text-xl font-bold uppercase tracking-tight md:text-2xl">
+          <h2 className="text-lg font-bold uppercase tracking-tight md:text-xl">
             Setembro <span className="font-light text-muted-foreground">2024</span>
           </h2>
           <div className="flex gap-1">
-            <button aria-label="Mês anterior" className="flex size-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-surface hover:text-foreground">
-              <ChevronLeft className="size-4" />
+            <button aria-label="Mês anterior" className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-surface hover:text-foreground">
+              <ChevronLeft className="size-3.5" />
             </button>
-            <button aria-label="Próximo mês" className="flex size-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-surface hover:text-foreground">
-              <ChevronRight className="size-4" />
+            <button aria-label="Próximo mês" className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-surface hover:text-foreground">
+              <ChevronRight className="size-3.5" />
             </button>
           </div>
         </div>
@@ -46,7 +46,7 @@ export function CalendarScreen() {
                 key={v}
                 onClick={() => setView(v)}
                 className={cn(
-                  "relative rounded-[5px] px-3 py-1 text-[10px] font-medium uppercase tracking-wide transition-colors",
+                  "relative rounded-[5px] px-2.5 py-1 text-[9px] font-medium uppercase tracking-wide transition-colors",
                   view === v ? "text-background" : "text-muted-foreground hover:text-foreground",
                 )}
               >
@@ -57,7 +57,7 @@ export function CalendarScreen() {
               </button>
             ))}
           </div>
-          <button className="flex items-center gap-2 rounded-md bg-surface/55 px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground">
+          <button className="flex items-center gap-2 rounded-md bg-surface/55 px-2.5 py-1 text-[9px] font-medium uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground">
             <SlidersHorizontal className="size-3.5" /> Filtros
           </button>
         </div>
@@ -66,7 +66,7 @@ export function CalendarScreen() {
       {/* weekday header */}
       <div className="mt-5 grid grid-cols-7 gap-px">
         {weekDayLabels.map((d) => (
-          <div key={d} className="pb-3 text-center text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <div key={d} className="pb-2 text-center text-[9px] font-medium uppercase tracking-wider text-muted-foreground">
             {d}
           </div>
         ))}
@@ -84,23 +84,23 @@ export function CalendarScreen() {
               animate={{ opacity: 1 }}
               transition={{ delay: Math.min(i * 0.008, 0.4) }}
               className={cn(
-                "min-h-16 border-b border-r border-foreground/10 p-2 last:border-r-0 sm:min-h-[74px]",
+                "min-h-14 border-b border-r border-foreground/10 p-1.5 last:border-r-0 sm:min-h-16",
                 d?.current && "bg-foreground/[0.04]",
               )}
             >
               {d && (
                 <>
                   <div className="flex items-center justify-between">
-                    <span className={cn("text-xs font-semibold", (isTrailing || !d.type) && i > 0 && !d.type ? "text-muted-foreground/50" : "")}>
+                    <span className={cn("text-[11px] font-semibold", (isTrailing || !d.type) && i > 0 && !d.type ? "text-muted-foreground/50" : "")}>
                       {d.day}
                     </span>
                     {d.match && <ClubBadge name={d.match} />}
                   </div>
                   {d.type && (
-                    <div className="mt-2 flex flex-col gap-1">
+                    <div className="mt-1.5 flex flex-col gap-0.5">
                       <span
                         className={cn(
-                          "text-[11px] font-medium",
+                          "text-[10px] font-medium",
                           d.type === "viagem" && "text-warn",
                           d.type === "recuperacao" && "text-info",
                           d.type === "jogo" && "font-semibold",
@@ -108,8 +108,8 @@ export function CalendarScreen() {
                       >
                         {d.title}
                       </span>
-                      {d.sub && <span className="text-[9px] uppercase tracking-wide text-muted-foreground">{d.sub}</span>}
-                      <span className="mt-1 size-2 rounded-full" style={{ backgroundColor: `var(--${meta?.token})` }} />
+                      {d.sub && <span className="text-[8px] uppercase tracking-wide text-muted-foreground">{d.sub}</span>}
+                      <span className="mt-0.5 size-1.5 rounded-full" style={{ backgroundColor: `var(--${meta?.token})` }} />
                     </div>
                   )}
                 </>
@@ -120,19 +120,20 @@ export function CalendarScreen() {
       </div>
 
       {/* legend + photo */}
-      <div className="relative mt-6 min-h-56 overflow-hidden">
-        <div className="relative z-10 flex flex-wrap gap-x-8 gap-y-3">
+      <div className="relative -mt-10 min-h-72 overflow-hidden">
+        <div className="relative z-30 mt-16 flex flex-wrap gap-x-8 gap-y-3">
           {(Object.keys(dayTypeMeta) as DayType[]).map((t) => (
-            <span key={t} className="flex items-center gap-2 text-[11px] uppercase tracking-wide text-muted-foreground">
-              <span className="size-2.5 rounded-full" style={{ backgroundColor: `var(--${dayTypeMeta[t].token})` }} />
+            <span key={t} className="flex items-center gap-2 text-[10px] uppercase tracking-wide text-muted-foreground">
+              <span className="size-2 rounded-full" style={{ backgroundColor: `var(--${dayTypeMeta[t].token})` }} />
               {dayTypeMeta[t].label}
             </span>
           ))}
         </div>
-        <div className="pointer-events-none absolute -bottom-16 left-1/2 h-80 w-full max-w-xl -translate-x-1/2 opacity-85">
+        <div className="pointer-events-none absolute -bottom-12 left-1/2 z-20 h-80 w-full max-w-xl -translate-x-1/2 opacity-90">
           <Image src="/calendar-team.png" alt="Jogadores do Athletic" fill className="object-contain object-bottom" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/5" />
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-background to-transparent" />
         </div>
       </div>
     </div>

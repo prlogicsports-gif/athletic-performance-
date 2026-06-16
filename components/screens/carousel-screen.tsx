@@ -29,9 +29,9 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
   const compact = useCompactViewport()
 
   const list = athletes
-  const xStep = compact ? 170 : 240
-  const cardSize = compact ? { width: 240, height: 360 } : { width: 310, height: 450 }
-  const carouselHeight = compact ? "h-[390px]" : "h-[480px]"
+  const xStep = compact ? 150 : 210
+  const cardSize = compact ? { width: 210, height: 320 } : { width: 270, height: 395 }
+  const carouselHeight = compact ? "h-[350px]" : "h-[425px]"
 
   const go = (dir: number) => {
     setActive((p) => (p + dir + list.length) % list.length)
@@ -131,19 +131,19 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
                 <div
                   className={cn(
                     "absolute right-5 top-6 flex items-center justify-center rounded-full border border-foreground/40 bg-background/40 backdrop-blur-sm",
-                    isCenter ? "size-12 text-xl" : "size-9 text-sm",
+                    isCenter ? "size-10 text-lg" : "size-8 text-xs",
                   )}
                 >
                   <span className="font-bold">{a.number}</span>
                 </div>
 
                 {/* name */}
-                <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1 px-4 pb-6 text-center">
-                  <span className={cn("font-medium", isCenter ? "text-base" : "text-xs")}>{a.firstName}</span>
-                  <span className={cn("font-bold leading-none tracking-tight", isCenter ? "text-4xl" : "text-xl")}>
+                <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1 px-4 pb-5 text-center">
+                  <span className={cn("font-medium", isCenter ? "text-sm" : "text-[11px]")}>{a.firstName}</span>
+                  <span className={cn("font-bold leading-none tracking-tight", isCenter ? "text-3xl" : "text-lg")}>
                     {a.lastName}
                   </span>
-                  <span className="mt-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                  <span className="mt-0.5 text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
                     {a.position}
                   </span>
                 </div>

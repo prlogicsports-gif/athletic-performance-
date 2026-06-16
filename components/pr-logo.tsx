@@ -3,16 +3,16 @@ import { cn } from "@/lib/utils"
 
 export function PrLogo({ className }: { className?: string }) {
   return (
-    <div className={cn("flex flex-col items-end gap-0 pt-0.5 text-right", className)}>
-      <span className="text-[4px] font-medium tracking-[0.18em] text-foreground/35 md:text-[5px]">POWERED BY</span>
+    <div className={cn("flex w-12 flex-col items-center gap-0 pt-0.5 text-center md:w-14", className)}>
+      <span className="text-[4px] font-medium leading-none tracking-[0.16em] text-foreground/35 md:text-[5px]">POWERED BY</span>
       <Image
         src="/pr-logo-outline.png"
         alt="PR Logic Sports"
-        width={52}
-        height={52}
-        className="h-auto w-9 object-contain md:w-11 lg:w-[52px]"
+        width={44}
+        height={44}
+        className="h-auto w-8 object-contain md:w-10 lg:w-11"
       />
-      <span className="text-[4px] font-semibold tracking-[0.14em] text-foreground/55 md:text-[5px]">
+      <span className="text-[4px] font-semibold leading-none tracking-[0.12em] text-foreground/55 md:text-[5px]">
         PR LOGIC SPORTS
       </span>
     </div>
