@@ -10,27 +10,48 @@ export function PrLogo({
 }) {
   const isFooter = size === "footer"
 
+  if (isFooter) {
+    return (
+      <div className={cn("flex w-20 flex-col items-center gap-0 text-center", className)}>
+        <span className="font-medium leading-none tracking-[0.16em] text-foreground/35 text-[6px]">
+          POWERED BY
+        </span>
+        <Image
+          src="/pr-logo-solid.png"
+          alt="PR Logic Sports"
+          width={80}
+          height={80}
+          className="h-auto w-14 object-contain"
+        />
+        <span className="font-semibold leading-none tracking-[0.12em] text-foreground/55 text-[6px]">
+          PR LOGIC SPORTS
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div
       className={cn(
-        "flex flex-col items-center gap-0 text-center",
-        isFooter ? "w-20" : "w-14 pt-0.5 md:w-16",
+        "flex items-center justify-end gap-2 pt-0.5 text-right",
         className,
       )}
     >
-      <span className={cn("font-medium leading-none tracking-[0.16em] text-foreground/35", isFooter ? "text-[6px]" : "text-[5px]")}>
-        POWERED BY
-      </span>
       <Image
         src="/pr-logo-solid.png"
         alt="PR Logic Sports"
         width={80}
         height={80}
-        className={cn("h-auto object-contain", isFooter ? "w-14" : "w-10 md:w-12 lg:w-14")}
+        className="h-auto w-9 object-contain md:w-10 lg:w-11"
       />
-      <span className={cn("font-semibold leading-none tracking-[0.12em] text-foreground/55", isFooter ? "text-[6px]" : "text-[5px]")}>
-        PR LOGIC SPORTS
-      </span>
+      <div className="flex flex-col leading-none">
+        <span className="font-medium leading-none tracking-[0.16em] text-foreground/35 text-[5px] md:text-[6px]">
+          POWERED BY
+        </span>
+        <span className="mt-1 font-semibold leading-none tracking-[0.12em] text-foreground/55 text-[5px] md:text-[6px]">
+          PR LOGIC SPORTS
+        </span>
+      </div>
     </div>
   )
 }

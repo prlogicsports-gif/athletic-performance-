@@ -5,16 +5,23 @@ import { motion } from "framer-motion"
 import { athletes } from "@/lib/data"
 
 const staff = [
-  { name: "R. Mancini", role: "Treinador", photo: "/athletes/hero-profile.png" },
-  { name: "A. Sampaio", role: "Preparação física", photo: "/athletes/player-4.png" },
-  { name: "L. Duarte", role: "Fisiologia", photo: "/athletes/player-5.png" },
-  { name: "M. Paiva", role: "Análise", photo: "/athletes/player-6.png" },
+  { name: "R. Mancini", role: "Treinador", photo: "/athletes/hero-profile.png", focus: "Modelo tático", load: "92%", status: "Campo" },
+  { name: "A. Sampaio", role: "Preparação física", photo: "/athletes/player-4.png", focus: "Carga externa", load: "88%", status: "GPS" },
+  { name: "L. Duarte", role: "Fisiologia", photo: "/athletes/player-5.png", focus: "Recuperação", load: "81%", status: "Apolo" },
+  { name: "M. Paiva", role: "Análise", photo: "/athletes/player-6.png", focus: "Vídeo e dados", load: "96%", status: "Live" },
 ]
+
+const spring = {
+  type: "spring",
+  stiffness: 180,
+  damping: 22,
+  mass: 0.9,
+} as const
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 14 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.42, delay },
+  transition: { ...spring, delay },
 })
 
 export function TeamScreen() {
@@ -41,17 +48,28 @@ export function TeamScreen() {
             <motion.div
               key={member.name}
               {...fade(0.08 + i * 0.03)}
-              className="group overflow-hidden rounded-2xl bg-card/35"
+              whileHover={{ y: -8, scale: 1.025 }}
+              transition={spring}
+              className="group overflow-hidden rounded-2xl bg-card/35 will-change-transform"
             >
               <div className="relative h-28 sm:h-32">
-                <Image src={member.photo} alt={member.name} fill className="object-cover object-top opacity-85" />
+                <motion.div className="absolute inset-0" whileHover={{ scale: 1.06 }} transition={spring}>
+                  <Image src={member.photo} alt={member.name} fill className="object-cover object-top opacity-85" />
+                </motion.div>
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent" />
+                <span className="absolute right-2 top-2 text-[8px] font-semibold uppercase tracking-[0.14em] text-foreground/55">
+                  {member.status}
+                </span>
               </div>
-              <div className="px-3 pb-3">
+              <div className="px-3 pb-3 pt-1">
                 <span className="block text-xs font-semibold text-foreground">{member.name}</span>
                 <span className="mt-0.5 block text-[9px] uppercase tracking-[0.14em] text-foreground/45">
                   {member.role}
                 </span>
+                <div className="mt-3 flex items-end justify-between gap-3">
+                  <span className="text-[8px] uppercase tracking-[0.12em] text-foreground/35">{member.focus}</span>
+                  <span className="font-mono text-[10px] text-foreground/70">{member.load}</span>
+                </div>
               </div>
             </motion.div>
           ))}
@@ -67,21 +85,29 @@ export function TeamScreen() {
             <motion.div
               key={a.id}
               {...fade(0.14 + i * 0.025)}
-              className="group overflow-hidden rounded-2xl bg-card/35"
+              whileHover={{ y: -8, scale: 1.025 }}
+              transition={spring}
+              className="group overflow-hidden rounded-2xl bg-card/35 will-change-transform"
             >
               <div className="relative h-28 sm:h-32">
-                <Image src={a.photo || "/placeholder.svg"} alt={`${a.firstName} ${a.lastName}`} fill className="object-cover object-top" />
+                <motion.div className="absolute inset-0" whileHover={{ scale: 1.06 }} transition={spring}>
+                  <Image src={a.photo || "/placeholder.svg"} alt={`${a.firstName} ${a.lastName}`} fill className="object-cover object-top" />
+                </motion.div>
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
                 <span className="absolute left-2 top-2 text-[10px] font-bold text-foreground">{a.number}</span>
                 <span className="absolute right-2 top-2 text-[9px] font-medium text-foreground/45">{a.positionShort}</span>
               </div>
-              <div className="px-3 pb-3">
+              <div className="px-3 pb-3 pt-1">
                 <span className="block text-xs font-semibold text-foreground">
                   {a.firstName[0]}. {a.lastName}
                 </span>
                 <span className="mt-0.5 block text-[9px] uppercase tracking-[0.14em] text-foreground/45">
                   {a.distance} km · zona {a.zone}
                 </span>
+                <div className="mt-3 grid grid-cols-2 gap-2 text-[8px] uppercase tracking-[0.12em] text-foreground/35">
+                  <span>{a.height}</span>
+                  <span className="text-right">{a.weight}</span>
+                </div>
               </div>
             </motion.div>
           ))}

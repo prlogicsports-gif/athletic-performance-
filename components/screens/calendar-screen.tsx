@@ -23,9 +23,9 @@ export function CalendarScreen() {
 
   return (
     <div className="relative overflow-hidden px-4 pb-8 md:px-8">
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[58%] opacity-35">
-        <Image src="/calendar-stadium-bg.png" alt="Arena do Athletic" fill priority className="object-cover object-center" />
-        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[68%] opacity-35">
+        <Image src="/calendar-stadium-bg.png" alt="Arena do Athletic" fill priority className="object-cover object-[center_38%]" />
+        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-background to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-background to-transparent" />
         <div className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background to-transparent" />
         <div className="absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background to-transparent" />

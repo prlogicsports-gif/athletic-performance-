@@ -43,7 +43,7 @@ function NavItem({
     <button
       onClick={() => onNavigate(item.screen)}
       className={cn(
-        "flex shrink-0 items-center gap-1.5 px-1 py-1.5 text-[9px] font-medium leading-none tracking-[0.14em] transition-colors md:px-1.5 md:py-1.5 md:text-[10px]",
+        "flex shrink-0 items-center gap-2 px-1 py-1.5 text-[9px] font-medium leading-none tracking-[0.16em] transition-colors md:px-2 md:py-1.5 md:text-[10px]",
         isActive ? "text-foreground" : "text-foreground/45 hover:text-foreground/80",
       )}
     >
@@ -62,8 +62,8 @@ export function TabNav({
 }) {
   const active = activeIdFor(screen)
   return (
-    <nav className="safe-x -mt-1 w-full max-w-full overflow-x-hidden overflow-y-visible bg-[#000000] px-4 pb-3 pt-0 md:grid md:grid-cols-[minmax(0,1fr)_100px_minmax(0,1fr)] md:px-8 md:pb-4 md:pt-0 lg:grid-cols-[minmax(0,1fr)_150px_minmax(0,1fr)]">
-      <div className="flex min-w-0 items-center gap-4 overflow-x-auto no-scrollbar md:justify-end md:gap-5 md:overflow-visible">
+    <nav className="safe-x -mt-1 w-full max-w-full overflow-x-hidden overflow-y-visible bg-[#000000] px-4 pb-3 pt-0 md:grid md:grid-cols-[minmax(0,1fr)_150px_minmax(0,1fr)] md:px-8 md:pb-4 md:pt-0 lg:grid-cols-[minmax(0,1fr)_220px_minmax(0,1fr)]">
+      <div className="flex min-w-0 items-center gap-5 overflow-x-auto no-scrollbar md:justify-end md:gap-7 md:overflow-visible">
         {leftItems.map((item) => (
           <NavItem key={item.id} item={item} isActive={item.id === active} onNavigate={onNavigate} />
         ))}
@@ -77,7 +77,7 @@ export function TabNav({
 
       <div className="hidden md:block" />
 
-      <div className="hidden min-w-0 items-center justify-start gap-5 md:flex">
+      <div className="hidden min-w-0 items-center justify-start gap-7 md:flex">
         {rightItems.map((item) => (
           <NavItem key={item.id} item={item} isActive={item.id === active} onNavigate={onNavigate} />
         ))}
