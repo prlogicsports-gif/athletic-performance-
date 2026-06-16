@@ -60,15 +60,17 @@ export function TabNav({
 }) {
   const active = activeIdFor(screen)
   return (
-    <nav className="bg-[#000000] px-4 pb-3 pt-2 md:grid md:grid-cols-[1fr_100px_1fr] md:px-8 md:pb-4 md:pt-3 lg:grid-cols-[1fr_150px_1fr]">
+    <nav className="w-full max-w-full overflow-hidden bg-[#000000] px-4 pb-3 pt-2 md:grid md:grid-cols-[1fr_100px_1fr] md:px-8 md:pb-4 md:pt-3 lg:grid-cols-[1fr_150px_1fr]">
       <div className="flex items-center gap-4 overflow-x-auto no-scrollbar md:justify-end md:gap-5 md:overflow-visible">
         {leftItems.map((item) => (
           <NavItem key={item.id} item={item} isActive={item.id === active} onNavigate={onNavigate} />
         ))}
-        <div className="w-6 shrink-0 md:hidden" />
-        {rightItems.map((item) => (
-          <NavItem key={item.id} item={item} isActive={item.id === active} onNavigate={onNavigate} />
-        ))}
+        <div className="w-4 shrink-0 md:hidden" />
+        <div className="flex items-center gap-4 md:hidden">
+          {rightItems.map((item) => (
+            <NavItem key={item.id} item={item} isActive={item.id === active} onNavigate={onNavigate} />
+          ))}
+        </div>
       </div>
 
       <div className="hidden md:block" />
