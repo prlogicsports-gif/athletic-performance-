@@ -1,9 +1,10 @@
 "use client"
 
+import Image from "next/image"
 import { motion } from "framer-motion"
 import { fieldPlayers } from "@/lib/field-data"
-import { spring, staggerContainer } from "@/lib/motion"
-import { PlayerFieldCard } from "./player-field-card"
+import { spring, staggerContainer, staggerItem } from "@/lib/motion"
+import { cn } from "@/lib/utils"
 
 function FieldLines() {
   return (
@@ -49,9 +50,9 @@ export function Field3DView({
       <div className="relative mt-6 flex flex-1 items-center justify-center overflow-hidden [perspective:1600px]">
         <motion.div
           layoutId="athletic-field-surface"
-          className="relative aspect-[1.62/1] w-full max-w-5xl overflow-visible rounded-[28px] shadow-[0_42px_120px_-50px_rgba(255,255,255,0.25)] [transform-style:preserve-3d]"
-          initial={{ opacity: 0, rotateX: 65, scale: 0.92 }}
-          animate={{ opacity: 1, rotateX: 55, scale: 1 }}
+          className="relative aspect-[1.62/1] w-full max-w-5xl overflow-hidden rounded-[28px] shadow-[0_42px_120px_-50px_rgba(255,255,255,0.25)] [transform-style:preserve-3d]"
+          initial={{ opacity: 0, rotateX: 65, rotateY: -7, x: 90, scale: 0.92 }}
+          animate={{ opacity: 1, rotateX: 55, rotateY: 0, x: 0, scale: 1 }}
           exit={{ opacity: 0, rotateX: 14, scale: 1.04 }}
           transition={spring}
           style={{ transformOrigin: "center center" }}
@@ -59,19 +60,53 @@ export function Field3DView({
           <div className="absolute inset-0 rounded-[28px] bg-[linear-gradient(90deg,rgba(38,95,54,0.42)_0%,rgba(20,65,37,0.42)_12%,rgba(38,95,54,0.42)_24%,rgba(20,65,37,0.42)_36%,rgba(38,95,54,0.42)_48%,rgba(20,65,37,0.42)_60%,rgba(38,95,54,0.42)_72%,rgba(20,65,37,0.42)_84%,rgba(38,95,54,0.42)_100%)]" />
           <div className="absolute inset-0 rounded-[28px] bg-background/20" />
           <FieldLines />
-          <motion.div variants={staggerContainer} initial="initial" animate="animate" className="absolute inset-[7%]">
-            {fieldPlayers.map((player) => (
-              <PlayerFieldCard
-                key={player.id}
-                player={player}
-                selected={selectedId === player.id}
-                onSelect={onSelect}
-              />
-            ))}
-          </motion.div>
         </motion.div>
         <div className="pointer-events-none absolute bottom-[10%] h-10 w-2/3 rounded-full bg-foreground/10 blur-3xl" />
       </div>
+
+      <motion.div
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+        className="mt-4 flex gap-3 overflow-x-auto pb-2 no-scrollbar"
+      >
+        {fieldPlayers.map((player) => {
+          const selected = selectedId === player.id
+          return (
+            <motion.button
+              key={player.id}
+              variants={staggerItem}
+              layoutId={`field-player-card-${player.id}`}
+              onClick={() => onSelect(player.id)}
+              whileHover={{ y: -6, scale: selected ? 1.04 : 1.02 }}
+              transition={spring}
+              className={cn(
+                "relative h-28 shrink-0 overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
+                selected ? "w-44 ring-1 ring-foreground/35" : "w-32 opacity-70",
+              )}
+            >
+              <Image
+                src={player.photo}
+                alt={player.fullName}
+                fill
+                sizes="176px"
+                className="object-cover object-top opacity-80"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/55 to-transparent" />
+              <span className="absolute left-3 top-2 text-[10px] font-bold text-foreground">{player.number}</span>
+              <span className="absolute right-3 top-2 text-[8px] uppercase tracking-[0.12em] text-foreground/45">{player.position}</span>
+              <div className="absolute bottom-3 left-3 right-3">
+                <span className="block truncate text-xs font-semibold text-foreground">{player.name}</span>
+                {selected && (
+                  <span className="mt-1 block text-[8px] uppercase tracking-[0.12em] text-foreground/45">
+                    {player.catapult.distance.toFixed(1)} km · {player.catapult.playerLoad} UA
+                  </span>
+                )}
+              </div>
+            </motion.button>
+          )
+        })}
+      </motion.div>
     </div>
   )
 }

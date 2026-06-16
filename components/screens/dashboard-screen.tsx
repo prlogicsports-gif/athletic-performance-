@@ -173,7 +173,7 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
             aria-label="Abrir visualização de campo"
           >
             <Image
-              src="/calendar-stadium-bg.png"
+              src="/athletic-aerial-field.png"
               alt="Arena Sicredi"
               fill
               sizes="288px"

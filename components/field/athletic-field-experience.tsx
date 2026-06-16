@@ -63,7 +63,7 @@ export function AthleticFieldExperience({
         {stage === "real" && <RealFieldView key="real" onNext={() => setStage("model")} />}
         {stage === "model" && (
           <Field3DView
-            key="model"
+            key={`model-${selectedId}`}
             selectedId={selectedId}
             onSelect={selectPlayer}
             onNext={() => setStage("analytics")}

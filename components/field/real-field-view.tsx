@@ -13,18 +13,18 @@ export function RealFieldView({ onNext }: { onNext: () => void }) {
       className="relative h-full min-h-[520px] w-full overflow-hidden bg-[#000000] text-left"
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 1.08, rotateX: 10 }}
+      exit={{ opacity: 0, scale: 1.08, rotateX: 10, x: -90 }}
       transition={spring}
     >
       <motion.div
         className="absolute inset-0"
         initial={{ scale: 1.04 }}
         animate={{ scale: 1 }}
-        exit={{ scale: 1.14, opacity: 0.18 }}
+        exit={{ scale: 1.14, opacity: 0.18, x: -80 }}
         transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
       >
         <Image
-          src="/calendar-stadium-bg.png"
+          src="/athletic-aerial-field.png"
           alt="Campo Athletic"
           fill
           priority
