@@ -39,7 +39,7 @@ export function FieldAnalyticsView({
   const visiblePlayers = selectedId ? fieldPlayers.filter((player) => player.id === selectedId) : fieldPlayers
 
   return (
-    <div className="grid h-full min-h-[560px] gap-5 bg-[#000000] px-4 py-5 md:grid-cols-[1fr_260px] md:px-8">
+    <div className="grid h-full min-h-[560px] gap-5 bg-[#000000] px-4 pb-5 pt-16 md:grid-cols-[1fr_260px] md:px-8 md:pt-20">
       <div className="flex min-w-0 flex-col">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>

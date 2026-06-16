@@ -4,6 +4,8 @@ import Image from "next/image"
 import { motion } from "framer-motion"
 import { spring } from "@/lib/motion"
 
+const REAL_FIELD_IMAGE = "/athletic-aerial-field.png"
+
 export function RealFieldView({ onNext }: { onNext: () => void }) {
   return (
     <motion.button
@@ -24,12 +26,12 @@ export function RealFieldView({ onNext }: { onNext: () => void }) {
         transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
       >
         <Image
-          src="/athletic-aerial-field.png"
+          src={REAL_FIELD_IMAGE}
           alt="Campo Athletic"
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center opacity-70"
+          className="object-cover object-center opacity-75 contrast-110 saturate-105"
         />
       </motion.div>
       <div className="absolute inset-0 bg-background/35" />

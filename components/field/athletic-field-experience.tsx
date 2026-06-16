@@ -34,13 +34,13 @@ export function AthleticFieldExperience({
       exit={{ opacity: 0 }}
       transition={spring}
     >
-      <div className="absolute left-4 top-4 z-50 flex items-center gap-3 md:left-8 md:top-6">
+      <div className="absolute left-4 top-4 z-50 flex max-w-[calc(100vw-5.5rem)] items-center gap-3 rounded-full bg-background/55 px-3 py-2 backdrop-blur-md md:left-8 md:top-6">
         {(["real", "model", "analytics"] as FieldStage[]).map((item, index) => (
           <button
             key={item}
             type="button"
             onClick={() => setStage(item)}
-            className="flex items-center gap-2 text-[9px] uppercase tracking-[0.16em] text-foreground/45 transition-colors hover:text-foreground"
+            className="flex shrink-0 items-center gap-2 text-[8px] uppercase tracking-[0.16em] text-foreground/45 transition-colors hover:text-foreground md:text-[9px]"
           >
             <span className={stage === item ? "text-foreground" : ""}>0{index + 1}</span>
             <span className={stage === item ? "text-foreground" : ""}>
@@ -54,7 +54,7 @@ export function AthleticFieldExperience({
         type="button"
         onClick={onClose}
         aria-label="Fechar visualização de campo"
-        className="absolute right-4 top-4 z-50 flex size-9 items-center justify-center rounded-full bg-surface/70 text-foreground/70 transition-colors hover:text-foreground md:right-8 md:top-6"
+        className="absolute right-4 top-4 z-50 flex size-9 items-center justify-center rounded-full bg-background/70 text-foreground/70 backdrop-blur-md transition-colors hover:text-foreground md:right-8 md:top-6"
       >
         <X className="size-4" />
       </button>

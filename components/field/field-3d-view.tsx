@@ -32,27 +32,27 @@ export function Field3DView({
   onNext: () => void
 }) {
   return (
-    <div className="flex h-full min-h-[560px] flex-col bg-[#000000] px-4 py-5 md:px-8">
-      <div className="flex items-center justify-between gap-4">
+    <div className="flex h-full min-h-[560px] flex-col bg-[#000000] px-4 pb-5 pt-16 md:px-8 md:pt-20">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <span className="text-[9px] uppercase tracking-[0.24em] text-foreground/40">Modelo tático</span>
-          <h2 className="mt-1 text-xl font-semibold tracking-tight text-foreground">Campo Athletic 3D</h2>
+          <h2 className="mt-1 text-lg font-semibold tracking-tight text-foreground md:text-xl">Campo Athletic 3D</h2>
         </div>
         <button
           type="button"
           onClick={onNext}
-          className="text-[10px] font-medium uppercase tracking-[0.2em] text-foreground/70 transition-colors hover:text-foreground"
+          className="pt-1 text-[9px] font-medium uppercase tracking-[0.2em] text-foreground/70 transition-colors hover:text-foreground md:text-[10px]"
         >
           Abrir análise plana
         </button>
       </div>
 
-      <div className="relative mt-6 flex flex-1 items-center justify-center overflow-hidden [perspective:1600px]">
+      <div className="relative mt-3 flex flex-1 items-center justify-center overflow-hidden [perspective:1600px] md:mt-5">
         <motion.div
           layoutId="athletic-field-surface"
           className="relative aspect-[1.62/1] w-full max-w-5xl overflow-hidden rounded-[28px] shadow-[0_42px_120px_-50px_rgba(255,255,255,0.25)] [transform-style:preserve-3d]"
-          initial={{ opacity: 0, rotateX: 65, rotateY: -7, x: 90, scale: 0.92 }}
-          animate={{ opacity: 1, rotateX: 55, rotateY: 0, x: 0, scale: 1 }}
+          initial={{ opacity: 0, rotateX: 72, rotateY: -7, x: 90, y: 60, scale: 0.86, filter: "blur(8px)" }}
+          animate={{ opacity: 1, rotateX: 58, rotateY: 0, x: 0, y: 0, scale: 1, filter: "blur(0px)" }}
           exit={{ opacity: 0, rotateX: 14, scale: 1.04 }}
           transition={spring}
           style={{ transformOrigin: "center center" }}
