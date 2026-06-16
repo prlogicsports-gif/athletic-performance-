@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronLeft, ChevronRight } from "lucide-react"
@@ -9,22 +9,39 @@ import { cn } from "@/lib/utils"
 
 const squadTabs = ["Elenco", "Comissão Técnica"]
 
+function useCompactViewport() {
+  const [compact, setCompact] = useState(false)
+
+  useEffect(() => {
+    const update = () => setCompact(window.innerWidth < 640)
+    update()
+    window.addEventListener("resize", update)
+    return () => window.removeEventListener("resize", update)
+  }, [])
+
+  return compact
+}
+
 export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: string) => void }) {
   const [active, setActive] = useState(0)
   const [filter, setFilter] = useState<(typeof positionFilters)[number]>("Todos")
   const [squad, setSquad] = useState(squadTabs[0])
+  const compact = useCompactViewport()
 
   const list = athletes
+  const xStep = compact ? 170 : 240
+  const cardSize = compact ? { width: 240, height: 360 } : { width: 310, height: 450 }
+  const carouselHeight = compact ? "h-[390px]" : "h-[480px]"
 
   const go = (dir: number) => {
     setActive((p) => (p + dir + list.length) % list.length)
   }
 
   return (
-    <div className="px-4 md:px-8">
+    <div className="max-w-full overflow-hidden px-4 md:px-8">
       {/* filters */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex max-w-full gap-2 overflow-x-auto no-scrollbar">
           {squadTabs.map((t) => (
             <button
               key={t}
@@ -38,7 +55,7 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
             </button>
           ))}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex max-w-full gap-2 overflow-x-auto no-scrollbar">
           {positionFilters.map((f) => (
             <button
               key={f}
@@ -55,7 +72,7 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
       </div>
 
       {/* carousel */}
-      <div className="relative mt-4 flex h-[480px] items-center justify-center [perspective:2200px]">
+      <div className={cn("relative mt-4 flex items-center justify-center overflow-hidden [perspective:2200px]", carouselHeight)}>
         {list.map((a, i) => {
           let offset = i - active
           if (offset > list.length / 2) offset -= list.length
@@ -68,9 +85,9 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
               key={a.id}
               onClick={() => (isCenter ? onSelectAthlete(a.id) : setActive(i))}
               className="absolute origin-center overflow-hidden rounded-[28px]"
-              style={{ width: 310, height: 450 }}
+              style={cardSize}
               animate={{
-                x: offset * 240,
+                x: offset * xStep,
                 scale: abs === 0 ? 1 : abs === 1 ? 0.78 : 0.6,
                 opacity: abs === 0 ? 1 : abs === 1 ? 0.55 : 0.18,
                 filter: abs === 0 ? "blur(0px)" : abs === 1 ? "blur(1px)" : "blur(5px)",
@@ -81,11 +98,11 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
               whileHover={
                 isCenter
                   ? {
-                      scale: 1.03,
-                      y: -10,
+                      scale: compact ? 1.01 : 1.03,
+                      y: compact ? -4 : -10,
                     }
                   : {
-                      scale: 0.82,
+                      scale: compact ? 0.8 : 0.82,
                     }
               }
               transition={{

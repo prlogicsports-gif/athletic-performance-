@@ -33,6 +33,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
   colorScheme: 'dark',
   themeColor: '#000000',
 }
@@ -43,8 +45,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR" className={`${geistSans.variable} ${geistMono.variable} bg-background`}>
-      <body className="font-sans antialiased bg-background text-foreground">
+    <html lang="pt-BR" className={`${geistSans.variable} ${geistMono.variable} bg-background overflow-x-hidden`}>
+      <body className="font-sans antialiased bg-background text-foreground overflow-x-hidden">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

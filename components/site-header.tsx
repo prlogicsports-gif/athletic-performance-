@@ -24,7 +24,7 @@ function useClock() {
 export function SiteHeader() {
   const time = useClock()
   return (
-    <header className="relative grid grid-cols-[1fr_auto_1fr] items-start bg-[#000000] px-4 pt-2 md:px-8 md:pt-3">
+    <header className="safe-x safe-header-top relative grid grid-cols-[1fr_auto_1fr] items-start bg-[#000000] px-4 pt-2 md:px-8 md:pt-3">
       <div className="flex flex-col gap-0.5 pt-1">
         <div className="flex items-center gap-2">
           <span className="flex items-center gap-1.5 text-[9px] font-semibold tracking-[0.16em] text-foreground md:text-[10px]">

@@ -74,14 +74,31 @@
   }
   html {
     @apply font-sans;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   body {
     @apply bg-background text-foreground;
+    width: 100%;
+    max-width: 100%;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
     -webkit-font-smoothing: antialiased;
   }
 }
 
 @layer utilities {
+  .safe-x {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+
+  .safe-header-top {
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
