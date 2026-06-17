@@ -31,8 +31,10 @@ export function Field3DView({
   onSelect: (id: string) => void
   onNext: () => void
 }) {
+  const selectedPlayer = fieldPlayers.find((player) => player.id === selectedId) ?? fieldPlayers[0]
+
   return (
-    <div className="flex h-full min-h-[560px] flex-col bg-[#000000] px-4 pb-5 pt-16 md:px-8 md:pt-20">
+    <div className="flex min-h-screen flex-col bg-[#000000] px-4 pb-8 pt-16 md:px-8 md:pt-20">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <span className="text-[9px] uppercase tracking-[0.24em] text-foreground/40">Modelo tático</span>
@@ -47,28 +49,11 @@ export function Field3DView({
         </button>
       </div>
 
-      <div className="relative mt-3 flex flex-1 items-center justify-center overflow-hidden [perspective:1600px] md:mt-5">
-        <motion.div
-          layoutId="athletic-field-surface"
-          className="relative aspect-[1.62/1] w-full max-w-5xl overflow-hidden rounded-[28px] shadow-[0_42px_120px_-50px_rgba(255,255,255,0.25)] [transform-style:preserve-3d]"
-          initial={{ opacity: 0, rotateX: 72, rotateY: -7, x: 90, y: 60, scale: 0.86, filter: "blur(8px)" }}
-          animate={{ opacity: 1, rotateX: 58, rotateY: 0, x: 0, y: 0, scale: 1, filter: "blur(0px)" }}
-          exit={{ opacity: 0, rotateX: 14, scale: 1.04 }}
-          transition={spring}
-          style={{ transformOrigin: "center center" }}
-        >
-          <div className="absolute inset-0 rounded-[28px] bg-[linear-gradient(90deg,rgba(38,95,54,0.42)_0%,rgba(20,65,37,0.42)_12%,rgba(38,95,54,0.42)_24%,rgba(20,65,37,0.42)_36%,rgba(38,95,54,0.42)_48%,rgba(20,65,37,0.42)_60%,rgba(38,95,54,0.42)_72%,rgba(20,65,37,0.42)_84%,rgba(38,95,54,0.42)_100%)]" />
-          <div className="absolute inset-0 rounded-[28px] bg-background/20" />
-          <FieldLines />
-        </motion.div>
-        <div className="pointer-events-none absolute bottom-[10%] h-10 w-2/3 rounded-full bg-foreground/10 blur-3xl" />
-      </div>
-
       <motion.div
         variants={staggerContainer}
         initial="initial"
         animate="animate"
-        className="mt-4 flex gap-3 overflow-x-auto pb-2 no-scrollbar"
+        className="mx-auto mt-4 flex w-full max-w-4xl justify-center gap-3 overflow-x-auto pb-2 no-scrollbar"
       >
         {fieldPlayers.map((player) => {
           const selected = selectedId === player.id
@@ -77,12 +62,12 @@ export function Field3DView({
               key={player.id}
               variants={staggerItem}
               layoutId={`field-player-card-${player.id}`}
-              onClick={() => onSelect(player.id)}
-              whileHover={{ y: -6, scale: selected ? 1.04 : 1.02 }}
+              onClick={() => (selected ? onNext() : onSelect(player.id))}
+              whileHover={{ y: -5, scale: selected ? 1.04 : 1.02 }}
               transition={spring}
               className={cn(
-                "relative h-28 shrink-0 overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
-                selected ? "w-44 ring-1 ring-foreground/35" : "w-32 opacity-70",
+                "relative h-24 shrink-0 overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
+                selected ? "w-44 ring-1 ring-foreground/35" : "w-28 opacity-65",
               )}
             >
               <Image
@@ -107,6 +92,39 @@ export function Field3DView({
           )
         })}
       </motion.div>
+
+      <div className="relative mt-1 flex flex-1 items-center justify-center overflow-hidden [perspective:1600px] md:mt-3">
+        <motion.div
+          layoutId="athletic-field-surface"
+          className="relative aspect-[1.62/1] w-full max-w-5xl overflow-hidden rounded-[28px] shadow-[0_42px_120px_-50px_rgba(255,255,255,0.25)] [transform-style:preserve-3d]"
+          initial={{ opacity: 0, rotateX: 70, x: 90, y: 60, scale: 0.86, filter: "blur(8px)" }}
+          animate={{ opacity: 1, rotateX: 58, x: 0, y: 0, scale: 1, filter: "blur(0px)" }}
+          exit={{ opacity: 0, rotateX: 14, scale: 1.04 }}
+          transition={spring}
+          style={{ transformOrigin: "center center" }}
+        >
+          <div className="absolute inset-0 rounded-[28px] bg-[linear-gradient(90deg,rgba(38,95,54,0.42)_0%,rgba(20,65,37,0.42)_12%,rgba(38,95,54,0.42)_24%,rgba(20,65,37,0.42)_36%,rgba(38,95,54,0.42)_48%,rgba(20,65,37,0.42)_60%,rgba(38,95,54,0.42)_72%,rgba(20,65,37,0.42)_84%,rgba(38,95,54,0.42)_100%)]" />
+          <div className="absolute inset-0 rounded-[28px] bg-background/20" />
+          <FieldLines />
+          <motion.div
+            key={selectedPlayer.id}
+            className="absolute z-20 -translate-x-1/2 -translate-y-1/2 text-center"
+            style={{ left: `${selectedPlayer.fieldPosition.x}%`, top: `${selectedPlayer.fieldPosition.y}%` }}
+            initial={{ opacity: 0, scale: 0.82, y: 18 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={spring}
+          >
+            <div className="mx-auto h-12 w-28 rounded-full bg-foreground/12 blur-xl" />
+            <span className="mt-[-28px] block text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/70 drop-shadow-[0_12px_24px_rgba(255,255,255,0.18)]">
+              {selectedPlayer.name}
+            </span>
+            <span className="mt-1 block text-[8px] uppercase tracking-[0.16em] text-foreground/35">
+              {selectedPlayer.position} · zona {selectedPlayer.zone}
+            </span>
+          </motion.div>
+        </motion.div>
+        <div className="pointer-events-none absolute bottom-[10%] h-10 w-2/3 rounded-full bg-foreground/10 blur-3xl" />
+      </div>
     </div>
   )
 }

@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
 import { fieldMetrics, fieldPlayers, type FieldMetric } from "@/lib/field-data"
 import { cn } from "@/lib/utils"
@@ -24,6 +25,10 @@ function routePath(points: { x: number; y: number }[]) {
   return points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ")
 }
 
+function vectorPath(vector: { x: number; y: number; dx: number; dy: number }) {
+  return `M ${vector.x} ${vector.y} L ${vector.x + vector.dx} ${vector.y + vector.dy}`
+}
+
 export function FieldAnalyticsView({
   selectedId,
   metric,
@@ -36,38 +41,68 @@ export function FieldAnalyticsView({
   onSelect: (id: string) => void
 }) {
   const selected = fieldPlayers.find((player) => player.id === selectedId) ?? fieldPlayers[0]
-  const visiblePlayers = selectedId ? fieldPlayers.filter((player) => player.id === selectedId) : fieldPlayers
 
   return (
-    <div className="grid h-full min-h-[560px] gap-5 bg-[#000000] px-4 pb-5 pt-16 md:grid-cols-[1fr_260px] md:px-8 md:pt-20">
+    <div className="grid min-h-screen gap-5 bg-[#000000] px-4 pb-8 pt-16 md:grid-cols-[1fr_280px] md:px-8 md:pt-20">
       <div className="flex min-w-0 flex-col">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <span className="text-[9px] uppercase tracking-[0.24em] text-foreground/40">Plano analítico</span>
-            <h2 className="mt-1 text-xl font-semibold tracking-tight text-foreground">Campo top-down</h2>
-          </div>
-          <div className="flex max-w-full gap-2 overflow-x-auto no-scrollbar">
-            {fieldMetrics.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => onMetricChange(item.id)}
-                className={cn(
-                  "shrink-0 rounded-full px-3 py-1 text-[9px] font-medium uppercase tracking-[0.14em] transition-colors",
-                  metric === item.id ? "bg-foreground text-background" : "bg-surface/70 text-foreground/45 hover:text-foreground",
-                )}
-              >
-                {item.label}
-              </button>
-            ))}
+            <h2 className="mt-1 text-lg font-semibold tracking-tight text-foreground md:text-xl">Campo top-down</h2>
           </div>
         </div>
 
         <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+          className="mx-auto mt-4 flex w-full max-w-4xl justify-center gap-3 overflow-x-auto pb-2 no-scrollbar"
+        >
+          {fieldPlayers.map((player) => {
+            const active = selected.id === player.id
+            return (
+              <motion.button
+                key={player.id}
+                variants={staggerItem}
+                onClick={() => onSelect(player.id)}
+                whileHover={{ y: -5, scale: active ? 1.04 : 1.02 }}
+                transition={spring}
+                className={cn(
+                  "relative h-20 shrink-0 overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
+                  active ? "w-40 ring-1 ring-foreground/35" : "w-24 opacity-55",
+                )}
+              >
+                <Image src={player.photo} alt={player.fullName} fill sizes="160px" className="object-cover object-top opacity-75" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+                <span className="absolute left-2 top-2 text-[9px] font-bold text-foreground">{player.number}</span>
+                <span className="absolute right-2 top-2 text-[8px] uppercase tracking-[0.12em] text-foreground/45">{player.position}</span>
+                <span className="absolute bottom-2 left-2 right-2 truncate text-[10px] font-semibold text-foreground">{player.name}</span>
+              </motion.button>
+            )
+          })}
+        </motion.div>
+
+        <div className="mt-2 flex max-w-full gap-2 overflow-x-auto pb-2 no-scrollbar">
+          {fieldMetrics.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => onMetricChange(item.id)}
+              className={cn(
+                "shrink-0 rounded-full px-3 py-1 text-[9px] font-medium uppercase tracking-[0.14em] transition-colors",
+                metric === item.id ? "bg-foreground text-background" : "bg-surface/70 text-foreground/45 hover:text-foreground",
+              )}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        <motion.div
           layoutId="athletic-field-surface"
-          className="relative mt-5 aspect-[1.62/1] min-h-[330px] overflow-hidden rounded-[24px] bg-[linear-gradient(90deg,rgba(22,80,42,0.36),rgba(13,45,27,0.36),rgba(22,80,42,0.36))]"
-          initial={{ opacity: 0, rotateX: 20, scale: 0.96 }}
-          animate={{ opacity: 1, rotateX: 0, scale: 1 }}
+          className="relative mt-3 aspect-[1.62/1] min-h-[340px] overflow-hidden rounded-[24px] bg-[linear-gradient(90deg,rgba(22,80,42,0.36),rgba(13,45,27,0.36),rgba(22,80,42,0.36))]"
+          initial={{ opacity: 0, rotateX: 58, y: 16, scale: 0.98 }}
+          animate={{ opacity: 1, rotateX: 0, y: -4, scale: 1.02 }}
           transition={spring}
         >
           <div className="absolute inset-0 bg-background/30" />
@@ -76,35 +111,48 @@ export function FieldAnalyticsView({
           <AnimatePresence mode="wait">
             {metric === "heatmap" && (
               <motion.div key="heatmap" className="absolute inset-0" initial={{ opacity: 0, scale: 0.96, filter: "blur(12px)" }} animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }} exit={{ opacity: 0 }} transition={spring}>
-                {visiblePlayers.flatMap((player) =>
-                  player.heatmapPoints.map((point, index) => (
-                    <span
-                      key={`${player.id}-${index}`}
-                      className="absolute size-28 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
-                      style={{
-                        left: `${point.x}%`,
-                        top: `${point.y}%`,
-                        opacity: point.intensity * 0.34,
-                        background: "radial-gradient(circle, rgba(255,211,77,0.9), rgba(255,82,82,0.42), transparent 68%)",
-                      }}
-                    />
-                  )),
-                )}
+                {selected.heatmapPoints.map((point, index) => (
+                  <span
+                    key={`${selected.id}-${index}`}
+                    className="absolute size-32 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
+                    style={{
+                      left: `${point.x}%`,
+                      top: `${point.y}%`,
+                      opacity: point.intensity * 0.36,
+                      background: "radial-gradient(circle, rgba(255,211,77,0.9), rgba(255,82,82,0.42), transparent 68%)",
+                    }}
+                  />
+                ))}
               </motion.div>
             )}
 
-            {["routes", "distance", "accelerations", "decelerations", "playerLoad"].includes(metric) && (
-              <motion.svg key="routes" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                {visiblePlayers.map((player, index) => (
+            {["routes", "distance", "playerLoad"].includes(metric) && (
+              <motion.svg key={metric} viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <motion.path
+                  d={routePath(metric === "distance" ? selected.distanceTrail : selected.routes)}
+                  fill="none"
+                  stroke={metric === "playerLoad" ? "var(--warn)" : "var(--good)"}
+                  strokeWidth={metric === "playerLoad" ? 1.3 : 0.8}
+                  strokeLinecap="round"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: 1, opacity: 0.9 }}
+                  transition={spring}
+                />
+              </motion.svg>
+            )}
+
+            {["accelerations", "decelerations"].includes(metric) && (
+              <motion.svg key={metric} viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                {(metric === "accelerations" ? selected.accelerations : selected.decelerations).map((vector, index) => (
                   <motion.path
-                    key={player.id}
-                    d={routePath(player.routes)}
+                    key={index}
+                    d={vectorPath(vector)}
                     fill="none"
-                    stroke={metric === "playerLoad" ? "var(--warn)" : "var(--good)"}
-                    strokeWidth={metric === "playerLoad" ? 1.1 : 0.7}
+                    stroke={metric === "accelerations" ? "var(--good)" : "var(--warn)"}
+                    strokeWidth={0.8}
                     strokeLinecap="round"
                     initial={{ pathLength: 0, opacity: 0 }}
-                    animate={{ pathLength: 1, opacity: 0.85 }}
+                    animate={{ pathLength: 1, opacity: 0.9 }}
                     transition={{ ...spring, delay: index * 0.08 }}
                   />
                 ))}
@@ -113,38 +161,35 @@ export function FieldAnalyticsView({
 
             {metric === "sprints" && (
               <motion.div key="sprints" className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                {visiblePlayers.flatMap((player) =>
-                  player.sprints.map((point, index) => (
-                    <motion.span
-                      key={`${player.id}-sprint-${index}`}
-                      className="absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-alert"
-                      style={{ left: `${point.x}%`, top: `${point.y}%` }}
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: [1, 1.6, 1], opacity: [0.4, 1, 0.55] }}
-                      transition={{ duration: 1.4, repeat: Number.POSITIVE_INFINITY, delay: index * 0.12 }}
-                    />
-                  )),
-                )}
+                {selected.sprints.map((point, index) => (
+                  <motion.span
+                    key={`${selected.id}-sprint-${index}`}
+                    className="absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-alert"
+                    style={{ left: `${point.x}%`, top: `${point.y}%` }}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: [1, 1.6, 1], opacity: [0.4, 1, 0.55] }}
+                    transition={{ duration: 1.4, repeat: Number.POSITIVE_INFINITY, delay: index * 0.12 }}
+                  />
+                ))}
               </motion.div>
             )}
 
             {metric === "shots" && (
-              <motion.div key="shots" className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                {visiblePlayers.flatMap((player) =>
-                  player.shots.map((point, index) => (
-                    <motion.span
-                      key={`${player.id}-shot-${index}`}
-                      className="absolute flex size-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-foreground/60 text-[8px] font-bold"
-                      style={{ left: `${point.x}%`, top: `${point.y}%` }}
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ ...spring, delay: index * 0.08 }}
-                    >
-                      T
-                    </motion.span>
-                  )),
-                )}
-              </motion.div>
+              <motion.svg key="shots" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                {selected.shots.map((shot, index) => (
+                  <motion.path
+                    key={index}
+                    d={`M ${shot.x} ${shot.y} L ${shot.targetX} ${shot.targetY}`}
+                    fill="none"
+                    stroke={shot.result === "gol" ? "var(--good)" : "var(--alert)"}
+                    strokeWidth={0.7}
+                    strokeLinecap="round"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ pathLength: 1, opacity: 0.85 }}
+                    transition={{ ...spring, delay: index * 0.08 }}
+                  />
+                ))}
+              </motion.svg>
             )}
           </AnimatePresence>
 
@@ -154,8 +199,10 @@ export function FieldAnalyticsView({
         </motion.div>
       </div>
 
-      <motion.aside variants={staggerContainer} initial="initial" animate="animate" className="flex flex-col justify-between bg-background/20 p-1 md:pt-14">
-        <div>
+      <motion.aside variants={staggerContainer} initial="initial" animate="animate" className="relative overflow-hidden bg-background/20 p-1 md:pt-14">
+        <Image src={selected.photo} alt={selected.fullName} fill sizes="280px" className="object-cover object-top opacity-20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/30" />
+        <div className="relative z-10">
           <motion.span variants={staggerItem} className="block text-[9px] uppercase tracking-[0.24em] text-foreground/40">
             Atleta selecionado
           </motion.span>
