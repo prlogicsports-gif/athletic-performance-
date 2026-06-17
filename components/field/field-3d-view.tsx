@@ -117,7 +117,7 @@ export function Field3DView({
         })}
       </motion.div>
 
-      <div className="relative mt-0 flex flex-1 items-start justify-center overflow-hidden [perspective:1600px] md:mt-1">
+      <div className="relative -mt-4 flex flex-1 items-start justify-center overflow-hidden [perspective:1600px] md:-mt-6">
         <motion.div
           layoutId="athletic-field-surface"
           className="relative aspect-[1.62/1] w-full max-w-5xl overflow-hidden rounded-[28px] shadow-[0_42px_120px_-50px_rgba(255,255,255,0.25)] [transform-style:preserve-3d]"

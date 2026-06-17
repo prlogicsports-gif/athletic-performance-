@@ -113,7 +113,7 @@ export function FieldAnalyticsView({
 
         <motion.div
           layoutId="athletic-field-surface"
-          className="relative mt-1 aspect-[1.62/1] min-h-[340px] overflow-hidden rounded-[24px] bg-[linear-gradient(90deg,rgba(22,80,42,0.36),rgba(13,45,27,0.36),rgba(22,80,42,0.36))]"
+          className="relative mt-6 aspect-[1.62/1] min-h-[340px] overflow-hidden rounded-[24px] bg-[linear-gradient(90deg,rgba(22,80,42,0.36),rgba(13,45,27,0.36),rgba(22,80,42,0.36))] md:mt-8"
           initial={{ opacity: 0, rotateX: 58, y: 16, scale: 0.98 }}
           animate={{ opacity: 1, rotateX: 0, y: -4, scale: 1.02 }}
           transition={softSpring}

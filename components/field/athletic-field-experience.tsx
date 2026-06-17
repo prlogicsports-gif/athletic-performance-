@@ -63,13 +63,13 @@ export function AthleticFieldExperience({
 
       {showLogo && (
         <motion.div
-          className="pointer-events-none fixed left-1/2 top-5 z-40 h-[66px] w-[66px] -translate-x-1/2 opacity-75 md:top-6 md:h-[82px] md:w-[82px]"
+          className="pointer-events-none fixed left-1/2 top-4 z-40 h-[78px] w-[78px] -translate-x-1/2 opacity-80 md:top-5 md:h-[104px] md:w-[104px]"
           initial={{ opacity: 0, scale: 0.92, y: -6 }}
-          animate={{ opacity: 0.75, scale: 1, y: 0 }}
+          animate={{ opacity: 0.8, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96 }}
           transition={softSpring}
         >
-          <Image src="/ac-logo-mark.png" alt="AC" fill sizes="82px" className="object-contain" priority />
+          <Image src="/ac-logo-mark.png" alt="AC" fill sizes="104px" className="object-contain" priority />
         </motion.div>
       )}
 
