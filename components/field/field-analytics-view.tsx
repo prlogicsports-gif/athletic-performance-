@@ -1,10 +1,11 @@
 "use client"
 
+import { useMemo } from "react"
 import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
 import { fieldMetrics, fieldPlayers, type FieldMetric } from "@/lib/field-data"
 import { cn } from "@/lib/utils"
-import { spring, staggerContainer, staggerItem } from "@/lib/motion"
+import { softSpring, spring, staggerContainer, staggerItem } from "@/lib/motion"
 import { PlayerFieldCard } from "./player-field-card"
 
 function FlatFieldLines() {
@@ -41,9 +42,21 @@ export function FieldAnalyticsView({
   onSelect: (id: string) => void
 }) {
   const selected = fieldPlayers.find((player) => player.id === selectedId) ?? fieldPlayers[0]
+  const centeredPlayers = useMemo(() => {
+    const selectedIndex = Math.max(
+      0,
+      fieldPlayers.findIndex((player) => player.id === selected.id),
+    )
+    const beforeCenter = Math.floor((fieldPlayers.length - 1) / 2)
+
+    return fieldPlayers.map((_, index) => {
+      const nextIndex = (selectedIndex - beforeCenter + index + fieldPlayers.length) % fieldPlayers.length
+      return fieldPlayers[nextIndex]
+    })
+  }, [selected.id])
 
   return (
-    <div className="grid min-h-screen gap-5 bg-[#000000] px-4 pb-8 pt-16 md:grid-cols-[1fr_280px] md:px-8 md:pt-20">
+    <div className="grid min-h-screen gap-4 bg-[#000000] px-4 pb-8 pt-14 md:grid-cols-[1fr_280px] md:px-8 md:pt-16">
       <div className="flex min-w-0 flex-col">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -56,23 +69,23 @@ export function FieldAnalyticsView({
           variants={staggerContainer}
           initial="initial"
           animate="animate"
-          className="mx-auto mt-4 flex w-full max-w-4xl justify-center gap-3 overflow-x-auto pb-2 no-scrollbar"
+          className="mx-auto mt-1 flex w-full max-w-5xl justify-center gap-3 overflow-x-auto pb-2 no-scrollbar md:mt-2"
         >
-          {fieldPlayers.map((player) => {
+          {centeredPlayers.map((player) => {
             const active = selected.id === player.id
             return (
               <motion.button
                 key={player.id}
                 variants={staggerItem}
                 onClick={() => onSelect(player.id)}
-                whileHover={{ y: -5, scale: active ? 1.04 : 1.02 }}
-                transition={spring}
+                whileHover={{ y: -6, scale: active ? 1.04 : 1.03 }}
+                transition={softSpring}
                 className={cn(
-                  "relative h-20 shrink-0 overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
-                  active ? "w-40 ring-1 ring-foreground/35" : "w-24 opacity-55",
+                  "relative h-24 shrink-0 overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
+                  active ? "w-48 ring-1 ring-foreground/35" : "w-28 opacity-55",
                 )}
               >
-                <Image src={player.photo} alt={player.fullName} fill sizes="160px" className="object-cover object-top opacity-75" />
+                <Image src={player.photo} alt={player.fullName} fill sizes="192px" className="object-cover object-top opacity-75" />
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
                 <span className="absolute left-2 top-2 text-[9px] font-bold text-foreground">{player.number}</span>
                 <span className="absolute right-2 top-2 text-[8px] uppercase tracking-[0.12em] text-foreground/45">{player.position}</span>
@@ -82,7 +95,7 @@ export function FieldAnalyticsView({
           })}
         </motion.div>
 
-        <div className="mt-2 flex max-w-full gap-2 overflow-x-auto pb-2 no-scrollbar">
+        <div className="mt-1 flex max-w-full gap-2 overflow-x-auto pb-2 no-scrollbar">
           {fieldMetrics.map((item) => (
             <button
               key={item.id}
@@ -100,10 +113,10 @@ export function FieldAnalyticsView({
 
         <motion.div
           layoutId="athletic-field-surface"
-          className="relative mt-3 aspect-[1.62/1] min-h-[340px] overflow-hidden rounded-[24px] bg-[linear-gradient(90deg,rgba(22,80,42,0.36),rgba(13,45,27,0.36),rgba(22,80,42,0.36))]"
+          className="relative mt-1 aspect-[1.62/1] min-h-[340px] overflow-hidden rounded-[24px] bg-[linear-gradient(90deg,rgba(22,80,42,0.36),rgba(13,45,27,0.36),rgba(22,80,42,0.36))]"
           initial={{ opacity: 0, rotateX: 58, y: 16, scale: 0.98 }}
           animate={{ opacity: 1, rotateX: 0, y: -4, scale: 1.02 }}
-          transition={spring}
+          transition={softSpring}
         >
           <div className="absolute inset-0 bg-background/30" />
           <FlatFieldLines />

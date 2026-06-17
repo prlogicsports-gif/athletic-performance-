@@ -1,10 +1,11 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
 import { X } from "lucide-react"
 import { fieldPlayers, type FieldMetric } from "@/lib/field-data"
-import { spring } from "@/lib/motion"
+import { softSpring } from "@/lib/motion"
 import { RealFieldView } from "./real-field-view"
 import { Field3DView } from "./field-3d-view"
 import { FieldAnalyticsView } from "./field-analytics-view"
@@ -21,6 +22,7 @@ export function AthleticFieldExperience({
   const [stage, setStage] = useState<FieldStage>(initialStage)
   const [selectedId, setSelectedId] = useState(fieldPlayers[0]?.id)
   const [metric, setMetric] = useState<FieldMetric>("heatmap")
+  const showLogo = stage !== "real"
 
   const selectPlayer = (id: string) => {
     setSelectedId(id)
@@ -32,7 +34,7 @@ export function AthleticFieldExperience({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={spring}
+      transition={softSpring}
     >
       <div className="absolute left-4 top-4 z-50 flex max-w-[calc(100vw-5.5rem)] items-center gap-3 rounded-full bg-background/55 px-3 py-2 backdrop-blur-md md:left-8 md:top-6">
         {(["real", "model", "analytics"] as FieldStage[]).map((item, index) => (
@@ -58,6 +60,18 @@ export function AthleticFieldExperience({
       >
         <X className="size-4" />
       </button>
+
+      {showLogo && (
+        <motion.div
+          className="pointer-events-none fixed left-1/2 top-5 z-40 h-[66px] w-[66px] -translate-x-1/2 opacity-75 md:top-6 md:h-[82px] md:w-[82px]"
+          initial={{ opacity: 0, scale: 0.92, y: -6 }}
+          animate={{ opacity: 0.75, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.96 }}
+          transition={softSpring}
+        >
+          <Image src="/ac-logo-mark.png" alt="AC" fill sizes="82px" className="object-contain" priority />
+        </motion.div>
+      )}
 
       <AnimatePresence mode="wait">
         {stage === "real" && <RealFieldView key="real" onNext={() => setStage("model")} />}

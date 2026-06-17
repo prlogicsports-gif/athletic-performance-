@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { spring } from "@/lib/motion"
+import { softSpring } from "@/lib/motion"
 
 const REAL_FIELD_IMAGE = "/athletic-aerial-field.png"
 
@@ -12,18 +12,18 @@ export function RealFieldView({ onNext }: { onNext: () => void }) {
       type="button"
       onClick={onNext}
       layoutId="athletic-field-surface"
-      className="relative h-full min-h-[520px] w-full overflow-hidden bg-[#000000] text-left"
+      className="relative min-h-screen w-full overflow-hidden bg-[#000000] text-left"
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 1.08, rotateX: 10, x: -90 }}
-      transition={spring}
+      exit={{ opacity: 0, scale: 1.04, rotateX: 5, x: -44, filter: "blur(6px)" }}
+      transition={softSpring}
     >
       <motion.div
         className="absolute inset-0"
         initial={{ scale: 1.04 }}
         animate={{ scale: 1 }}
-        exit={{ scale: 1.14, opacity: 0.18, x: -80 }}
-        transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+        exit={{ scale: 1.08, opacity: 0.22, x: -48 }}
+        transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
       >
         <Image
           src={REAL_FIELD_IMAGE}
@@ -44,14 +44,14 @@ export function RealFieldView({ onNext }: { onNext: () => void }) {
         className="absolute bottom-8 left-6 right-6 flex flex-wrap items-end justify-between gap-5 md:bottom-10 md:left-10 md:right-10"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ ...spring, delay: 0.15 }}
+        transition={{ ...softSpring, delay: 0.12 }}
       >
         <div>
           <span className="text-[9px] uppercase tracking-[0.28em] text-foreground/40">Visualização de campo</span>
           <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground md:text-5xl">Campo Athletic</h2>
         </div>
         <span className="text-[10px] font-medium uppercase tracking-[0.22em] text-foreground/70">
-          Visualizar modelo 3D
+          Clicar para abrir
         </span>
       </motion.div>
     </motion.button>
