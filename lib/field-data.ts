@@ -56,6 +56,13 @@ export const fieldPlayers = athletes.map((athlete, index) => {
     { x: pos.x + 11, y: pos.y + 3, dx: -7, dy: 5 + actionSeed, magnitude: 2.1 + index * 0.15 },
     { x: pos.x - 9, y: pos.y - 10, dx: -5, dy: -6, magnitude: 1.9 + index * 0.12 },
   ]
+  const heatmapPoints = [
+    { x: Math.max(12, pos.x - 10), y: Math.max(14, pos.y - 12), intensity: 0.62 },
+    { x: Math.min(88, pos.x + 2), y: Math.max(12, pos.y - 6), intensity: 0.88 },
+    { x: Math.min(88, pos.x + 12), y: Math.min(86, pos.y + 4), intensity: 0.74 },
+    { x: Math.max(12, pos.x - 2), y: Math.min(86, pos.y + 12), intensity: 0.56 },
+    { x: Math.min(90, pos.x + 22), y: Math.max(12, pos.y - 2), intensity: 0.48 },
+  ]
 
   return {
     id: athlete.id,
@@ -69,7 +76,7 @@ export const fieldPlayers = athletes.map((athlete, index) => {
     zone: pos.zone,
     colorToken: athlete.zoneState,
     fieldPosition: pos,
-    heatmapPoints: distanceTrail.map((p, i) => ({ x: p.x, y: p.y, intensity: 0.35 + i * 0.12 })),
+    heatmapPoints,
     routes: route,
     distanceTrail,
     accelerations: accelerationVectors,

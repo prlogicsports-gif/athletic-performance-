@@ -30,7 +30,7 @@ export function AthleticFieldExperience({
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden bg-[#000000] text-foreground"
+      className="fixed inset-0 z-50 overflow-hidden bg-[#000000] text-foreground"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -63,13 +63,13 @@ export function AthleticFieldExperience({
 
       {showLogo && (
         <motion.div
-          className="pointer-events-none fixed left-1/2 top-4 z-40 h-[78px] w-[78px] -translate-x-1/2 opacity-80 md:top-5 md:h-[104px] md:w-[104px]"
+          className="pointer-events-none absolute left-1/2 top-3 z-40 h-[68px] w-[68px] -translate-x-1/2 opacity-80 md:top-3 md:h-[92px] md:w-[92px]"
           initial={{ opacity: 0, scale: 0.92, y: -6 }}
           animate={{ opacity: 0.8, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96 }}
           transition={softSpring}
         >
-          <Image src="/ac-logo-mark.png" alt="AC" fill sizes="104px" className="object-contain" priority />
+          <Image src="/ac-logo-mark.png" alt="AC" fill sizes="92px" className="object-contain" priority />
         </motion.div>
       )}
 

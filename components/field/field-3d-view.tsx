@@ -54,7 +54,7 @@ export function Field3DView({
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#000000] px-4 pb-8 pt-14 md:px-8 md:pt-16">
+    <div className="flex h-screen min-h-0 flex-col bg-[#000000] px-4 pb-4 pt-12 md:px-8 md:pt-12">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <span className="text-[9px] uppercase tracking-[0.24em] text-foreground/40">Modelo tatico</span>
@@ -73,7 +73,7 @@ export function Field3DView({
         variants={staggerContainer}
         initial="initial"
         animate="animate"
-        className="mx-auto mt-1 flex w-full max-w-5xl justify-center gap-3 overflow-x-auto pb-2 no-scrollbar md:mt-2"
+        className="mx-auto mt-0 flex w-full max-w-5xl justify-center gap-2.5 overflow-x-auto pb-1 no-scrollbar"
       >
         {centeredPlayers.map((player) => {
           const selected = selectedId === player.id
@@ -90,15 +90,15 @@ export function Field3DView({
               whileHover={{ y: -6, scale: selected ? 1.04 : 1.03 }}
               transition={softSpring}
               className={cn(
-                "relative h-28 shrink-0 overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
-                selected ? "w-52 ring-1 ring-foreground/35" : "w-32 opacity-65",
+                "relative h-24 shrink-0 overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
+                selected ? "w-48 ring-1 ring-foreground/35" : "w-28 opacity-65",
               )}
             >
               <Image
                 src={player.photo}
                 alt={player.fullName}
                 fill
-                sizes="208px"
+                sizes="192px"
                 className="object-cover object-top opacity-80"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/55 to-transparent" />
@@ -117,10 +117,10 @@ export function Field3DView({
         })}
       </motion.div>
 
-      <div className="relative -mt-4 flex flex-1 items-start justify-center overflow-hidden [perspective:1600px] md:-mt-6">
+      <div className="relative -mt-6 flex min-h-0 flex-1 items-start justify-center overflow-hidden [perspective:1600px] md:-mt-8">
         <motion.div
           layoutId="athletic-field-surface"
-          className="relative aspect-[1.62/1] w-full max-w-5xl overflow-hidden rounded-[28px] shadow-[0_42px_120px_-50px_rgba(255,255,255,0.25)] [transform-style:preserve-3d]"
+          className="relative aspect-[1.62/1] max-h-[58vh] w-full max-w-4xl overflow-hidden rounded-[28px] shadow-[0_42px_120px_-50px_rgba(255,255,255,0.25)] [transform-style:preserve-3d]"
           initial={{ opacity: 0, rotateX: 64, x: 42, y: 26, scale: 0.92, filter: "blur(6px)" }}
           animate={{ opacity: 1, rotateX: 56, x: 0, y: 0, scale: 1, filter: "blur(0px)" }}
           exit={{ opacity: 0, rotateX: 14, scale: 1.04 }}
