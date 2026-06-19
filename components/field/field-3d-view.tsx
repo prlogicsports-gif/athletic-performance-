@@ -121,8 +121,8 @@ export function Field3DView({
         <motion.div
           layoutId="athletic-field-surface"
           className="relative aspect-[1.62/1] max-h-[58vh] w-full max-w-4xl overflow-hidden rounded-[28px] shadow-[0_42px_120px_-50px_rgba(255,255,255,0.25)] [transform-style:preserve-3d]"
-          initial={{ opacity: 0, rotateX: 64, x: 42, y: 26, scale: 0.92, filter: "blur(6px)" }}
-          animate={{ opacity: 1, rotateX: 56, x: 0, y: 0, scale: 1, filter: "blur(0px)" }}
+          initial={{ opacity: 0, rotateX: 58, x: 28, y: 18, scale: 0.94 }}
+          animate={{ opacity: 1, rotateX: 54, x: 0, y: 0, scale: 1 }}
           exit={{ opacity: 0, rotateX: 14, scale: 1.04 }}
           transition={softSpring}
           style={{ transformOrigin: "center center" }}
@@ -139,7 +139,7 @@ export function Field3DView({
                 opacity: point.intensity * 0.28,
                 background: "radial-gradient(circle, rgba(255,211,77,0.85), rgba(255,82,82,0.34), transparent 70%)",
               }}
-              initial={{ opacity: 0, scale: 0.7 }}
+              initial={{ opacity: 0, scale: 0.82 }}
               animate={{ opacity: point.intensity * 0.28, scale: 1 }}
               transition={softSpring}
             />

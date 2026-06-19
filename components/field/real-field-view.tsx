@@ -15,7 +15,7 @@ export function RealFieldView({ onNext }: { onNext: () => void }) {
       className="relative min-h-screen w-full overflow-hidden bg-[#000000] text-left"
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 1.04, rotateX: 5, x: -44, filter: "blur(6px)" }}
+      exit={{ opacity: 0, scale: 1.03, rotateX: 3, x: -32 }}
       transition={softSpring}
     >
       <motion.div

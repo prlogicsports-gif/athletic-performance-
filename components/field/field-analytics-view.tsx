@@ -35,12 +35,18 @@ function HeatmapLayer({ points, id }: { points: { x: number; y: number; intensit
     <motion.div
       key={id}
       className="absolute inset-0"
-      initial={{ opacity: 0, scale: 0.98, filter: "blur(14px)" }}
-      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0 }}
       transition={spring}
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_35%,rgba(36,185,255,0.30),transparent_24%),radial-gradient(circle_at_54%_46%,rgba(35,206,120,0.22),transparent_28%),radial-gradient(circle_at_78%_52%,rgba(36,185,255,0.24),transparent_18%)]" />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 24% 35%, rgba(36,185,255,0.30), transparent 24%), radial-gradient(circle at 54% 46%, rgba(35,206,120,0.22), transparent 28%), radial-gradient(circle at 78% 52%, rgba(36,185,255,0.24), transparent 18%)",
+        }}
+      />
       {points.map((point, index) => (
         <span
           key={`${id}-${index}`}
@@ -144,7 +150,7 @@ export function FieldAnalyticsView({
         <motion.div
           layoutId="athletic-field-surface"
           className="relative mt-4 aspect-[1.62/1] max-h-[55vh] min-h-[280px] overflow-hidden rounded-[24px] bg-[linear-gradient(90deg,rgba(22,80,42,0.36),rgba(13,45,27,0.36),rgba(22,80,42,0.36))] md:mt-5"
-          initial={{ opacity: 0, rotateX: 58, y: 16, scale: 0.98 }}
+          initial={{ opacity: 0, y: 14, scale: 0.98 }}
           animate={{ opacity: 1, rotateX: 0, y: -4, scale: 1.02 }}
           transition={softSpring}
         >
