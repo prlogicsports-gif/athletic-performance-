@@ -1,7 +1,6 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { spring } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 import type { FieldPlayer } from "@/lib/field-data"
 
@@ -19,11 +18,10 @@ export function PlayerFieldCard({
   return (
     <motion.button
       type="button"
-      layoutId={`field-player-${player.id}`}
       onClick={() => onSelect(player.id)}
       whileHover={{ y: -7, scale: 1.08 }}
       animate={{ y: [0, -3, 0] }}
-      transition={{ ...spring, y: { duration: 4.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" } }}
+      transition={{ duration: 4.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
       className={cn(
         "group absolute z-20 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full bg-background/75 px-2 py-1 text-left backdrop-blur-md will-change-transform",
         selected && "bg-foreground text-background",

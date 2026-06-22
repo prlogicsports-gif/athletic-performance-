@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { AnimatePresence, motion } from "framer-motion"
+import { motion } from "framer-motion"
 import { X } from "lucide-react"
 import { fieldPlayers, type FieldMetric } from "@/lib/field-data"
 import { softSpring } from "@/lib/motion"
@@ -56,7 +56,7 @@ export function AthleticFieldExperience({
         type="button"
         onClick={onClose}
         aria-label="Fechar visualização de campo"
-        className="absolute right-4 top-4 z-50 flex size-9 items-center justify-center rounded-full bg-background/70 text-foreground/70 backdrop-blur-md transition-colors hover:text-foreground md:right-8 md:top-6"
+        className="fixed right-4 top-4 z-[100] flex size-9 items-center justify-center rounded-full bg-background/80 text-foreground/80 backdrop-blur-md transition-colors hover:text-foreground md:right-8 md:top-6"
       >
         <X className="size-4" />
       </button>
@@ -73,11 +73,10 @@ export function AthleticFieldExperience({
         </motion.div>
       )}
 
-      <AnimatePresence mode="wait">
-        {stage === "real" && <RealFieldView key="real" onNext={() => setStage("model")} />}
+      <div className="h-full w-full">
+        {stage === "real" && <RealFieldView onNext={() => setStage("model")} />}
         {stage === "model" && (
           <Field3DView
-            key="model"
             selectedId={selectedId}
             onSelect={selectPlayer}
             onNext={() => setStage("analytics")}
@@ -85,14 +84,13 @@ export function AthleticFieldExperience({
         )}
         {stage === "analytics" && (
           <FieldAnalyticsView
-            key="analytics"
             selectedId={selectedId}
             metric={metric}
             onMetricChange={setMetric}
             onSelect={selectPlayer}
           />
         )}
-      </AnimatePresence>
+      </div>
     </motion.div>
   )
 }

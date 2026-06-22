@@ -1,10 +1,10 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { fieldPlayers } from "@/lib/field-data"
-import { softSpring, staggerContainer, staggerItem } from "@/lib/motion"
+import { softSpring, spring } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 function FieldLines() {
@@ -35,18 +35,10 @@ export function Field3DView({
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const selectedPlayer = fieldPlayers.find((player) => player.id === selectedId) ?? fieldPlayers[0]
   const previewPlayer = fieldPlayers.find((player) => player.id === hoveredId) ?? selectedPlayer
-  const centeredPlayers = useMemo(() => {
-    const selectedIndex = Math.max(
-      0,
-      fieldPlayers.findIndex((player) => player.id === selectedPlayer.id),
-    )
-    const beforeCenter = Math.floor((fieldPlayers.length - 1) / 2)
-
-    return fieldPlayers.map((_, index) => {
-      const nextIndex = (selectedIndex - beforeCenter + index + fieldPlayers.length) % fieldPlayers.length
-      return fieldPlayers[nextIndex]
-    })
-  }, [selectedPlayer.id])
+  const activeIndex = Math.max(
+    0,
+    fieldPlayers.findIndex((player) => player.id === selectedPlayer.id),
+  )
 
   const openPlayerAnalysis = (id: string) => {
     onSelect(id)
@@ -69,29 +61,36 @@ export function Field3DView({
         </button>
       </div>
 
-      <motion.div
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-        className="mx-auto mt-0 flex w-full max-w-5xl justify-center gap-2.5 overflow-x-auto pb-1 no-scrollbar"
-      >
-        {centeredPlayers.map((player) => {
-          const selected = selectedId === player.id
+      <motion.div className="relative mx-auto mt-0 h-28 w-full max-w-5xl overflow-hidden [perspective:1800px] [transform-style:preserve-3d]">
+        {fieldPlayers.map((player, index) => {
+          let offset = index - activeIndex
+          if (offset > fieldPlayers.length / 2) offset -= fieldPlayers.length
+          if (offset < -fieldPlayers.length / 2) offset += fieldPlayers.length
+          const abs = Math.abs(offset)
+          if (abs > 2) return null
+          const selected = offset === 0
           return (
             <motion.button
               key={player.id}
-              variants={staggerItem}
-              layoutId={`field-player-card-${player.id}`}
               onMouseEnter={() => setHoveredId(player.id)}
               onMouseLeave={() => setHoveredId(null)}
               onFocus={() => setHoveredId(player.id)}
               onBlur={() => setHoveredId(null)}
-              onClick={() => openPlayerAnalysis(player.id)}
-              whileHover={{ y: -6, scale: selected ? 1.04 : 1.03 }}
-              transition={softSpring}
+              onClick={() => (selected ? openPlayerAnalysis(player.id) : onSelect(player.id))}
+              animate={{
+                x: offset * 156,
+                scale: abs === 0 ? 1 : abs === 1 ? 0.82 : 0.66,
+                opacity: abs === 0 ? 1 : abs === 1 ? 0.68 : 0.34,
+                filter: abs === 0 ? "blur(0px)" : abs === 1 ? "blur(1px)" : "blur(4px)",
+                zIndex: 50 - abs,
+                rotateY: offset * -14,
+                translateZ: abs === 0 ? 100 : abs === 1 ? -30 : -90,
+              }}
+              whileHover={selected ? { scale: 1.04, y: -6 } : { scale: 0.86, opacity: 0.82 }}
+              transition={spring}
               className={cn(
-                "relative h-24 shrink-0 overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
-                selected ? "w-48 ring-1 ring-foreground/35" : "w-28 opacity-65",
+                "absolute left-1/2 top-0 h-24 w-48 -translate-x-1/2 origin-center overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
+                selected && "ring-1 ring-foreground/35",
               )}
             >
               <Image
@@ -117,10 +116,9 @@ export function Field3DView({
         })}
       </motion.div>
 
-      <div className="relative -mt-6 flex min-h-0 flex-1 items-start justify-center overflow-hidden [perspective:1600px] md:-mt-8">
+      <div className="relative -mt-5 flex min-h-0 flex-1 items-start justify-center overflow-hidden [perspective:1600px] md:-mt-7">
         <motion.div
-          layoutId="athletic-field-surface"
-          className="relative aspect-[1.62/1] max-h-[58vh] w-full max-w-4xl overflow-hidden rounded-[28px] shadow-[0_42px_120px_-50px_rgba(255,255,255,0.25)] [transform-style:preserve-3d]"
+          className="relative aspect-[1.62/1] max-h-[66vh] w-full max-w-6xl overflow-hidden rounded-[28px] shadow-[0_42px_120px_-50px_rgba(255,255,255,0.25)] [transform-style:preserve-3d]"
           initial={{ opacity: 0, rotateX: 58, x: 28, y: 18, scale: 0.94 }}
           animate={{ opacity: 1, rotateX: 54, x: 0, y: 0, scale: 1 }}
           exit={{ opacity: 0, rotateX: 14, scale: 1.04 }}
@@ -161,13 +159,13 @@ export function Field3DView({
               {previewPlayer.position} · zona {previewPlayer.zone}
             </span>
           </motion.div>
-          <div className="absolute bottom-5 left-5 z-20 flex flex-wrap gap-3 text-[8px] uppercase tracking-[0.14em] text-foreground/45">
-            <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-[var(--warn)]" /> Toques</span>
-            <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-[var(--alert)]" /> Pressao</span>
-            <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-[var(--good)]" /> Carga</span>
-          </div>
         </motion.div>
         <div className="pointer-events-none absolute bottom-[10%] h-10 w-2/3 rounded-full bg-foreground/10 blur-3xl" />
+      </div>
+      <div className="mx-auto -mt-2 flex w-full max-w-6xl flex-wrap gap-4 px-1 text-[8px] uppercase tracking-[0.14em] text-foreground/45">
+        <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-[var(--warn)]" /> Toques</span>
+        <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-[var(--alert)]" /> Pressao</span>
+        <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-[var(--good)]" /> Carga</span>
       </div>
     </div>
   )

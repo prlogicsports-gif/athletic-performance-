@@ -1,6 +1,5 @@
 "use client"
 
-import { useMemo } from "react"
 import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
 import { fieldMetrics, fieldPlayers, type FieldMetric } from "@/lib/field-data"
@@ -78,21 +77,13 @@ export function FieldAnalyticsView({
   onSelect: (id: string) => void
 }) {
   const selected = fieldPlayers.find((player) => player.id === selectedId) ?? fieldPlayers[0]
-  const centeredPlayers = useMemo(() => {
-    const selectedIndex = Math.max(
-      0,
-      fieldPlayers.findIndex((player) => player.id === selected.id),
-    )
-    const beforeCenter = Math.floor((fieldPlayers.length - 1) / 2)
-
-    return fieldPlayers.map((_, index) => {
-      const nextIndex = (selectedIndex - beforeCenter + index + fieldPlayers.length) % fieldPlayers.length
-      return fieldPlayers[nextIndex]
-    })
-  }, [selected.id])
+  const activeIndex = Math.max(
+    0,
+    fieldPlayers.findIndex((player) => player.id === selected.id),
+  )
 
   return (
-    <div className="grid h-screen min-h-0 gap-3 overflow-hidden bg-[#000000] px-4 pb-4 pt-12 md:grid-cols-[1fr_250px] md:px-8 md:pt-12">
+    <div className="grid h-screen min-h-0 gap-3 overflow-hidden bg-[#000000] px-4 pb-4 pt-12 md:grid-cols-[1fr_240px] md:px-8 md:pt-12">
       <div className="flex min-w-0 flex-col">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -101,24 +92,32 @@ export function FieldAnalyticsView({
           </div>
         </div>
 
-        <motion.div
-          variants={staggerContainer}
-          initial="initial"
-          animate="animate"
-          className="mx-auto mt-0 flex w-full max-w-5xl justify-center gap-2.5 overflow-x-auto pb-1 no-scrollbar"
-        >
-          {centeredPlayers.map((player) => {
-            const active = selected.id === player.id
+        <motion.div className="relative mx-auto mt-0 h-24 w-full max-w-5xl overflow-hidden [perspective:1800px] [transform-style:preserve-3d]">
+          {fieldPlayers.map((player, index) => {
+            let offset = index - activeIndex
+            if (offset > fieldPlayers.length / 2) offset -= fieldPlayers.length
+            if (offset < -fieldPlayers.length / 2) offset += fieldPlayers.length
+            const abs = Math.abs(offset)
+            if (abs > 2) return null
+            const active = offset === 0
             return (
               <motion.button
                 key={player.id}
-                variants={staggerItem}
                 onClick={() => onSelect(player.id)}
-                whileHover={{ y: -6, scale: active ? 1.04 : 1.03 }}
-                transition={softSpring}
+                animate={{
+                  x: offset * 148,
+                  scale: abs === 0 ? 1 : abs === 1 ? 0.82 : 0.66,
+                  opacity: abs === 0 ? 1 : abs === 1 ? 0.68 : 0.34,
+                  filter: abs === 0 ? "blur(0px)" : abs === 1 ? "blur(1px)" : "blur(4px)",
+                  zIndex: 50 - abs,
+                  rotateY: offset * -14,
+                  translateZ: abs === 0 ? 100 : abs === 1 ? -30 : -90,
+                }}
+                whileHover={active ? { scale: 1.04, y: -6 } : { scale: 0.86, opacity: 0.82 }}
+                transition={spring}
                 className={cn(
-                  "relative h-20 shrink-0 overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
-                  active ? "w-44 ring-1 ring-foreground/35" : "w-24 opacity-55",
+                  "absolute left-1/2 top-0 h-20 w-44 -translate-x-1/2 origin-center overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
+                  active && "ring-1 ring-foreground/35",
                 )}
               >
                 <Image src={player.photo} alt={player.fullName} fill sizes="176px" className="object-cover object-top opacity-75" />
@@ -148,8 +147,7 @@ export function FieldAnalyticsView({
         </div>
 
         <motion.div
-          layoutId="athletic-field-surface"
-          className="relative mt-4 aspect-[1.62/1] max-h-[55vh] min-h-[280px] overflow-hidden rounded-[24px] bg-[linear-gradient(90deg,rgba(22,80,42,0.36),rgba(13,45,27,0.36),rgba(22,80,42,0.36))] md:mt-5"
+          className="relative mt-4 aspect-[1.62/1] max-h-[66vh] min-h-[340px] w-full overflow-hidden rounded-[24px] bg-[linear-gradient(90deg,rgba(22,80,42,0.36),rgba(13,45,27,0.36),rgba(22,80,42,0.36))] md:mt-5"
           initial={{ opacity: 0, y: 14, scale: 0.98 }}
           animate={{ opacity: 1, rotateX: 0, y: -4, scale: 1.02 }}
           transition={softSpring}
@@ -215,7 +213,7 @@ export function FieldAnalyticsView({
                     fill={metric === "accelerations" ? "var(--good)" : "var(--warn)"}
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: [0, 1.3, 1], opacity: 1 }}
-                    transition={{ ...spring, delay: index * 0.1 }}
+                    transition={{ duration: 0.42, ease: "easeOut", delay: index * 0.1 }}
                   />
                 ))}
               </motion.svg>
@@ -230,7 +228,7 @@ export function FieldAnalyticsView({
                     style={{ left: `${point.x}%`, top: `${point.y}%` }}
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: [1, 1.6, 1], opacity: [0.4, 1, 0.55] }}
-                    transition={{ duration: 1.4, repeat: Number.POSITIVE_INFINITY, delay: index * 0.12 }}
+                    transition={{ duration: 1.4, ease: "easeInOut", repeat: Number.POSITIVE_INFINITY, delay: index * 0.12 }}
                   />
                 ))}
               </motion.div>
@@ -261,7 +259,7 @@ export function FieldAnalyticsView({
                     fill={shot.result === "gol" ? "var(--good)" : "var(--alert)"}
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: [0, 1.45, 1], opacity: 1 }}
-                    transition={{ ...spring, delay: index * 0.12 }}
+                    transition={{ duration: 0.42, ease: "easeOut", delay: index * 0.12 }}
                   />
                 ))}
               </motion.svg>

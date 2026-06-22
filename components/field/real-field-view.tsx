@@ -11,7 +11,6 @@ export function RealFieldView({ onNext }: { onNext: () => void }) {
     <motion.button
       type="button"
       onClick={onNext}
-      layoutId="athletic-field-surface"
       className="relative min-h-screen w-full overflow-hidden bg-[#000000] text-left"
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
