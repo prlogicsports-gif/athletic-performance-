@@ -34,23 +34,25 @@ export function SplashScreen({ onEnter }: { onEnter: (s: Screen) => void }) {
         />
       </motion.div>
       <motion.div
-        className="absolute bottom-14 flex flex-col items-center gap-1 text-center md:bottom-16"
+        className="absolute bottom-14 flex items-center gap-2 text-left md:bottom-16"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...softSpring, delay: 0.6 }}
       >
-        <span className="text-[6px] font-medium uppercase leading-none tracking-[0.2em] text-foreground/30 md:text-[7px]">
-          Powered by
-        </span>
         <Image
           src="/pr-logo-solid.png"
           alt="PR Logic Sports"
           width={96}
           height={64}
-          className="h-auto w-14 object-contain opacity-75 md:w-16"
+          className="h-auto w-12 object-contain opacity-75 md:w-14"
         />
-        <span className="text-[6px] font-semibold uppercase leading-none tracking-[0.18em] text-foreground/45 md:text-[7px]">
-          PR Logic Sports
+        <span className="flex flex-col leading-none">
+          <span className="text-[6px] font-medium uppercase tracking-[0.2em] text-foreground/30 md:text-[7px]">
+            Powered by
+          </span>
+          <span className="mt-1 text-[6px] font-semibold uppercase tracking-[0.18em] text-foreground/45 md:text-[7px]">
+            PR Logic Sports
+          </span>
         </span>
       </motion.div>
       <motion.span
