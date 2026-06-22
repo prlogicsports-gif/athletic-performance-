@@ -56,7 +56,7 @@ export function SplashScreen({ onEnter }: { onEnter: (s: Screen) => void }) {
         </span>
       </motion.div>
       <motion.span
-        className="absolute bottom-14 text-[10px] font-medium uppercase tracking-[0.32em] text-foreground/45 md:bottom-16"
+        className="absolute bottom-24 text-[10px] font-medium uppercase tracking-[0.32em] text-foreground/45 md:bottom-28"
         initial={{ opacity: 0 }}
         animate={{ opacity: [0.3, 0.7, 0.3] }}
         transition={{ delay: 1.1, duration: 1.8, repeat: Number.POSITIVE_INFINITY }}
