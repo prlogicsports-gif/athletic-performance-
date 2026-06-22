@@ -33,16 +33,28 @@ export function SplashScreen({ onEnter }: { onEnter: (s: Screen) => void }) {
           className="object-contain object-center"
         />
       </motion.div>
-      <motion.span
-        className="absolute bottom-16 text-[7px] font-semibold uppercase tracking-[0.28em] text-foreground/25 md:text-[8px]"
+      <motion.div
+        className="absolute bottom-14 flex flex-col items-center gap-1 text-center md:bottom-16"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...softSpring, delay: 0.6 }}
       >
-        Powered by PR Logic Sports
-      </motion.span>
+        <span className="text-[6px] font-medium uppercase leading-none tracking-[0.2em] text-foreground/30 md:text-[7px]">
+          Powered by
+        </span>
+        <Image
+          src="/pr-logo-solid.png"
+          alt="PR Logic Sports"
+          width={96}
+          height={64}
+          className="h-auto w-14 object-contain opacity-75 md:w-16"
+        />
+        <span className="text-[6px] font-semibold uppercase leading-none tracking-[0.18em] text-foreground/45 md:text-[7px]">
+          PR Logic Sports
+        </span>
+      </motion.div>
       <motion.span
-        className="absolute bottom-8 text-[10px] font-medium uppercase tracking-[0.32em] text-foreground/45"
+        className="absolute bottom-5 text-[10px] font-medium uppercase tracking-[0.32em] text-foreground/45 md:bottom-7"
         initial={{ opacity: 0 }}
         animate={{ opacity: [0.3, 0.7, 0.3] }}
         transition={{ delay: 1.1, duration: 1.8, repeat: Number.POSITIVE_INFINITY }}
