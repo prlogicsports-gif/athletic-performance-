@@ -103,6 +103,8 @@ export function FieldAnalyticsView({
             return (
               <motion.button
                 key={player.id}
+                onMouseEnter={() => onSelect(player.id)}
+                onFocus={() => onSelect(player.id)}
                 onClick={() => onSelect(player.id)}
                 animate={{
                   x: offset * 148,
@@ -147,7 +149,7 @@ export function FieldAnalyticsView({
         </div>
 
         <motion.div
-          className="relative mt-4 aspect-[1.62/1] max-h-[66vh] min-h-[340px] w-full overflow-hidden rounded-[24px] bg-[linear-gradient(90deg,rgba(22,80,42,0.36),rgba(13,45,27,0.36),rgba(22,80,42,0.36))] md:mt-5"
+          className="relative mt-4 aspect-[1.62/1] max-h-none min-h-[420px] w-full overflow-hidden rounded-[24px] bg-[linear-gradient(90deg,rgba(22,80,42,0.36),rgba(13,45,27,0.36),rgba(22,80,42,0.36))] md:mt-5 md:min-h-[520px]"
           initial={{ opacity: 0, y: 14, scale: 0.98 }}
           animate={{ opacity: 1, rotateX: 0, y: -4, scale: 1.02 }}
           transition={softSpring}
@@ -212,7 +214,7 @@ export function FieldAnalyticsView({
                     r={1}
                     fill={metric === "accelerations" ? "var(--good)" : "var(--warn)"}
                     initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: [0, 1.3, 1], opacity: 1 }}
+                    animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.42, ease: "easeOut", delay: index * 0.1 }}
                   />
                 ))}
@@ -227,8 +229,8 @@ export function FieldAnalyticsView({
                     className="absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-alert"
                     style={{ left: `${point.x}%`, top: `${point.y}%` }}
                     initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: [1, 1.6, 1], opacity: [0.4, 1, 0.55] }}
-                    transition={{ duration: 1.4, ease: "easeInOut", repeat: Number.POSITIVE_INFINITY, delay: index * 0.12 }}
+                    animate={{ scale: 1.45, opacity: 0.55 }}
+                    transition={{ duration: 1.1, ease: "easeInOut", repeat: Number.POSITIVE_INFINITY, repeatType: "mirror", delay: index * 0.12 }}
                   />
                 ))}
               </motion.div>
@@ -258,7 +260,7 @@ export function FieldAnalyticsView({
                     r={1.15}
                     fill={shot.result === "gol" ? "var(--good)" : "var(--alert)"}
                     initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: [0, 1.45, 1], opacity: 1 }}
+                    animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.42, ease: "easeOut", delay: index * 0.12 }}
                   />
                 ))}

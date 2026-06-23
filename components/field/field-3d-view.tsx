@@ -72,7 +72,10 @@ export function Field3DView({
           return (
             <motion.button
               key={player.id}
-              onMouseEnter={() => setHoveredId(player.id)}
+              onMouseEnter={() => {
+                setHoveredId(player.id)
+                onSelect(player.id)
+              }}
               onMouseLeave={() => setHoveredId(null)}
               onFocus={() => setHoveredId(player.id)}
               onBlur={() => setHoveredId(null)}
@@ -116,12 +119,12 @@ export function Field3DView({
         })}
       </motion.div>
 
-      <div className="relative -mt-5 flex min-h-0 flex-1 items-start justify-center overflow-hidden [perspective:1600px] md:-mt-7">
+      <div className="relative -mt-3 flex min-h-0 flex-1 items-start justify-center overflow-hidden md:-mt-5">
         <motion.div
-          className="relative aspect-[1.62/1] max-h-[66vh] w-full max-w-6xl overflow-hidden rounded-[28px] shadow-[0_42px_120px_-50px_rgba(255,255,255,0.25)] [transform-style:preserve-3d]"
-          initial={{ opacity: 0, rotateX: 58, x: 28, y: 18, scale: 0.94 }}
-          animate={{ opacity: 1, rotateX: 54, x: 0, y: 0, scale: 1 }}
-          exit={{ opacity: 0, rotateX: 14, scale: 1.04 }}
+          className="relative aspect-[1.62/1] max-h-[70vh] min-h-[360px] w-full max-w-7xl overflow-hidden rounded-[28px] shadow-[0_42px_120px_-50px_rgba(255,255,255,0.25)]"
+          initial={{ opacity: 0, y: 18, scale: 0.96 }}
+          animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+          exit={{ opacity: 0, scale: 1.02 }}
           transition={softSpring}
           style={{ transformOrigin: "center center" }}
         >

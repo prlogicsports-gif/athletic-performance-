@@ -30,7 +30,7 @@ export function AthleticFieldExperience({
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 overflow-hidden bg-[#000000] text-foreground"
+      className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden bg-[#000000] text-foreground"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

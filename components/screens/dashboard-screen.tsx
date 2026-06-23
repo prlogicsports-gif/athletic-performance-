@@ -164,7 +164,8 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
         <motion.div
           variants={staggerItem}
           transition={spring}
-          className="relative flex h-[198px] w-64 shrink-0 overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform sm:w-72"
+          whileHover={{ y: -6, scale: 1.025 }}
+          className="group relative flex h-[198px] w-64 shrink-0 overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform sm:w-72 md:w-80"
         >
           <button
             type="button"
@@ -176,10 +177,10 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
               src="/athletic-aerial-field.png"
               alt="Arena Sicredi"
               fill
-              sizes="288px"
-              className="object-cover object-center opacity-55 transition-transform duration-700 hover:scale-105"
+              sizes="320px"
+              className="object-cover object-center opacity-55 transition duration-700 group-hover:scale-110 group-hover:opacity-70"
             />
-            <div className="absolute inset-0 bg-background/30" />
+            <div className="absolute inset-0 bg-background/30 transition-colors duration-500 group-hover:bg-background/20" />
             <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent" />
             <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background via-background/70 to-transparent" />
             <div className="absolute bottom-4 left-4 right-4">
@@ -202,7 +203,7 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
                 key={stage}
                 type="button"
                 onClick={() => setFieldOpen(stage as FieldStage)}
-                className="rounded-full bg-background/60 px-2 py-1 text-[8px] font-medium uppercase tracking-[0.12em] text-foreground/55 backdrop-blur transition-colors hover:text-foreground"
+                className="rounded-full bg-background/60 px-2 py-1 text-[8px] font-medium uppercase tracking-[0.12em] text-foreground/55 backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-foreground hover:text-background"
               >
                 {label}
               </button>
