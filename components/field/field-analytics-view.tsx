@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { useRef } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { fieldMetrics, fieldPlayers, type FieldMetric } from "@/lib/field-data"
 import { cn } from "@/lib/utils"
@@ -21,12 +22,18 @@ function FlatFieldLines() {
   )
 }
 
+const FIELD_RATIO = 1.62
+
+function fieldX(value: number) {
+  return value * FIELD_RATIO
+}
+
 function routePath(points: { x: number; y: number }[]) {
-  return points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ")
+  return points.map((point, index) => `${index === 0 ? "M" : "L"} ${fieldX(point.x)} ${point.y}`).join(" ")
 }
 
 function vectorPath(vector: { x: number; y: number; dx: number; dy: number }) {
-  return `M ${vector.x} ${vector.y} L ${vector.x + vector.dx} ${vector.y + vector.dy}`
+  return `M ${fieldX(vector.x)} ${vector.y} L ${fieldX(vector.x + vector.dx)} ${vector.y + vector.dy}`
 }
 
 function HeatmapLayer({ points, id }: { points: { x: number; y: number; intensity: number }[]; id: string }) {
@@ -77,13 +84,23 @@ export function FieldAnalyticsView({
   onSelect: (id: string) => void
 }) {
   const selected = fieldPlayers.find((player) => player.id === selectedId) ?? fieldPlayers[0]
+  const hoverTimer = useRef<ReturnType<typeof window.setTimeout> | null>(null)
   const activeIndex = Math.max(
     0,
     fieldPlayers.findIndex((player) => player.id === selected.id),
   )
 
+  const scheduleSelect = (id: string) => {
+    if (hoverTimer.current) window.clearTimeout(hoverTimer.current)
+    hoverTimer.current = window.setTimeout(() => onSelect(id), 220)
+  }
+
+  const cancelScheduledSelect = () => {
+    if (hoverTimer.current) window.clearTimeout(hoverTimer.current)
+  }
+
   return (
-    <div className="grid h-screen min-h-0 gap-3 overflow-hidden bg-[#000000] px-4 pb-4 pt-12 md:grid-cols-[1fr_240px] md:px-8 md:pt-12">
+    <div className="grid min-h-screen gap-8 overflow-visible bg-[#000000] px-4 pb-12 pt-16 md:grid-cols-[1fr_250px] md:gap-10 md:px-8 md:pb-16 md:pt-16">
       <div className="flex min-w-0 flex-col">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -92,7 +109,7 @@ export function FieldAnalyticsView({
           </div>
         </div>
 
-        <motion.div className="relative mx-auto mt-0 h-24 w-full max-w-5xl overflow-hidden [perspective:1800px] [transform-style:preserve-3d]">
+        <motion.div className="relative mx-auto mt-6 h-28 w-full max-w-5xl overflow-hidden [perspective:1800px] [transform-style:preserve-3d]">
           {fieldPlayers.map((player, index) => {
             let offset = index - activeIndex
             if (offset > fieldPlayers.length / 2) offset -= fieldPlayers.length
@@ -103,11 +120,13 @@ export function FieldAnalyticsView({
             return (
               <motion.button
                 key={player.id}
-                onMouseEnter={() => onSelect(player.id)}
-                onFocus={() => onSelect(player.id)}
+                onMouseEnter={() => scheduleSelect(player.id)}
+                onMouseLeave={cancelScheduledSelect}
+                onFocus={() => scheduleSelect(player.id)}
+                onBlur={cancelScheduledSelect}
                 onClick={() => onSelect(player.id)}
                 animate={{
-                  x: offset * 148,
+                  x: offset * 164,
                   scale: abs === 0 ? 1 : abs === 1 ? 0.82 : 0.66,
                   opacity: abs === 0 ? 1 : abs === 1 ? 0.68 : 0.34,
                   filter: abs === 0 ? "blur(0px)" : abs === 1 ? "blur(1px)" : "blur(4px)",
@@ -116,9 +135,9 @@ export function FieldAnalyticsView({
                   translateZ: abs === 0 ? 100 : abs === 1 ? -30 : -90,
                 }}
                 whileHover={active ? { scale: 1.04, y: -6 } : { scale: 0.86, opacity: 0.82 }}
-                transition={spring}
+                transition={{ ...spring, stiffness: 130, damping: 26 }}
                 className={cn(
-                  "absolute left-1/2 top-0 h-20 w-44 -translate-x-1/2 origin-center overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
+                  "absolute left-1/2 top-1 h-24 w-48 -translate-x-1/2 origin-center overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
                   active && "ring-1 ring-foreground/35",
                 )}
               >
@@ -132,7 +151,7 @@ export function FieldAnalyticsView({
           })}
         </motion.div>
 
-        <div className="mt-1 flex max-w-full gap-2 overflow-x-auto pb-2 no-scrollbar">
+        <div className="mt-5 flex max-w-full gap-2 overflow-x-auto pb-2 no-scrollbar">
           {fieldMetrics.map((item) => (
             <button
               key={item.id}
@@ -149,9 +168,9 @@ export function FieldAnalyticsView({
         </div>
 
         <motion.div
-          className="relative mt-4 aspect-[1.62/1] max-h-none min-h-[420px] w-full overflow-hidden rounded-[24px] bg-[linear-gradient(90deg,rgba(22,80,42,0.36),rgba(13,45,27,0.36),rgba(22,80,42,0.36))] md:mt-5 md:min-h-[520px]"
+          className="relative mt-7 aspect-[1.62/1] max-h-none min-h-[440px] w-full overflow-hidden rounded-[24px] bg-[linear-gradient(90deg,rgba(22,80,42,0.36),rgba(13,45,27,0.36),rgba(22,80,42,0.36))] md:mt-8 md:min-h-[560px]"
           initial={{ opacity: 0, y: 14, scale: 0.98 }}
-          animate={{ opacity: 1, rotateX: 0, y: -4, scale: 1.02 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={softSpring}
         >
           <div className="absolute inset-0 bg-background/30" />
@@ -163,7 +182,7 @@ export function FieldAnalyticsView({
             )}
 
             {["routes", "distance", "playerLoad", "speedZone"].includes(metric) && (
-              <motion.svg key={metric} viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <motion.svg key={metric} viewBox="0 0 162 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 <motion.path
                   d={routePath(metric === "distance" ? selected.distanceTrail : selected.routes)}
                   fill="none"
@@ -178,7 +197,7 @@ export function FieldAnalyticsView({
                 {(metric === "distance" ? selected.distanceTrail : selected.routes).map((point, index, list) => (
                   <motion.circle
                     key={`${metric}-${index}`}
-                    cx={point.x}
+                    cx={fieldX(point.x)}
                     cy={point.y}
                     r={index === 0 || index === list.length - 1 ? 1.2 : 0.75}
                     fill={index === 0 ? "var(--good)" : index === list.length - 1 ? "var(--foreground)" : "rgba(255,255,255,0.65)"}
@@ -191,7 +210,7 @@ export function FieldAnalyticsView({
             )}
 
             {["accelerations", "decelerations"].includes(metric) && (
-              <motion.svg key={metric} viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <motion.svg key={metric} viewBox="0 0 162 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 {(metric === "accelerations" ? selected.accelerations : selected.decelerations).map((vector, index) => (
                   <motion.path
                     key={index}
@@ -209,7 +228,7 @@ export function FieldAnalyticsView({
                 {(metric === "accelerations" ? selected.accelerations : selected.decelerations).map((vector, index) => (
                   <motion.circle
                     key={`dot-${index}`}
-                    cx={vector.x + vector.dx}
+                    cx={fieldX(vector.x + vector.dx)}
                     cy={vector.y + vector.dy}
                     r={1}
                     fill={metric === "accelerations" ? "var(--good)" : "var(--warn)"}
@@ -237,11 +256,11 @@ export function FieldAnalyticsView({
             )}
 
             {metric === "shots" && (
-              <motion.svg key="shots" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <motion.svg key="shots" viewBox="0 0 162 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 {selected.shots.map((shot, index) => (
                   <motion.path
                     key={index}
-                    d={`M ${shot.x} ${shot.y} L ${shot.targetX} ${shot.targetY}`}
+                    d={`M ${fieldX(shot.x)} ${shot.y} L ${fieldX(shot.targetX)} ${shot.targetY}`}
                     fill="none"
                     stroke={shot.result === "gol" ? "var(--good)" : "var(--alert)"}
                     strokeWidth={1}
@@ -255,7 +274,7 @@ export function FieldAnalyticsView({
                 {selected.shots.map((shot, index) => (
                   <motion.circle
                     key={`shot-target-${index}`}
-                    cx={shot.targetX}
+                    cx={fieldX(shot.targetX)}
                     cy={shot.targetY}
                     r={1.15}
                     fill={shot.result === "gol" ? "var(--good)" : "var(--alert)"}

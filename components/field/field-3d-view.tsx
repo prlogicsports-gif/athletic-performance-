@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { fieldPlayers } from "@/lib/field-data"
@@ -33,6 +33,7 @@ export function Field3DView({
   onNext: () => void
 }) {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
+  const hoverTimer = useRef<ReturnType<typeof window.setTimeout> | null>(null)
   const selectedPlayer = fieldPlayers.find((player) => player.id === selectedId) ?? fieldPlayers[0]
   const previewPlayer = fieldPlayers.find((player) => player.id === hoveredId) ?? selectedPlayer
   const activeIndex = Math.max(
@@ -45,8 +46,17 @@ export function Field3DView({
     window.setTimeout(onNext, 220)
   }
 
+  const scheduleSelect = (id: string) => {
+    if (hoverTimer.current) window.clearTimeout(hoverTimer.current)
+    hoverTimer.current = window.setTimeout(() => onSelect(id), 220)
+  }
+
+  const cancelScheduledSelect = () => {
+    if (hoverTimer.current) window.clearTimeout(hoverTimer.current)
+  }
+
   return (
-    <div className="flex h-screen min-h-0 flex-col bg-[#000000] px-4 pb-4 pt-12 md:px-8 md:pt-12">
+    <div className="flex min-h-screen flex-col bg-[#000000] px-4 pb-12 pt-16 md:px-8 md:pb-16 md:pt-16">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <span className="text-[9px] uppercase tracking-[0.24em] text-foreground/40">Modelo tatico</span>
@@ -74,11 +84,20 @@ export function Field3DView({
               key={player.id}
               onMouseEnter={() => {
                 setHoveredId(player.id)
-                onSelect(player.id)
+                scheduleSelect(player.id)
               }}
-              onMouseLeave={() => setHoveredId(null)}
-              onFocus={() => setHoveredId(player.id)}
-              onBlur={() => setHoveredId(null)}
+              onMouseLeave={() => {
+                setHoveredId(null)
+                cancelScheduledSelect()
+              }}
+              onFocus={() => {
+                setHoveredId(player.id)
+                scheduleSelect(player.id)
+              }}
+              onBlur={() => {
+                setHoveredId(null)
+                cancelScheduledSelect()
+              }}
               onClick={() => (selected ? openPlayerAnalysis(player.id) : onSelect(player.id))}
               animate={{
                 x: offset * 156,
@@ -90,7 +109,7 @@ export function Field3DView({
                 translateZ: abs === 0 ? 100 : abs === 1 ? -30 : -90,
               }}
               whileHover={selected ? { scale: 1.04, y: -6 } : { scale: 0.86, opacity: 0.82 }}
-              transition={spring}
+              transition={{ ...spring, stiffness: 130, damping: 26 }}
               className={cn(
                 "absolute left-1/2 top-0 h-24 w-48 -translate-x-1/2 origin-center overflow-hidden rounded-2xl bg-card/35 text-left will-change-transform",
                 selected && "ring-1 ring-foreground/35",
@@ -119,7 +138,7 @@ export function Field3DView({
         })}
       </motion.div>
 
-      <div className="relative -mt-3 flex min-h-0 flex-1 items-start justify-center overflow-hidden md:-mt-5">
+      <div className="relative mt-4 flex min-h-[440px] flex-1 items-start justify-center overflow-visible md:mt-6 md:min-h-[520px]">
         <motion.div
           className="relative aspect-[1.62/1] max-h-[70vh] min-h-[360px] w-full max-w-7xl overflow-hidden rounded-[28px] shadow-[0_42px_120px_-50px_rgba(255,255,255,0.25)]"
           initial={{ opacity: 0, y: 18, scale: 0.96 }}

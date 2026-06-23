@@ -73,7 +73,7 @@ export function AthleticFieldExperience({
         </motion.div>
       )}
 
-      <div className="h-full w-full">
+      <div className="min-h-full w-full">
         {stage === "real" && <RealFieldView onNext={() => setStage("model")} />}
         {stage === "model" && (
           <Field3DView
