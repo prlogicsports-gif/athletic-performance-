@@ -19,7 +19,7 @@ import { DonutLoad, Bar, LineChart } from "../viz"
 import { cn } from "@/lib/utils"
 import type { Screen } from "@/lib/nav"
 import { spring, staggerContainer, staggerItem } from "@/lib/motion"
-import { AthleticFieldExperience, type FieldStage } from "@/components/field/athletic-field-experience"
+import { AthleticFieldExperience } from "@/components/field/athletic-field-experience"
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 18 },
@@ -60,7 +60,7 @@ function SectionLabel({ children, sub }: { children: React.ReactNode; sub?: stri
 }
 
 export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: string) => void }) {
-  const [fieldOpen, setFieldOpen] = useState<FieldStage | null>(null)
+  const [fieldOpen, setFieldOpen] = useState(false)
 
   return (
     <motion.div variants={staggerContainer} initial="initial" animate="animate" className="px-4 pb-16 pt-1 md:px-8">
@@ -73,7 +73,7 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
         </span>
         <button
           type="button"
-          onClick={() => setFieldOpen("real")}
+          onClick={() => setFieldOpen(true)}
           className="hidden"
         >
           Visualização de Campo
@@ -81,7 +81,7 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
       </motion.div>
       <button
         type="button"
-        onClick={() => setFieldOpen("real")}
+        onClick={() => setFieldOpen(true)}
         className="hidden"
       >
         Visualização de Campo
@@ -169,7 +169,7 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
         >
           <button
             type="button"
-            onClick={() => setFieldOpen("real")}
+            onClick={() => setFieldOpen(true)}
             className="absolute inset-0 text-left"
             aria-label="Abrir visualização de campo"
           >
@@ -183,32 +183,16 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
             <div className="absolute inset-0 bg-background/30 transition-colors duration-500 group-hover:bg-background/20" />
             <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent" />
             <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background via-background/70 to-transparent" />
-            <div className="absolute bottom-4 left-4 right-4">
+            <div className="absolute bottom-4 left-4 right-4 [&>span:last-child]:hidden">
               <span className="text-[8px] font-medium uppercase tracking-[0.22em] text-foreground/45">
                 Arena Sicredi
               </span>
-              <h3 className="mt-1 text-sm font-semibold text-foreground">Visualização de Campo</h3>
               <span className="mt-1 block text-[9px] uppercase tracking-[0.16em] text-foreground/45">
-                Real → 3D → Análise
+                Campo 2D - treino ao vivo
               </span>
+              <h3 className="mt-1 text-sm font-semibold text-foreground">Visualização de Campo</h3>
             </div>
           </button>
-          <div className="absolute right-3 top-3 flex gap-1">
-            {[
-              ["real", "Real"],
-              ["model", "3D"],
-              ["analytics", "Plano"],
-            ].map(([stage, label]) => (
-              <button
-                key={stage}
-                type="button"
-                onClick={() => setFieldOpen(stage as FieldStage)}
-                className="rounded-full bg-background/60 px-2 py-1 text-[8px] font-medium uppercase tracking-[0.12em] text-foreground/55 backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-foreground hover:text-background"
-              >
-                {label}
-              </button>
-            ))}
-          </div>
         </motion.div>
       </motion.div>
 
@@ -307,7 +291,7 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
         </motion.div>
       </div>
       <AnimatePresence>
-        {fieldOpen && <AthleticFieldExperience initialStage={fieldOpen} onClose={() => setFieldOpen(null)} />}
+        {fieldOpen && <AthleticFieldExperience onClose={() => setFieldOpen(false)} onOpenAthlete={onSelectAthlete} />}
       </AnimatePresence>
     </motion.div>
   )
