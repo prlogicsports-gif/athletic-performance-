@@ -8,7 +8,7 @@ export function FieldRoutesLayer({ player, recent = false }: { player: LiveField
   const points = recent ? player.recentTrail : player.distanceTrail
 
   return (
-    <motion.svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+    <motion.svg viewBox="0 0 105 68" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <FieldMotionTrace
         points={points}
         color="rgba(94,222,102,0.96)"

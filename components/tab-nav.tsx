@@ -18,8 +18,8 @@ type NavEntry = {
 }
 
 const leftItems: NavEntry[] = [
-  { id: "dashboard", label: "DASHBOARD", icon: Home, screen: "dashboard" },
   { id: "briefing", label: "BRIEFING", icon: Newspaper, screen: "briefing", feature: "morningBriefEnabled" },
+  { id: "dashboard", label: "DASHBOARD", icon: Home, screen: "dashboard" },
   { id: "equipe", label: "EQUIPE", icon: Users, screen: "team", feature: "teamBoardEnabled" },
   { id: "atletas", label: "ATLETAS", icon: User, screen: "carousel" },
 ]
