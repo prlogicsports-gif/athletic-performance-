@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import type { LiveFieldPlayer } from "@/lib/mock-field-session"
-import { spring } from "@/lib/motion"
+import { FieldMotionTrace } from "./field-motion-trace"
 
 export function FieldSprintsLayer({ player }: { player: LiveFieldPlayer }) {
   return (
@@ -11,19 +11,13 @@ export function FieldSprintsLayer({ player }: { player: LiveFieldPlayer }) {
         const start = player.routes[index] ?? player.fieldPosition
         return (
           <g key={`${player.id}-sprint-${index}`}>
-            <motion.path
-              d={`M ${start.x} ${start.y} L ${point.x} ${point.y}`}
-              fill="none"
-              stroke="var(--alert)"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 0.88 }}
-              transition={{ ...spring, delay: index * 0.04 }}
+            <FieldMotionTrace
+              points={[start, point]}
+              color={index % 2 === 0 ? "rgba(255,211,49,0.98)" : "rgba(255,74,74,0.92)"}
+              pointColor={index % 2 === 0 ? "rgba(255,211,49,0.98)" : "rgba(255,74,74,0.92)"}
+              delay={index * 0.04}
+              width={1.14}
             />
-            <circle cx={start.x} cy={start.y} r="0.8" fill="var(--foreground)" />
-            <circle cx={point.x} cy={point.y} r="1.25" fill="var(--alert)" />
           </g>
         )
       })}
