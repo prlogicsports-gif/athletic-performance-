@@ -3,44 +3,16 @@
 import Image from "next/image"
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Activity, Database, FileText, Flame, HeartPulse, Map, MessageSquarePlus, X } from "lucide-react"
-import { athletes, type Athlete } from "@/lib/data"
+import { Activity, Database, FileText, Flame, HeartPulse, MessageSquarePlus, X } from "lucide-react"
+import { athletes, profilePhysical, profileRings } from "@/lib/data"
 import { getAthleteDossier } from "@/lib/athlete-dossier-data"
 import { DataSourceBadge } from "@/components/analytics/data-source-badge"
-import { Bar } from "@/components/viz"
+import { Bar, Ring } from "@/components/viz"
+import { MetricIcon } from "@/components/metric-icon"
 import { cn } from "@/lib/utils"
 import { spring } from "@/lib/motion"
 
-const tabs = ["visao geral", "padroes", "carga", "termografia", "observacoes", "campo", "historico", "fontes"] as const
-
-function MiniField({ athlete }: { athlete: Athlete }) {
-  const x = athlete.group === "atacantes" ? 72 : athlete.group === "meio-campistas" ? 52 : 32
-  const y = athlete.number % 2 === 0 ? 42 : 58
-
-  return (
-    <div className="relative aspect-[105/68] overflow-hidden rounded-[22px] bg-[linear-gradient(90deg,rgba(22,80,42,0.34),rgba(13,45,27,0.24))]">
-      <div className="absolute inset-[7%] border border-white/26" />
-      <div className="absolute bottom-[7%] left-1/2 top-[7%] w-px bg-white/18" />
-      <div className="absolute left-1/2 top-1/2 size-16 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/16" />
-      <span
-        className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
-        style={{
-          left: `${x}%`,
-          top: `${y}%`,
-          width: 150,
-          height: 95,
-          background: "radial-gradient(circle, rgba(255,34,34,0.62), rgba(255,211,49,0.34), rgba(80,220,96,0.16), transparent 74%)",
-        }}
-      />
-      <span
-        className="absolute flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background"
-        style={{ left: `${x}%`, top: `${y}%` }}
-      >
-        {athlete.number}
-      </span>
-    </div>
-  )
-}
+const tabs = ["visao geral", "padroes", "carga", "termografia", "observacoes", "historico", "fontes"] as const
 
 export function AthleteDossierDialog({
   athleteId,
@@ -76,30 +48,44 @@ export function AthleteDossierDialog({
           <X className="size-4" />
         </button>
 
-        <header className="grid gap-6 lg:grid-cols-[340px_minmax(0,1fr)]">
-          <div className="relative min-h-[360px] overflow-hidden rounded-[26px] bg-card/20 p-5">
-            <Image src={athlete.id === "giroud" ? "/athletes/hero-profile.png" : athlete.photo} alt={`${athlete.firstName} ${athlete.lastName}`} fill sizes="340px" className="object-cover object-top opacity-62" />
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/15" />
-            <div className="relative z-10 flex h-full flex-col justify-end">
-              <span className="text-[9px] font-semibold uppercase tracking-[0.24em] text-foreground/42">Dossie operacional</span>
-              <div className="mt-3 flex items-end gap-3">
-                <span className="text-5xl font-bold leading-none">{athlete.number}</span>
-                <div>
-                  <h2 className="text-3xl font-semibold leading-none">{athlete.firstName} {athlete.lastName}</h2>
-                  <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-foreground/48">{athlete.position} - {dossier.category}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col justify-between gap-6 pr-10">
+        <header className="grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)]">
+          <div className="flex flex-col justify-between gap-7">
             <div>
               <div className="flex flex-wrap gap-2">
                 <span className="rounded-full bg-surface/70 px-3 py-1 text-[9px] uppercase tracking-[0.16em] text-foreground/55">{dossier.availability}</span>
                 <span className="rounded-full bg-surface/70 px-3 py-1 text-[9px] uppercase tracking-[0.16em] text-foreground/55">Responsavel: {dossier.responsible}</span>
                 <span className="rounded-full bg-surface/70 px-3 py-1 text-[9px] uppercase tracking-[0.16em] text-foreground/55">Proxima avaliacao: {dossier.nextAssessment}</span>
               </div>
-              <div className="mt-6 grid gap-4 sm:grid-cols-4">
+
+              <div className="mt-6 flex items-center gap-3 text-xs">
+                <span className="text-3xl font-bold leading-none">{athlete.number}</span>
+                <span className="uppercase tracking-[0.18em] text-foreground/45">{athlete.position}</span>
+                <span>{athlete.country}</span>
+              </div>
+
+              <h2 className="mt-2 text-5xl font-extrabold leading-none tracking-tight md:text-6xl">
+                {athlete.firstName} <span className="block md:inline">{athlete.lastName}</span>
+              </h2>
+
+              <div className="mt-8">
+                <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
+                  Metricas fisicas atuais
+                </h3>
+                <div className="flex flex-wrap gap-x-8 gap-y-5">
+                  {profilePhysical.map((metric) => (
+                    <div key={metric.label} className="flex flex-col gap-1">
+                      <MetricIcon type={metric.icon} className="size-5 text-foreground" />
+                      <div className="mt-1 flex items-baseline gap-1">
+                        <span className="text-xl font-bold">{metric.value}</span>
+                        {metric.unit && <span className="text-xs text-foreground/45">{metric.unit}</span>}
+                      </div>
+                      <span className="text-[10px] uppercase tracking-wide text-foreground/42">{metric.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-8 grid gap-4 sm:grid-cols-4">
                 {[
                   ["Altura", athlete.height],
                   ["Peso", athlete.weight],
@@ -130,6 +116,42 @@ export function AthleteDossierDialog({
               ))}
             </div>
           </div>
+
+          <motion.div layoutId={`athlete-card-${athlete.id}`} className="relative flex min-h-[380px] items-start justify-center pr-16">
+            <motion.div
+              layoutId={`athlete-photo-${athlete.id}`}
+              initial={{ opacity: 0, scale: 1.04 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={spring}
+              className="relative h-[390px] w-full max-w-sm"
+            >
+              <Image
+                src={athlete.id === "giroud" ? "/athletes/hero-profile.png" : athlete.photo}
+                alt={`${athlete.firstName} ${athlete.lastName}`}
+                fill
+                sizes="380px"
+                className="object-contain object-top opacity-90"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-l from-transparent to-background/35" />
+            </motion.div>
+
+            <div className="absolute right-0 top-2 flex flex-col gap-4">
+              {profileRings.map((ring, index) => (
+                <motion.div
+                  key={ring.label}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ...spring, delay: 0.08 * index }}
+                  className="flex flex-col items-center gap-1"
+                >
+                  <Ring pct={ring.pct} token={ring.token} size={72} />
+                  <span className="w-24 text-center text-[10px] uppercase tracking-wide text-foreground/45">
+                    {ring.label}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </header>
 
         <main className="mt-8">
@@ -139,7 +161,7 @@ export function AthleteDossierDialog({
                 { icon: Activity, label: "Carga recente", value: `${athlete.catapult.playerLoad} UA` },
                 { icon: HeartPulse, label: "Recovery", value: `${athlete.apollo.recovery}%` },
                 { icon: Flame, label: "Dor/fadiga", value: `${athlete.apollo.soreness}%` },
-                { icon: Map, label: "Ultima sessao", value: "Treino tatico" },
+                { icon: Activity, label: "Ultima sessao", value: "Treino tatico" },
               ].map((item) => (
                 <button key={item.label} type="button" className="rounded-2xl bg-card/16 p-4 text-left transition-colors hover:bg-card/28">
                   <item.icon className="size-4 text-foreground/55" />
@@ -209,8 +231,6 @@ export function AthleteDossierDialog({
               ))}
             </div>
           )}
-
-          {tab === "campo" && <MiniField athlete={athlete} />}
 
           {tab === "historico" && (
             <div className="grid gap-3 md:grid-cols-2">

@@ -1,42 +1,33 @@
 "use client"
 
-import { Circle, Triangle, X } from "lucide-react"
 import { motion } from "framer-motion"
 import type { LiveFieldPlayer } from "@/lib/mock-field-session"
-import { spring } from "@/lib/motion"
+import { FieldMotionTrace } from "./field-motion-trace"
 
 export function FieldShotsLayer({ player }: { player: LiveFieldPlayer }) {
   return (
-    <div className="absolute inset-0">
-      <motion.svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-        {player.shots.map((shot, index) => (
-          <motion.path
-            key={`${player.id}-shot-line-${index}`}
-            d={`M ${shot.x} ${shot.y} L ${shot.targetX} ${shot.targetY}`}
-            fill="none"
-            stroke={shot.result === "gol" ? "var(--good)" : shot.result === "defesa" ? "var(--warn)" : "var(--alert)"}
-            strokeWidth="1"
-            strokeLinecap="round"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.8 }}
-            transition={{ ...spring, delay: index * 0.06 }}
-          />
-        ))}
-      </motion.svg>
+    <motion.svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       {player.shots.map((shot, index) => {
-        const Icon = shot.result === "gol" ? Circle : shot.result === "defesa" ? Triangle : X
+        const color = shot.result === "gol" ? "rgba(94,222,102,0.96)" : shot.result === "defesa" ? "rgba(255,211,49,0.96)" : "rgba(255,74,74,0.94)"
         return (
-          <button
+          <g
             key={`${player.id}-shot-${index}`}
-            type="button"
-            title={`${player.name} - ${shot.result}`}
-            className="absolute z-20 flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-background/75 text-foreground backdrop-blur"
-            style={{ left: `${shot.x}%`, top: `${shot.y}%` }}
           >
-            <Icon className="size-3.5" />
-          </button>
+            <FieldMotionTrace
+              points={[
+                { x: shot.x, y: shot.y },
+                { x: (shot.x + shot.targetX) / 2, y: Math.max(8, Math.min(92, (shot.y + shot.targetY) / 2 - 3)) },
+                { x: shot.targetX, y: shot.targetY },
+              ]}
+              color={color}
+              pointColor={color}
+              delay={index * 0.06}
+              width={1}
+            />
+            <circle cx={shot.x} cy={shot.y} r="2" fill="rgba(0,0,0,0.74)" stroke={color} strokeWidth="0.52" vectorEffect="non-scaling-stroke" />
+          </g>
         )
       })}
-    </div>
+    </motion.svg>
   )
 }

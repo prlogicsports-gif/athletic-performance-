@@ -41,6 +41,26 @@ export function SettingsScreen() {
         </motion.button>
       </motion.div>
 
+      <motion.section
+        variants={staggerItem}
+        className="relative mt-6 overflow-hidden rounded-[26px] bg-white/[0.035] p-4 backdrop-blur-2xl ring-1 ring-white/[0.06] md:p-5"
+      >
+        <div className="pointer-events-none absolute inset-x-8 top-0 h-24 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.11),transparent_60%)]" />
+        <div className="relative grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+          <div>
+            <span className="text-[9px] font-medium uppercase tracking-[0.22em] text-foreground/38">
+              Feature control
+            </span>
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-foreground/64">
+              Ative modulos sem remover a experiencia: o clube pode liberar Briefing, Campo, Ao Vivo e relatorios por fase.
+            </p>
+          </div>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/45">
+            Mock local - pronto para admin
+          </span>
+        </div>
+      </motion.section>
+
       <motion.div variants={staggerContainer} className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {platformFeatures.map((feature, index) => {
           const enabled = settings[feature.id]

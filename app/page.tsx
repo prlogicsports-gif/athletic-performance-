@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
@@ -23,12 +23,7 @@ import { pageTransition, spring } from "@/lib/motion"
 export default function Page() {
   const [screen, setScreen] = useState<Screen>("splash")
   const [athleteId, setAthleteId] = useState("giroud")
-  const [showClassicDashboard, setShowClassicDashboard] = useState(false)
   const { settings } = usePlatformSettings()
-
-  useEffect(() => {
-    if (!settings.morningBriefEnabled) setShowClassicDashboard(false)
-  }, [settings.morningBriefEnabled])
 
   const selectAthlete = (id: string) => {
     setAthleteId(id)
@@ -36,7 +31,6 @@ export default function Page() {
   }
 
   const navigate = (nextScreen: Screen) => {
-    if (nextScreen === "dashboard") setShowClassicDashboard(false)
     setScreen(nextScreen)
   }
 
@@ -61,10 +55,11 @@ export default function Page() {
                 {...pageTransition}
                 transition={spring}
               >
-                {screen === "dashboard" && (
-                  settings.morningBriefEnabled && !showClassicDashboard ? (
+                {screen === "dashboard" && <DashboardScreen onSelectAthlete={selectAthlete} />}
+                {screen === "briefing" && (
+                  settings.morningBriefEnabled ? (
                     <MorningBriefScreen
-                      onOpenDashboard={() => setShowClassicDashboard(true)}
+                      onOpenDashboard={() => navigate("dashboard")}
                       onOpenSettings={() => navigate("settings")}
                       onSelectAthlete={selectAthlete}
                     />

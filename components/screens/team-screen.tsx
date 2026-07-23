@@ -38,6 +38,37 @@ export function TeamScreen() {
         </span>
       </motion.div>
 
+      <motion.section
+        variants={staggerItem}
+        className="relative mt-6 overflow-hidden rounded-[26px] bg-white/[0.035] p-4 backdrop-blur-2xl ring-1 ring-white/[0.06] md:p-5"
+      >
+        <div className="pointer-events-none absolute inset-x-6 h-24 bg-[radial-gradient(circle_at_20%_0%,rgba(255,255,255,0.10),transparent_58%)]" />
+        <div className="relative grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+          <div>
+            <span className="text-[9px] font-medium uppercase tracking-[0.22em] text-foreground/38">
+              Central da comissao
+            </span>
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-foreground/64">
+              Responsaveis, alertas e decisoes ficam conectados em uma visao compacta para orientar o trabalho do dia.
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-5 text-right md:min-w-[320px]">
+            <span>
+              <strong className="block text-xl leading-none">{activeCount}</strong>
+              <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/35">ativos</span>
+            </span>
+            <span>
+              <strong className="block text-xl leading-none">{alerts}</strong>
+              <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/35">alertas</span>
+            </span>
+            <span>
+              <strong className="block text-xl leading-none">{decisions}</strong>
+              <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/35">decisoes</span>
+            </span>
+          </div>
+        </div>
+      </motion.section>
+
       <motion.div variants={staggerContainer} className="mt-8 grid grid-cols-2 gap-6 md:grid-cols-4">
         {[
           { icon: UsersRound, label: "Ativos", value: activeCount },

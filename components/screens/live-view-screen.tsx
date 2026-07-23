@@ -48,6 +48,37 @@ export function LiveViewScreen() {
         </div>
       </motion.header>
 
+      <motion.section
+        variants={staggerItem}
+        className="relative mt-6 overflow-hidden rounded-[26px] bg-white/[0.035] p-4 backdrop-blur-2xl ring-1 ring-white/[0.06] md:p-5"
+      >
+        <div className="pointer-events-none absolute inset-x-8 top-0 h-24 bg-[radial-gradient(circle_at_68%_0%,rgba(255,255,255,0.11),transparent_58%)]" />
+        <div className="relative grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+          <div>
+            <span className="text-[9px] font-medium uppercase tracking-[0.22em] text-alert">
+              Sessao ao vivo
+            </span>
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-foreground/64">
+              Monitoramento mockado de carga, sinal e eventos criticos para orientar a comissao durante o treino.
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-5 text-right md:min-w-[340px]">
+            <span>
+              <strong className="block text-xl leading-none">{active}</strong>
+              <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/35">ativos</span>
+            </span>
+            <span>
+              <strong className="block text-xl leading-none">{noSignal}</strong>
+              <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/35">sinal</span>
+            </span>
+            <span>
+              <strong className="block text-xl leading-none">{teamLoad}</strong>
+              <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/35">UA media</span>
+            </span>
+          </div>
+        </div>
+      </motion.section>
+
       <motion.div variants={staggerItem} className="mt-7 flex max-w-full gap-2 overflow-x-auto no-scrollbar">
         {modes.map((item) => (
           <button
