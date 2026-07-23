@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { Activity, Network, ShieldCheck, UsersRound } from "lucide-react"
+import { Activity, Network, Plus, ShieldCheck, UsersRound, X } from "lucide-react"
 import { staffDepartments, staffMembers, type StaffMember } from "@/lib/staff-data"
 import { spring, staggerContainer, staggerItem } from "@/lib/motion"
 import { StaffCard } from "@/components/staff/staff-card"
@@ -11,6 +11,7 @@ import { StaffDetailDialog } from "@/components/staff/staff-detail-dialog"
 export function TeamScreen() {
   const [department, setDepartment] = useState<string>("Todos")
   const [selected, setSelected] = useState<StaffMember | null>(null)
+  const [adding, setAdding] = useState(false)
   const filtered = useMemo(
     () => department === "Todos" ? staffMembers : staffMembers.filter((member) => member.department === department),
     [department],
@@ -38,18 +39,29 @@ export function TeamScreen() {
         </span>
       </motion.div>
 
+      <motion.button
+        type="button"
+        onClick={() => setAdding(true)}
+        variants={staggerItem}
+        whileHover={{ y: -3, scale: 1.015 }}
+        transition={spring}
+        className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/[0.055] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-foreground/62 backdrop-blur-xl ring-1 ring-white/[0.06] hover:text-foreground"
+      >
+        <Plus className="size-3.5" strokeWidth={1.5} />
+        Adicionar profissional
+      </motion.button>
+
       <motion.section
         variants={staggerItem}
         className="relative mt-6 overflow-hidden rounded-[26px] bg-white/[0.035] p-4 backdrop-blur-2xl ring-1 ring-white/[0.06] md:p-5"
       >
-        <div className="pointer-events-none absolute inset-x-6 h-24 bg-[radial-gradient(circle_at_20%_0%,rgba(255,255,255,0.10),transparent_58%)]" />
         <div className="relative grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
           <div>
             <span className="text-[9px] font-medium uppercase tracking-[0.22em] text-foreground/38">
               Central da comissao
             </span>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-foreground/64">
-              Responsaveis, alertas e decisoes ficam conectados em uma visao compacta para orientar o trabalho do dia.
+              Responsaveis, alertas e decisoes ficam reunidos em uma visao compacta para orientar o trabalho do dia.
             </p>
           </div>
           <div className="grid grid-cols-3 gap-5 text-right md:min-w-[320px]">
@@ -117,7 +129,7 @@ export function TeamScreen() {
               <div key={group} className="rounded-2xl bg-card/14 p-4">
                 <span className="text-xs font-semibold">{group}</span>
                 <p className="mt-2 text-xs leading-relaxed text-foreground/45">
-                  Responsabilidades conectadas a sessoes, alertas, atletas e relatorios.
+                  Responsabilidades vinculadas a sessoes, alertas, atletas e relatorios.
                 </p>
               </div>
             ))}
@@ -135,6 +147,45 @@ export function TeamScreen() {
 
       <AnimatePresence>
         {selected && <StaffDetailDialog member={selected} onClose={() => setSelected(null)} />}
+        {adding && (
+          <motion.div
+            className="fixed inset-0 z-[80] flex items-end justify-center bg-background/82 px-3 pb-3 backdrop-blur-md md:items-center md:p-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setAdding(false)}
+          >
+            <motion.section
+              role="dialog"
+              aria-modal="true"
+              className="relative w-full max-w-xl rounded-[28px] bg-[#101010]/92 p-5 text-foreground ring-1 ring-white/[0.08] backdrop-blur-2xl md:p-7"
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.98 }}
+              transition={spring}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <button type="button" onClick={() => setAdding(false)} className="absolute right-4 top-4 flex size-9 items-center justify-center rounded-full bg-white/[0.06] text-foreground/55 hover:text-foreground" aria-label="Fechar cadastro">
+                <X className="size-4" />
+              </button>
+              <span className="text-[9px] font-medium uppercase tracking-[0.24em] text-foreground/40">
+                Equipe habilitada
+              </span>
+              <h3 className="mt-2 pr-10 text-2xl font-semibold">Adicionar profissional</h3>
+              <p className="mt-2 text-sm leading-relaxed text-foreground/52">
+                Mock preparado para cadastro futuro de profissionais por Bruno/Fisiologia.
+              </p>
+              <div className="mt-6 grid gap-3">
+                {["Nome completo", "Departamento", "Funcao", "Permissao", "Contato"].map((label) => (
+                  <div key={label} className="rounded-2xl bg-white/[0.055] p-4">
+                    <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/35">{label}</span>
+                    <p className="mt-2 text-sm text-foreground/62">Campo mockado para integracao futura.</p>
+                  </div>
+                ))}
+              </div>
+            </motion.section>
+          </motion.div>
+        )}
       </AnimatePresence>
     </motion.div>
   )

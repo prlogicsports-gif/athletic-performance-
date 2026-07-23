@@ -1,6 +1,6 @@
 "use client"
 
-import { Activity, Database, Radio, ShieldCheck } from "lucide-react"
+import { Activity, Database, FileText, ShieldCheck } from "lucide-react"
 import { motion } from "framer-motion"
 import { staggerItem } from "@/lib/motion"
 import type { FieldSession } from "@/lib/mock-field-session"
@@ -21,7 +21,7 @@ export function FieldSessionHeader({ session }: { session: FieldSession }) {
 
       <div className="grid gap-3 text-[10px] uppercase tracking-[0.14em] text-foreground/45 sm:grid-cols-2 xl:grid-cols-5">
         <span className="flex items-center gap-2"><Activity className="size-3.5 text-good" /> {session.activeAthletes} atletas ativos</span>
-        <span className="flex items-center gap-2"><Radio className="size-3.5 text-good" /> Catapult {session.catapultStatus}</span>
+        <span className="flex items-center gap-2"><FileText className="size-3.5 text-good" /> Catapult {session.catapultStatus}</span>
         <span className="flex items-center gap-2"><Database className="size-3.5 text-info" /> Apollo {session.apolloStatus}</span>
         <span className="flex items-center gap-2"><ShieldCheck className="size-3.5 text-good" /> Qualidade {session.dataQuality}</span>
         <span>{session.lastUpdate} - {session.activePeriod}</span>

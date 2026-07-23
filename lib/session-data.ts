@@ -4,7 +4,7 @@ import { staffMembers } from "@/lib/staff-data"
 
 export type SessionType = "TREINO" | "JOGO" | "AMISTOSO" | "TESTE" | "RECUPERACAO" | "AVALIACAO" | "INDIVIDUAL" | "TRANSICAO"
 export type SessionStatus = "draft" | "scheduled" | "ready" | "live" | "review" | "published" | "archived"
-export type CaptureSource = "CATAPULT" | "APOLLO" | "MANUAL" | "CSV" | "MOCK AO VIVO"
+export type ReportSource = "CATAPULT" | "APOLLO" | "MANUAL" | "CSV" | "RELATORIO EXTERNO"
 
 export type TrainingBlock = {
   id: string
@@ -14,18 +14,6 @@ export type TrainingBlock = {
   plannedLoad: number
   valences: string[]
   responsible: string
-}
-
-export type DeviceAssignment = {
-  athleteId: string
-  deviceId?: string
-  status: "connected" | "unstable" | "missing"
-  battery?: number
-  connectionQuality: number
-  preTraining: "answered" | "pending" | "restricted"
-  targetPct: number
-  restriction?: string
-  participation: "confirmed" | "monitor" | "blocked"
 }
 
 export type AthleticSession = {
@@ -44,13 +32,13 @@ export type AthleticSession = {
   team: string
   athleteIds: string[]
   status: SessionStatus
-  sources: CaptureSource[]
+  sources: ReportSource[]
   quality: number
   blocks: TrainingBlock[]
   provenance: DataProvenance
 }
 
-export type LiveCaptureEvent = {
+export type InterpretedSessionEvent = {
   id: string
   minute: number
   athleteId: string
@@ -76,7 +64,7 @@ export const athleticSessions: AthleticSession[] = [
     team: "Profissional",
     athleteIds: athletes.map((athlete) => athlete.id),
     status: "live",
-    sources: ["CATAPULT", "APOLLO", "MOCK AO VIVO"],
+    sources: ["CATAPULT", "APOLLO", "CSV"],
     quality: 94,
     provenance: mockProvenance.calculated,
     blocks: [
@@ -133,23 +121,11 @@ export const athleticSessions: AthleticSession[] = [
   },
 ]
 
-export const deviceAssignments: DeviceAssignment[] = athletes.map((athlete, index) => ({
-  athleteId: athlete.id,
-  deviceId: index === 4 ? undefined : `CAT-${String(index + 18).padStart(3, "0")}`,
-  status: index === 4 ? "missing" : index === 3 ? "unstable" : "connected",
-  battery: index === 4 ? undefined : 92 - index * 7,
-  connectionQuality: index === 4 ? 0 : index === 3 ? 64 : 98 - index * 3,
-  preTraining: athlete.zoneState === "alert" ? "restricted" : index === 1 ? "pending" : "answered",
-  targetPct: athlete.zoneState === "alert" ? 70 : athlete.zoneState === "warn" ? 82 : 100,
-  restriction: athlete.zoneState === "alert" ? "Restricao ativa - carga reduzida" : undefined,
-  participation: athlete.zoneState === "alert" ? "monitor" : index === 4 ? "blocked" : "confirmed",
-}))
-
-export const liveCaptureEvents: LiveCaptureEvent[] = [
+export const interpretedSessionEvents: InterpretedSessionEvent[] = [
   { id: "ev-01", minute: 8, athleteId: "giroud", metric: "distancia", value: 1.2, unit: "km", status: "normal", provenance: mockProvenance.catapult },
   { id: "ev-02", minute: 18, athleteId: "goncalo", metric: "playerLoad", value: 188, unit: "UA", status: "attention", provenance: mockProvenance.catapult },
   { id: "ev-03", minute: 31, athleteId: "giroud", metric: "meta", value: 82, unit: "%", status: "attention", provenance: mockProvenance.calculated },
-  { id: "ev-04", minute: 42, athleteId: "ronaldinho", metric: "sinal", value: 61, unit: "%", status: "critical", provenance: mockProvenance.catapult },
+  { id: "ev-04", minute: 42, athleteId: "ronaldinho", metric: "conflito de leitura", value: 1, unit: "registro", status: "critical", provenance: mockProvenance.catapult },
   { id: "ev-05", minute: 53, athleteId: "diogo", metric: "sprints", value: 28, unit: "spr", status: "normal", provenance: mockProvenance.catapult },
 ]
 
@@ -157,14 +133,16 @@ export function getSessionResponsible(session: AthleticSession) {
   return staffMembers.find((member) => member.id === session.responsibleId) ?? staffMembers[0]
 }
 
-export function getSessionReadiness() {
-  const missingDevices = deviceAssignments.filter((item) => item.status === "missing").length
-  const restrictions = deviceAssignments.filter((item) => item.preTraining === "restricted").length
-  const pendingPreTraining = deviceAssignments.filter((item) => item.preTraining === "pending").length
+export function getSessionImportReadiness() {
+  const catapultReports = 2
+  const apolloReports = 2
+  const pendingRecords = 5
+  const conflicts = 2
   return {
-    missingDevices,
-    restrictions,
-    pendingPreTraining,
-    canStart: missingDevices === 0 && restrictions <= 1,
+    catapultReports,
+    apolloReports,
+    pendingRecords,
+    conflicts,
+    canBuildUnifiedReport: pendingRecords <= 5,
   }
 }

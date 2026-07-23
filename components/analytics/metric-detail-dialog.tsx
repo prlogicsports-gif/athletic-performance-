@@ -108,7 +108,7 @@ export function MetricDetailDialog({
               <h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/45">Origem do dado</h3>
               <dl className="mt-3 space-y-2 text-xs">
                 <div className="flex justify-between gap-4"><dt className="text-foreground/40">Sistema</dt><dd>{analysis.provenance.sourceLabel}</dd></div>
-                <div className="flex justify-between gap-4"><dt className="text-foreground/40">Capturado</dt><dd>{analysis.provenance.collectedAt}</dd></div>
+                <div className="flex justify-between gap-4"><dt className="text-foreground/40">Registro original</dt><dd>{analysis.provenance.collectedAt}</dd></div>
                 <div className="flex justify-between gap-4"><dt className="text-foreground/40">Registrado</dt><dd>{analysis.provenance.registeredAt}</dd></div>
                 <div className="flex justify-between gap-4"><dt className="text-foreground/40">Atualizado</dt><dd>{analysis.provenance.updatedAt}</dd></div>
                 {analysis.provenance.externalRecordId && (

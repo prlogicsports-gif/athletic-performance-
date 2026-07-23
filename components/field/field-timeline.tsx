@@ -64,7 +64,7 @@ export function FieldTimeline({
             onClick={() => onMinuteChange(event.minute)}
             className={cn(
               "absolute top-[26px] size-3 -translate-x-1/2 rounded-full transition-transform hover:scale-125",
-              event.type === "alert" ? "bg-alert" : event.type === "signal" ? "bg-warn" : event.type === "decision" ? "bg-info" : "bg-foreground/45",
+              event.type === "alert" ? "bg-alert" : event.type === "issue" ? "bg-warn" : event.type === "decision" ? "bg-info" : "bg-foreground/45",
             )}
             style={{ left: `${(event.minute / maxMinute) * 100}%` }}
             title={event.label}

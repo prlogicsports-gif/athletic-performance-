@@ -59,7 +59,7 @@ export type AthleteDossier = {
   department: string
   responsible: string
   nextAssessment: string
-  connectedSources: string[]
+  dataSources: string[]
   baselines: AthleteBaseline[]
   thermographies: ThermographyRecord[]
   observations: DailyObservation[]
@@ -119,7 +119,7 @@ export const athleteDossiers: AthleteDossier[] = athletes.map((athlete, index) =
     department: athlete.zoneState === "alert" ? "Departamento medico" : "Preparacao fisica",
     responsible: athlete.zoneState === "alert" ? "B. Naves" : "A. Sampaio",
     nextAssessment: "24/07/2026 08:00",
-    connectedSources: ["Catapult", "Apollo", "Termografia", "Mock"],
+    dataSources: ["Catapult", "Apollo", "Termografia", "Mock"],
     baselines: makeBaselines(athlete.id, seed),
     thermographies: [
       {

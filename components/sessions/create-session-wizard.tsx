@@ -12,7 +12,7 @@ const steps = [
   { id: 1, label: "Informacoes", icon: CalendarClock },
   { id: 2, label: "Participantes", icon: Users },
   { id: 3, label: "Planejamento", icon: Dumbbell },
-  { id: 4, label: "Captacao", icon: Database },
+  { id: 4, label: "Fontes", icon: Database },
   { id: 5, label: "Revisao", icon: Check },
 ]
 
@@ -106,11 +106,11 @@ export function CreateSessionWizard({ onClose }: { onClose: () => void }) {
 
           {step === 4 && (
             <div className="grid gap-4 md:grid-cols-5">
-              {["CATAPULT", "APOLLO", "MANUAL", "CSV", "MOCK AO VIVO"].map((source) => (
+              {["CATAPULT", "APOLLO", "MANUAL", "CSV", "RELATORIO EXTERNO"].map((source) => (
                 <div key={source} className="rounded-2xl bg-card/16 p-4">
                   <Database className="size-4 text-good" />
                   <p className="mt-3 text-sm font-semibold">{source}</p>
-                  <p className="mt-1 text-xs text-foreground/42">Qualidade minima configurada</p>
+                  <p className="mt-1 text-xs text-foreground/42">Leitura e normalizacao preparadas</p>
                 </div>
               ))}
             </div>
@@ -118,7 +118,7 @@ export function CreateSessionWizard({ onClose }: { onClose: () => void }) {
 
           {step === 5 && (
             <div className="grid gap-4 md:grid-cols-3">
-              {["Salvar rascunho", "Publicar", "Iniciar captacao"].map((action) => (
+              {["Salvar rascunho", "Publicar", "Importar relatorio"].map((action) => (
                 <button key={action} type="button" className="rounded-2xl bg-card/16 p-5 text-left transition-colors hover:bg-card/28">
                   <span className="text-sm font-semibold">{action}</span>
                   <p className="mt-2 text-xs text-foreground/45">Acao mockada preparada para backend futuro.</p>

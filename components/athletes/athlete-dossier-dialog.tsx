@@ -242,11 +242,11 @@ export function AthleteDossierDialog({
 
           {tab === "fontes" && (
             <div className="grid gap-3 md:grid-cols-2">
-              {dossier.connectedSources.map((source) => (
+              {dossier.dataSources.map((source) => (
                 <div key={source} className="flex items-center gap-3 rounded-2xl bg-card/16 p-4">
                   <Database className="size-4 text-foreground/45" />
                   <span className="font-semibold">{source}</span>
-                  <span className="text-xs text-foreground/40">conectado em ambiente mock</span>
+                  <span className="text-xs text-foreground/40">fonte importada em ambiente mock</span>
                 </div>
               ))}
               <div className="flex items-center gap-3 rounded-2xl bg-card/16 p-4">

@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import { useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { Activity, AlertTriangle, CheckCircle2, Clock3, FileText, Radio, Settings2, TrendingDown, X } from "lucide-react"
@@ -62,6 +61,7 @@ export function MorningBriefScreen({
   onSelectAthlete: (id: string) => void
 }) {
   const [detail, setDetail] = useState<BriefDetail | null>(null)
+  const [selectedDecisionId, setSelectedDecisionId] = useState<string | null>(null)
   const { settings } = usePlatformSettings()
   const unavailable = athletes.filter((athlete) => athlete.zoneState === "alert")
   const monitor = athletes.filter((athlete) => athlete.zoneState === "warn")
@@ -71,6 +71,7 @@ export function MorningBriefScreen({
       athlete: athletes.find((athlete) => athlete.id === decision.athleteId),
     }))
     .filter((item) => item.athlete)
+  const selectedDecision = priorityAthletes.find((item) => item.decision.id === selectedDecisionId) ?? priorityAthletes[0]
 
   return (
     <motion.div
@@ -115,7 +116,10 @@ export function MorningBriefScreen({
       </motion.div>
 
       <motion.div variants={staggerContainer} className="mt-9 grid grid-cols-2 gap-6 md:grid-cols-4">
-        <BriefMetric icon={AlertTriangle} label="Atletas em atencao" value={`${monitor.length + unavailable.length}`} tone="text-warn" onClick={() => setDetail("attention")} />
+        <BriefMetric icon={AlertTriangle} label="Atletas em atencao" value={`${monitor.length + unavailable.length}`} tone="text-warn" onClick={() => {
+          setSelectedDecisionId(null)
+          setDetail("attention")
+        }} />
         <BriefMetric icon={TrendingDown} label="Indisponiveis" value={`${unavailable.length}`} tone="text-alert" onClick={() => setDetail("unavailable")} />
         <BriefMetric icon={Clock3} label="Sessao em revisao" value="1" onClick={() => setDetail("review")} />
         <BriefMetric icon={FileText} label="Relatorios publicados" value="3" onClick={() => setDetail("reports")} />
@@ -129,9 +133,42 @@ export function MorningBriefScreen({
           <h3 className="mt-2 max-w-2xl text-xl font-semibold leading-tight md:text-2xl">
             {settings.decisionCenterEnabled ? "Prioridades prontas para revisao." : "Decision Center pausado."}
           </h3>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-foreground/50">
-            Os detalhes ficam sob demanda para manter a abertura limpa e rapida para a comissao.
-          </p>
+          {settings.decisionCenterEnabled && (
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              {priorityAthletes.map(({ athlete, decision }, index) => {
+                if (!athlete) return null
+                const severity = severityStyle[decision.severity]
+
+                return (
+                  <motion.button
+                    key={decision.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedDecisionId(decision.id)
+                      setDetail("attention")
+                    }}
+                    variants={staggerItem}
+                    whileHover={{ y: -6, scale: 1.015 }}
+                    transition={{ ...spring, delay: index * 0.02 }}
+                    className="rounded-[24px] bg-white/[0.045] p-4 text-left ring-1 ring-white/[0.06] backdrop-blur-xl hover:bg-white/[0.065]"
+                  >
+                    <span className={cn("inline-flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.2em]", severity.text)}>
+                      <span className={cn("size-2 rounded-full", severity.dot)} />
+                      {severity.label}
+                    </span>
+                    <div className="mt-4 flex items-end gap-3">
+                      <span className="text-3xl font-semibold leading-none">{athlete.number}</span>
+                      <span>
+                        <span className="block text-sm font-semibold">{athlete.firstName[0]}. {athlete.lastName}</span>
+                        <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/38">{athlete.positionShort}</span>
+                      </span>
+                    </div>
+                    <p className="mt-4 text-xs font-semibold text-foreground/72">{decision.indicator}</p>
+                  </motion.button>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         <div className="grid gap-2">
@@ -162,7 +199,7 @@ export function MorningBriefScreen({
             <motion.section
               role="dialog"
               aria-modal="true"
-              className="relative max-h-[86vh] w-full max-w-5xl overflow-y-auto rounded-[28px] bg-[#050505] p-5 text-foreground ring-1 ring-white/[0.07] md:p-7"
+              className="relative max-h-[86vh] w-full max-w-5xl overflow-y-auto rounded-[28px] bg-[#101010]/92 p-5 text-foreground ring-1 ring-white/[0.08] backdrop-blur-2xl md:p-7"
               initial={{ opacity: 0, y: 24, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -186,40 +223,55 @@ export function MorningBriefScreen({
               </h3>
 
               {detail === "attention" && (
-                <div className="mt-6 grid gap-4 md:grid-cols-3">
-                  {priorityAthletes.map(({ athlete, decision }, index) => {
-                    if (!athlete) return null
-                    const severity = severityStyle[decision.severity]
-                    return (
-                      <motion.button
-                        key={decision.id}
-                        type="button"
-                        onClick={() => onSelectAthlete(athlete.id)}
-                        whileHover={{ y: -6, scale: 1.015 }}
-                        transition={{ ...spring, delay: index * 0.03 }}
-                        className="group relative min-h-[250px] overflow-hidden rounded-2xl bg-card/30 p-4 text-left"
-                      >
-                        <Image src={athlete.photo} alt={`${athlete.firstName} ${athlete.lastName}`} fill sizes="320px" className="object-cover object-top opacity-35 transition duration-700 group-hover:scale-105 group-hover:opacity-45" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/75 to-background/20" />
-                        <div className="relative z-10 flex h-full flex-col justify-between">
-                          <div>
+                <div className="mt-6">
+                  {selectedDecision?.athlete && selectedDecision?.decision ? (
+                    <div className="grid gap-4 md:grid-cols-[260px_minmax(0,1fr)]">
+                      <aside className="rounded-[24px] bg-white/[0.055] p-5 ring-1 ring-white/[0.06]">
+                        <span className={cn("inline-flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.2em]", severityStyle[selectedDecision.decision.severity].text)}>
+                          <span className={cn("size-2 rounded-full", severityStyle[selectedDecision.decision.severity].dot)} />
+                          {severityStyle[selectedDecision.decision.severity].label}
+                        </span>
+                        <p className="mt-5 text-4xl font-semibold leading-none">{selectedDecision.athlete.number}</p>
+                        <p className="mt-2 font-semibold">{selectedDecision.athlete.firstName} {selectedDecision.athlete.lastName}</p>
+                        <p className="mt-1 text-[10px] uppercase tracking-[0.16em] text-foreground/38">{selectedDecision.athlete.positionShort}</p>
+                      </aside>
+
+                      <section className="space-y-3">
+                        {[
+                          ["Alerta", selectedDecision.decision.indicator],
+                          ["Resumo", selectedDecision.decision.summary],
+                          ["Acao sugerida", selectedDecision.decision.suggestedAction],
+                          ["Responsavel", selectedDecision.decision.owner],
+                          ["Status", selectedDecision.decision.status.replace("_", " ")],
+                        ].map(([label, value]) => (
+                          <div key={label} className="rounded-2xl bg-white/[0.055] p-4">
+                            <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/35">{label}</span>
+                            <p className="mt-2 text-sm font-semibold text-foreground/78">{value}</p>
+                          </div>
+                        ))}
+                        <button type="button" onClick={() => onSelectAthlete(selectedDecision.athlete!.id)} className="mt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/55 hover:text-foreground">
+                          Abrir dossie do atleta
+                        </button>
+                      </section>
+                    </div>
+                  ) : (
+                    <div className="grid gap-3 md:grid-cols-3">
+                      {priorityAthletes.map(({ athlete, decision }) => {
+                        if (!athlete) return null
+                        const severity = severityStyle[decision.severity]
+                        return (
+                          <button key={decision.id} type="button" onClick={() => setSelectedDecisionId(decision.id)} className="rounded-[24px] bg-white/[0.055] p-4 text-left ring-1 ring-white/[0.06] hover:bg-white/[0.075]">
                             <span className={cn("inline-flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.2em]", severity.text)}>
                               <span className={cn("size-2 rounded-full", severity.dot)} />
                               {severity.label}
                             </span>
-                            <h4 className="mt-4 text-3xl font-semibold leading-none">{athlete.number}</h4>
-                            <p className="mt-1 text-sm font-semibold">{athlete.firstName[0]}. {athlete.lastName}</p>
-                            <p className="text-[10px] uppercase tracking-[0.18em] text-foreground/45">{athlete.positionShort}</p>
-                          </div>
-                          <div>
-                            <p className="text-xs font-semibold">{decision.signal}</p>
-                            <p className="mt-2 text-xs leading-relaxed text-foreground/52">{decision.summary}</p>
-                            <p className="mt-3 text-sm font-semibold">{decision.suggestedAction}</p>
-                          </div>
-                        </div>
-                      </motion.button>
-                    )
-                  })}
+                            <p className="mt-4 font-semibold">{athlete.number} {athlete.firstName[0]}. {athlete.lastName}</p>
+                            <p className="mt-2 text-xs text-foreground/55">{decision.indicator}</p>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
 

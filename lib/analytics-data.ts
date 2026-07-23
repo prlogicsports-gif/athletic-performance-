@@ -1,5 +1,5 @@
 export type DataProvenance = {
-  source: "catapult" | "apollo" | "manual" | "csv" | "sensor" | "thermography" | "mock" | "calculated"
+  source: "catapult" | "apollo" | "manual" | "csv" | "thermography" | "mock" | "calculated"
   sourceLabel: string
   externalRecordId?: string
   collectedAt: string
@@ -41,7 +41,7 @@ export const mockProvenance = {
     synchronizedAt: "2026-07-23T08:17:03-03:00",
     updatedAt: now,
     sessionId: "athletic-live-field",
-    capturedBy: "Catapult Vector",
+    capturedBy: "Relatorio Catapult",
     reviewedBy: "Preparacao fisica",
     qualityStatus: "mock",
     latencyMs: 3000,
@@ -196,7 +196,7 @@ export const metricAnalyses: Record<string, MetricAnalysis> = {
     id: "time",
     title: "Tempo de sessao",
     scope: "sessao",
-    summary: "Sessao com 62 minutos monitorados e boa qualidade de sinal.",
+    summary: "Sessao com 62 minutos registrados e boa qualidade de leitura.",
     history: [
       { label: "Hoje", value: "62 min" },
       { label: "Planejado", value: "60 min" },

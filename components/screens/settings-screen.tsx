@@ -45,7 +45,6 @@ export function SettingsScreen() {
         variants={staggerItem}
         className="relative mt-6 overflow-hidden rounded-[26px] bg-white/[0.035] p-4 backdrop-blur-2xl ring-1 ring-white/[0.06] md:p-5"
       >
-        <div className="pointer-events-none absolute inset-x-8 top-0 h-24 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.11),transparent_60%)]" />
         <div className="relative grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
           <div>
             <span className="text-[9px] font-medium uppercase tracking-[0.22em] text-foreground/38">
@@ -78,7 +77,6 @@ export function SettingsScreen() {
                 enabled ? "text-foreground" : "text-foreground/45",
               )}
             >
-              <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-foreground/[0.05] to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
               <div className="relative z-10 flex h-full flex-col justify-between">
                 <div>
                   <div className="flex items-start justify-between gap-4">

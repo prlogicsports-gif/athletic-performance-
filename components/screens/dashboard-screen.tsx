@@ -137,29 +137,35 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
       </div>
 
       {/* player strip */}
-      <motion.div {...fade(0.25)} className="mt-8 flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+      <motion.div {...fade(0.25)} className="mt-8 flex gap-3 overflow-x-auto pb-3 no-scrollbar">
         {athletes.map((a) => {
           const featured = a.id === "giroud"
           return (
             <motion.button
               key={a.id}
               onClick={() => onSelectAthlete(a.id)}
-              whileHover={{ y: -6, scale: 1.02 }}
+              whileHover={{ y: -8, scale: 1.025 }}
               transition={spring}
               className={cn(
-                "group relative flex w-32 shrink-0 flex-col items-center overflow-hidden rounded-2xl bg-gradient-to-b from-surface to-card pt-2.5 text-center will-change-transform",
-                featured && "ring-1 ring-foreground/30",
+                "group relative flex h-[198px] w-32 shrink-0 flex-col items-center overflow-hidden rounded-2xl bg-gradient-to-b from-surface/95 via-card to-background text-center will-change-transform sm:w-36",
+                featured && "ring-1 ring-foreground/35",
               )}
             >
-              <div className="flex w-full items-center justify-between px-3 text-[10px] text-muted-foreground">
+              <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between px-3 pt-2 text-[10px] text-muted-foreground">
                 <span className="font-bold text-foreground">{a.number}</span>
                 <span>{a.positionShort}</span>
               </div>
-              <div className="relative h-24 w-full">
-                <Image src={a.photo || "/placeholder.svg"} alt={a.lastName} fill className="object-cover object-top" />
-                <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-card to-transparent" />
+              <div className="absolute inset-x-0 top-0 h-[128px] overflow-hidden">
+                <Image
+                  src={a.photo || "/placeholder.svg"}
+                  alt={a.lastName}
+                  fill
+                  sizes="144px"
+                  className="object-cover object-top transition duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card via-card/72 to-transparent" />
               </div>
-              <div className="flex w-full flex-col gap-1 px-3 pb-3">
+              <div className="relative z-10 mt-auto flex w-full flex-col gap-1 px-3 pb-3">
                 <span className="text-xs font-semibold">{a.firstName[0]}. {a.lastName}</span>
                 <span className="text-base font-bold leading-none">{a.distance} <span className="text-[10px] font-normal text-muted-foreground">km</span></span>
                 <span className="text-[9px] uppercase tracking-wider text-muted-foreground">Zona {a.zone}</span>

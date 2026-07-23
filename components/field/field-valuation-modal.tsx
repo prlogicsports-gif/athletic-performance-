@@ -54,7 +54,7 @@ export function FieldValuationModal({
               ["Menor valor", `${sorted.at(-1)?.loadPct ?? 0}%`],
               ["Meta", `${selected.targetPct}%`],
               ["Diferenca", `${selected.targetPct - 100 > 0 ? "+" : ""}${selected.targetPct - 100}%`],
-              ["Qualidade", `${selected.signalQuality}%`],
+              ["Qualidade", `${selected.dataQualityScore}%`],
             ].map(([labelText, value]) => (
               <div key={labelText}>
                 <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/35">{labelText}</span>
