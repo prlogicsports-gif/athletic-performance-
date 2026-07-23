@@ -7,7 +7,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { athletes, positionFilters } from "@/lib/data"
 import { cn } from "@/lib/utils"
 import { spring } from "@/lib/motion"
-import { AthleteDossierDialog } from "@/components/athletes/athlete-dossier-dialog"
 
 const squadTabs = ["Elenco", "Comissão Técnica"]
 
@@ -28,7 +27,6 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
   const [active, setActive] = useState(0)
   const [filter, setFilter] = useState<(typeof positionFilters)[number]>("Todos")
   const [squad, setSquad] = useState(squadTabs[0])
-  const [dossierId, setDossierId] = useState<string | null>(null)
   const compact = useCompactViewport()
 
   const list = athletes
@@ -98,7 +96,7 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
             <motion.button
               key={a.id}
               layoutId={`athlete-card-${a.id}`}
-              onClick={() => (isCenter ? setDossierId(a.id) : setActive(i))}
+              onClick={() => (isCenter ? onSelectAthlete(a.id) : setActive(i))}
               className="absolute origin-center overflow-hidden rounded-[28px]"
               style={cardSize}
               animate={{
@@ -210,9 +208,6 @@ export function CarouselScreen({ onSelectAthlete }: { onSelectAthlete: (id: stri
           </motion.span>
         </AnimatePresence>
       </div>
-      <AnimatePresence>
-        {dossierId && <AthleteDossierDialog athleteId={dossierId} onClose={() => setDossierId(null)} />}
-      </AnimatePresence>
     </div>
   )
 }

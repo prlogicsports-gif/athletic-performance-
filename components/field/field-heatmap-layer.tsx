@@ -9,7 +9,7 @@ export function FieldHeatmapLayer({ player, live }: { player: LiveFieldPlayer; l
     <motion.div
       className="absolute inset-0"
       initial={{ opacity: 0 }}
-      animate={{ opacity: live ? 0.72 : 0.64 }}
+      animate={{ opacity: live ? 0.84 : 0.72 }}
       exit={{ opacity: 0 }}
       transition={spring}
     >
@@ -20,9 +20,9 @@ export function FieldHeatmapLayer({ player, live }: { player: LiveFieldPlayer; l
           style={{
             left: `${point.x}%`,
             top: `${point.y}%`,
-            width: `${120 + point.intensity * 170}px`,
-            height: `${76 + point.intensity * 122}px`,
-            opacity: 0.12 + point.intensity * 0.28,
+            width: `${70 + point.intensity * 95}px`,
+            height: `${44 + point.intensity * 70}px`,
+            opacity: 0.18 + point.intensity * 0.38,
             background:
               "radial-gradient(circle, rgba(255,34,34,0.88) 0%, rgba(255,211,49,0.72) 34%, rgba(85,220,104,0.34) 58%, rgba(33,155,255,0.14) 78%, transparent 100%)",
           }}

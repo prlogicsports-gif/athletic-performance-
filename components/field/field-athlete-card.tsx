@@ -38,7 +38,7 @@ export function FieldAthleteCard({
             <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/45">{player.position}</span>
           </div>
           <span className="mt-2 block truncate text-sm font-semibold">{player.name}</span>
-          <span className="mt-1 block text-[9px] font-semibold uppercase tracking-[0.14em] text-foreground/70">{metric}</span>
+          <span className="mt-1 block text-[9px] uppercase tracking-[0.14em] text-foreground/45">{metric}</span>
         </div>
         <div className="flex flex-col items-end gap-1 text-[9px] uppercase tracking-[0.12em]">
           {player.signal === "offline" ? <WifiOff className="size-3.5 text-alert" /> : <Wifi className="size-3.5 text-good" />}

@@ -1,45 +1,34 @@
 "use client"
 
-import { Activity, Bell, CalendarDays, FileText, Home, MonitorPlay, Settings2, User, Users } from "lucide-react"
+import { Activity, Bell, CalendarDays, FileText, Home, User, Users } from "lucide-react"
 import { motion } from "framer-motion"
 import type { LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
-import type { FeatureFlag } from "@/lib/platform-settings"
 import type { Screen } from "@/lib/nav"
 import { spring, staggerContainer, staggerItem } from "@/lib/motion"
-import { usePlatformSettings } from "@/hooks/use-platform-settings"
 
-type NavEntry = {
-  id: string
-  label: string
-  icon: LucideIcon
-  screen: Screen
-  feature?: FeatureFlag
-}
+type NavEntry = { id: string; label: string; icon: LucideIcon; screen: Screen }
 
 const leftItems: NavEntry[] = [
   { id: "dashboard", label: "DASHBOARD", icon: Home, screen: "dashboard" },
-  { id: "equipe", label: "EQUIPE", icon: Users, screen: "team", feature: "teamBoardEnabled" },
+  { id: "equipe", label: "EQUIPE", icon: Users, screen: "team" },
   { id: "atletas", label: "ATLETAS", icon: User, screen: "carousel" },
 ]
 
 const rightItems: NavEntry[] = [
-  { id: "sessoes", label: "SESSOES", icon: Activity, screen: "sessions", feature: "sessionsEnabled" },
-  { id: "ao-vivo", label: "AO VIVO", icon: MonitorPlay, screen: "live", feature: "liveMonitoringEnabled" },
-  { id: "calendario", label: "CALENDARIO", icon: CalendarDays, screen: "calendar" },
-  { id: "relatorios", label: "RELATORIOS", icon: FileText, screen: "reports" },
-  { id: "alertas", label: "ALERTAS", icon: Bell, screen: "dashboard", feature: "alertsEnabled" },
-  { id: "features", label: "FEATURES", icon: Settings2, screen: "settings" },
+  { id: "sessoes", label: "SESSÕES", icon: Activity, screen: "dashboard" },
+  { id: "calendario", label: "CALENDÁRIO", icon: CalendarDays, screen: "calendar" },
+  { id: "relatorios", label: "RELATÓRIOS", icon: FileText, screen: "reports" },
+  { id: "alertas", label: "ALERTAS", icon: Bell, screen: "dashboard" },
 ]
+
+const items = [...leftItems, ...rightItems]
 
 function activeIdFor(screen: Screen) {
   if (screen === "carousel" || screen === "profile") return "atletas"
   if (screen === "team") return "equipe"
   if (screen === "calendar") return "calendario"
-  if (screen === "sessions") return "sessoes"
-  if (screen === "live") return "ao-vivo"
   if (screen === "reports") return "relatorios"
-  if (screen === "settings") return "features"
   return "dashboard"
 }
 
@@ -48,7 +37,7 @@ function NavItem({
   isActive,
   onNavigate,
 }: {
-  item: NavEntry
+  item: (typeof items)[number]
   isActive: boolean
   onNavigate: (s: Screen) => void
 }) {
@@ -77,10 +66,6 @@ export function TabNav({
   onNavigate: (s: Screen) => void
 }) {
   const active = activeIdFor(screen)
-  const { settings } = usePlatformSettings()
-  const visibleLeftItems = leftItems.filter((item) => !item.feature || settings[item.feature])
-  const visibleRightItems = rightItems.filter((item) => !item.feature || settings[item.feature])
-
   return (
     <motion.nav
       variants={staggerContainer}
@@ -89,12 +74,12 @@ export function TabNav({
       className="safe-x -mt-1 w-full max-w-full overflow-x-hidden overflow-y-visible bg-[#000000] px-4 pb-3 pt-0 md:grid md:grid-cols-[minmax(0,1fr)_150px_minmax(0,1fr)] md:px-8 md:pb-4 md:pt-0 lg:grid-cols-[minmax(0,1fr)_220px_minmax(0,1fr)]"
     >
       <motion.div className="flex min-w-0 items-center gap-5 overflow-x-auto no-scrollbar md:justify-end md:gap-7 md:overflow-visible">
-        {visibleLeftItems.map((item) => (
+        {leftItems.map((item) => (
           <NavItem key={item.id} item={item} isActive={item.id === active} onNavigate={onNavigate} />
         ))}
         <div className="w-4 shrink-0 md:hidden" />
         <div className="flex items-center gap-4 md:hidden">
-          {visibleRightItems.map((item) => (
+          {rightItems.map((item) => (
             <NavItem key={item.id} item={item} isActive={item.id === active} onNavigate={onNavigate} />
           ))}
         </div>
@@ -103,7 +88,7 @@ export function TabNav({
       <div className="hidden md:block" />
 
       <motion.div className="hidden min-w-0 items-center justify-start gap-7 md:flex">
-        {visibleRightItems.map((item) => (
+        {rightItems.map((item) => (
           <NavItem key={item.id} item={item} isActive={item.id === active} onNavigate={onNavigate} />
         ))}
       </motion.div>
