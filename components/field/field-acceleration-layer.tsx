@@ -9,7 +9,7 @@ export function FieldAccelerationLayer({ player, type }: { player: LiveFieldPlay
   const color = type === "accelerations" ? "rgba(94,222,102,0.96)" : "rgba(255,142,45,0.96)"
 
   return (
-    <motion.svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+    <motion.svg viewBox="0 0 105 68" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       {vectors.slice(0, 4).map((vector, index) => (
         <g key={`${player.id}-${type}-${index}`}>
           <FieldMotionTrace

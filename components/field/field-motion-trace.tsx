@@ -11,7 +11,9 @@ type TracePoint = {
 function smoothPath(points: TracePoint[]) {
   if (points.length < 2) return ""
 
-  return points.reduce((path, point, index) => {
+  const scaled = points.map((point) => ({ x: point.x * 1.05, y: point.y * 0.68 }))
+
+  return scaled.reduce((path, point, index) => {
     if (index === 0) return `M ${point.x} ${point.y}`
 
     const previous = points[index - 1]
@@ -67,8 +69,8 @@ export function FieldMotionTrace({
       {points.map((point, index) => (
         <motion.circle
           key={`${point.x}-${point.y}-${index}`}
-          cx={point.x}
-          cy={point.y}
+          cx={point.x * 1.05}
+          cy={point.y * 0.68}
           r={index === 0 || index === points.length - 1 ? 1.1 : 0.78}
           fill={index === points.length - 1 ? "rgba(255,255,255,0.95)" : pointColor ?? color}
           stroke="rgba(0,0,0,0.64)"

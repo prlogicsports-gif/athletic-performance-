@@ -6,7 +6,7 @@ import { FieldMotionTrace } from "./field-motion-trace"
 
 export function FieldShotsLayer({ player }: { player: LiveFieldPlayer }) {
   return (
-    <motion.svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+    <motion.svg viewBox="0 0 105 68" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       {player.shots.map((shot, index) => {
         const color = shot.result === "gol" ? "rgba(94,222,102,0.96)" : shot.result === "defesa" ? "rgba(255,211,49,0.96)" : "rgba(255,74,74,0.94)"
         return (
@@ -24,7 +24,7 @@ export function FieldShotsLayer({ player }: { player: LiveFieldPlayer }) {
               delay={index * 0.06}
               width={1}
             />
-            <circle cx={shot.x} cy={shot.y} r="2" fill="rgba(0,0,0,0.74)" stroke={color} strokeWidth="0.52" vectorEffect="non-scaling-stroke" />
+            <circle cx={shot.x * 1.05} cy={shot.y * 0.68} r="1.5" fill="rgba(0,0,0,0.74)" stroke={color} strokeWidth="0.52" vectorEffect="non-scaling-stroke" />
           </g>
         )
       })}

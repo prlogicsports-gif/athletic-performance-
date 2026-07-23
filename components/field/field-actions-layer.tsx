@@ -20,7 +20,7 @@ export function FieldActionsLayer({ player }: { player: LiveFieldPlayer }) {
   const points = player.actions.map((action) => ({ x: action.x, y: action.y }))
 
   return (
-    <motion.svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+    <motion.svg viewBox="0 0 105 68" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <FieldMotionTrace points={points} color="rgba(94,222,102,0.82)" pointColor="rgba(94,222,102,0.92)" width={0.92} />
       {player.actions.map((action) => {
         const color = colors[action.type]
@@ -29,8 +29,8 @@ export function FieldActionsLayer({ player }: { player: LiveFieldPlayer }) {
             key={`${player.id}-action-${action.timestamp}-${action.type}`}
             aria-label={`${player.name} - ${action.label}`}
           >
-            <circle cx={action.x} cy={action.y} r="2.1" fill="rgba(0,0,0,0.74)" stroke={color} strokeWidth="0.5" vectorEffect="non-scaling-stroke" />
-            <circle cx={action.x} cy={action.y} r="0.88" fill={color} />
+            <circle cx={action.x * 1.05} cy={action.y * 0.68} r="1.55" fill="rgba(0,0,0,0.74)" stroke={color} strokeWidth="0.5" vectorEffect="non-scaling-stroke" />
+            <circle cx={action.x * 1.05} cy={action.y * 0.68} r="0.66" fill={color} />
           </g>
         )
       })}

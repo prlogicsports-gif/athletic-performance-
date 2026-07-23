@@ -5,11 +5,11 @@ import { motion } from "framer-motion"
 import type { Screen } from "@/lib/nav"
 import { softSpring } from "@/lib/motion"
 
-export function SplashScreen({ onEnter }: { onEnter: (s: Screen) => void }) {
+export function SplashScreen({ onEnter, defaultScreen = "dashboard" }: { onEnter: (s: Screen) => void; defaultScreen?: Screen }) {
   return (
     <motion.button
       type="button"
-      onClick={() => onEnter("dashboard")}
+      onClick={() => onEnter(defaultScreen)}
       className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-[#000000]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}

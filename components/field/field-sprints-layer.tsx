@@ -6,7 +6,7 @@ import { FieldMotionTrace } from "./field-motion-trace"
 
 export function FieldSprintsLayer({ player }: { player: LiveFieldPlayer }) {
   return (
-    <motion.svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+    <motion.svg viewBox="0 0 105 68" preserveAspectRatio="none" className="absolute inset-0 size-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       {player.sprints.map((point, index) => {
         const start = player.routes[index] ?? player.fieldPosition
         return (

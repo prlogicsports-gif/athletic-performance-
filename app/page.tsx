@@ -38,7 +38,7 @@ export default function Page() {
     <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground">
       <AnimatePresence mode="wait">
         {screen === "splash" ? (
-          <SplashScreen key="splash" onEnter={navigate} />
+          <SplashScreen key="splash" onEnter={navigate} defaultScreen={settings.morningBriefEnabled ? "briefing" : "dashboard"} />
         ) : (
           <motion.div
             key="app"

@@ -2,24 +2,39 @@
 
 import Image from "next/image"
 import { useMemo, useState } from "react"
-import { motion } from "framer-motion"
-import { AlertTriangle, Maximize2, MonitorPlay, Pause, Play, Radio, RotateCcw } from "lucide-react"
+import { AnimatePresence, motion } from "framer-motion"
+import { AlertTriangle, History, Maximize2, MonitorPlay, Pause, Play, Radio, RotateCcw, X } from "lucide-react"
 import { athletes } from "@/lib/data"
-import { athleticSessions, deviceAssignments, liveCaptureEvents } from "@/lib/session-data"
+import { athleticSessions, deviceAssignments, liveCaptureEvents, type LiveCaptureEvent } from "@/lib/session-data"
 import { fieldSession, liveFieldPlayers } from "@/lib/mock-field-session"
 import { FieldPitch } from "@/components/field/field-pitch"
 import { FieldLegends } from "@/components/field/field-legends"
 import { DataSourceBadge } from "@/components/analytics/data-source-badge"
 import { mockProvenance } from "@/lib/analytics-data"
 import { cn } from "@/lib/utils"
-import { staggerContainer, staggerItem } from "@/lib/motion"
+import { spring, staggerContainer, staggerItem } from "@/lib/motion"
 
 const modes = ["comissao", "tv coletiva", "foco atleta", "campo", "carga", "fisiologia", "alertas", "relatorios"] as const
+
+type LiveModal = { type: "event"; id: string } | { type: "history" } | null
+
+const eventTone: Record<LiveCaptureEvent["status"], string> = {
+  normal: "text-good",
+  attention: "text-warn",
+  critical: "text-alert",
+}
+
+const eventDot: Record<LiveCaptureEvent["status"], string> = {
+  normal: "bg-good",
+  attention: "bg-warn",
+  critical: "bg-alert",
+}
 
 export function LiveViewScreen() {
   const [mode, setMode] = useState<(typeof modes)[number]>("comissao")
   const [selectedId, setSelectedId] = useState(athletes[0].id)
   const [rotation, setRotation] = useState(false)
+  const [modal, setModal] = useState<LiveModal>(null)
   const selected = athletes.find((athlete) => athlete.id === selectedId) ?? athletes[0]
   const selectedLive = liveFieldPlayers.find((player) => player.id === selectedId) ?? liveFieldPlayers[0]
   const session = athleticSessions[0]
@@ -27,6 +42,8 @@ export function LiveViewScreen() {
   const noSignal = deviceAssignments.filter((device) => device.status === "missing" || device.status === "unstable").length
   const criticalEvents = liveCaptureEvents.filter((event) => event.status !== "normal")
   const teamLoad = useMemo(() => Math.round(liveFieldPlayers.reduce((sum, player) => sum + player.catapult.playerLoad, 0) / liveFieldPlayers.length), [])
+  const selectedEvent = modal?.type === "event" ? liveCaptureEvents.find((event) => event.id === modal.id) : undefined
+  const selectedEventAthlete = selectedEvent ? athletes.find((athlete) => athlete.id === selectedEvent.athleteId) ?? athletes[0] : undefined
 
   return (
     <motion.div variants={staggerContainer} initial="initial" animate="animate" className="min-h-screen bg-[#000000] px-4 pb-16 pt-1 md:px-8">
@@ -108,6 +125,96 @@ export function LiveViewScreen() {
             <p className="mt-1 text-xs text-foreground/42">{sub}</p>
           </motion.div>
         ))}
+      </motion.section>
+
+      <motion.section variants={staggerContainer} className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <div>
+          <div className="mb-4 flex items-end justify-between gap-4">
+            <div>
+              <span className="text-[9px] font-medium uppercase tracking-[0.24em] text-foreground/40">
+                Eventos ao vivo
+              </span>
+              <h3 className="mt-1 text-sm font-semibold uppercase tracking-[0.16em]">
+                Selecionar evento da sessao
+              </h3>
+            </div>
+            <span className="text-[10px] uppercase tracking-[0.18em] text-foreground/35">
+              {liveCaptureEvents.length} capturas
+            </span>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {liveCaptureEvents.map((event, index) => {
+              const athlete = athletes.find((item) => item.id === event.athleteId) ?? athletes[0]
+              return (
+                <motion.button
+                  key={event.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedId(athlete.id)
+                    setModal({ type: "event", id: event.id })
+                  }}
+                  variants={staggerItem}
+                  whileHover={{ y: -6, scale: 1.015 }}
+                  transition={{ ...spring, delay: index * 0.02 }}
+                  className="group relative min-h-[150px] overflow-hidden rounded-[24px] bg-white/[0.04] p-4 text-left backdrop-blur-2xl ring-1 ring-white/[0.06] transition-colors hover:bg-white/[0.065]"
+                >
+                  <div className="pointer-events-none absolute inset-x-4 top-0 h-16 bg-[radial-gradient(circle_at_24%_0%,rgba(255,255,255,0.12),transparent_62%)]" />
+                  <div className="relative flex h-full flex-col justify-between">
+                    <div className="flex items-start justify-between gap-3">
+                      <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-foreground/40">
+                        {event.minute}:00
+                      </span>
+                      <span className={cn("flex items-center gap-1.5 text-[8px] font-semibold uppercase tracking-[0.16em]", eventTone[event.status])}>
+                        <span className={cn("size-1.5 rounded-full", eventDot[event.status])} />
+                        {event.status}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">{athlete.firstName[0]}. {athlete.lastName}</p>
+                      <p className="mt-1 text-2xl font-semibold leading-none">{event.value} <span className="text-xs text-foreground/45">{event.unit}</span></p>
+                      <p className="mt-2 text-[9px] uppercase tracking-[0.16em] text-foreground/38">{event.metric} captado</p>
+                    </div>
+                  </div>
+                </motion.button>
+              )
+            })}
+          </div>
+        </div>
+
+        <aside>
+          <div className="mb-4">
+            <span className="text-[9px] font-medium uppercase tracking-[0.24em] text-foreground/40">
+              Historico
+            </span>
+            <h3 className="mt-1 text-sm font-semibold uppercase tracking-[0.16em]">
+              Sessao completa
+            </h3>
+          </div>
+          <motion.button
+            type="button"
+            onClick={() => setModal({ type: "history" })}
+            variants={staggerItem}
+            whileHover={{ y: -6, scale: 1.015 }}
+            transition={spring}
+            className="group relative min-h-[210px] w-full overflow-hidden rounded-[28px] bg-white/[0.04] p-5 text-left backdrop-blur-2xl ring-1 ring-white/[0.06] hover:bg-white/[0.065]"
+          >
+            <div className="pointer-events-none absolute inset-x-6 top-0 h-24 bg-[radial-gradient(circle_at_70%_0%,rgba(255,255,255,0.14),transparent_62%)]" />
+            <div className="relative flex h-full flex-col justify-between">
+              <History className="size-5 text-foreground/55" strokeWidth={1.5} />
+              <div>
+                <p className="text-lg font-semibold">Abrir historico ao vivo</p>
+                <p className="mt-2 text-xs leading-relaxed text-foreground/48">
+                  Eventos, atletas, metricas, blocos, devices e qualidade captada nesta sessao.
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-4 text-sm">
+                <span><strong className="block">{liveCaptureEvents.length}</strong><span className="text-[8px] uppercase tracking-[0.16em] text-foreground/35">eventos</span></span>
+                <span><strong className="block">{session.blocks.length}</strong><span className="text-[8px] uppercase tracking-[0.16em] text-foreground/35">blocos</span></span>
+                <span><strong className="block">{session.quality}%</strong><span className="text-[8px] uppercase tracking-[0.16em] text-foreground/35">qualidade</span></span>
+              </div>
+            </div>
+          </motion.button>
+        </aside>
       </motion.section>
 
       {mode === "comissao" && (
@@ -217,6 +324,190 @@ export function LiveViewScreen() {
         <span>QR/link interno mock</span>
         <span>snapshots parciais preparados</span>
       </motion.div>
+
+      <AnimatePresence>
+        {modal && (
+          <motion.div
+            className="fixed inset-0 z-[90] flex items-end justify-center bg-background/84 px-3 pb-3 backdrop-blur-md md:items-center md:p-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setModal(null)}
+          >
+            <motion.section
+              role="dialog"
+              aria-modal="true"
+              className="relative max-h-[88vh] w-full max-w-5xl overflow-y-auto rounded-[30px] bg-[#050505] p-5 text-foreground ring-1 ring-white/[0.07] md:p-7"
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.98 }}
+              transition={spring}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setModal(null)}
+                className="absolute right-4 top-4 flex size-9 items-center justify-center rounded-full bg-white/[0.06] text-foreground/55 hover:text-foreground"
+                aria-label="Fechar evento ao vivo"
+              >
+                <X className="size-4" />
+              </button>
+
+              {modal.type === "event" && selectedEvent && selectedEventAthlete && (
+                <>
+                  <header className="grid gap-6 md:grid-cols-[minmax(0,1fr)_260px]">
+                    <div>
+                      <span className="text-[9px] font-medium uppercase tracking-[0.24em] text-foreground/40">
+                        Evento ao vivo
+                      </span>
+                      <h3 className="mt-2 pr-8 text-3xl font-semibold leading-none">
+                        {selectedEvent.metric} - {selectedEventAthlete.firstName[0]}. {selectedEventAthlete.lastName}
+                      </h3>
+                      <p className="mt-3 max-w-2xl text-sm leading-relaxed text-foreground/52">
+                        Captura da sessao {session.name} aos {selectedEvent.minute}:00, vinculada ao atleta e a metrica recebida.
+                      </p>
+                    </div>
+                    <div className="relative min-h-[180px] overflow-hidden rounded-[24px] bg-white/[0.04]">
+                      <Image src={selectedEventAthlete.photo} alt={`${selectedEventAthlete.firstName} ${selectedEventAthlete.lastName}`} fill sizes="260px" className="object-cover object-top opacity-55" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/55 to-transparent" />
+                      <div className="relative z-10 flex h-full flex-col justify-end p-4">
+                        <span className={cn("text-[9px] font-semibold uppercase tracking-[0.18em]", eventTone[selectedEvent.status])}>
+                          {selectedEvent.status}
+                        </span>
+                        <p className="mt-1 text-2xl font-semibold">{selectedEvent.value} <span className="text-xs text-foreground/45">{selectedEvent.unit}</span></p>
+                      </div>
+                    </div>
+                  </header>
+
+                  <div className="mt-7 grid gap-4 md:grid-cols-4">
+                    {[
+                      ["Minuto", `${selectedEvent.minute}:00`],
+                      ["Metrica", selectedEvent.metric],
+                      ["Valor", `${selectedEvent.value} ${selectedEvent.unit}`],
+                      ["Status", selectedEvent.status],
+                    ].map(([label, value]) => (
+                      <div key={label} className="rounded-2xl bg-white/[0.04] p-4">
+                        <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/35">{label}</span>
+                        <p className="mt-2 text-lg font-semibold">{value}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 grid gap-4 md:grid-cols-2">
+                    <div className="rounded-2xl bg-white/[0.04] p-4">
+                      <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/35">Atleta</span>
+                      <p className="mt-2 font-semibold">{selectedEventAthlete.number} - {selectedEventAthlete.firstName} {selectedEventAthlete.lastName}</p>
+                      <p className="mt-1 text-xs text-foreground/45">{selectedEventAthlete.position} - zona {selectedEventAthlete.zone}</p>
+                    </div>
+                    <div className="rounded-2xl bg-white/[0.04] p-4">
+                      <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/35">Fonte</span>
+                      <div className="mt-3">
+                        <DataSourceBadge provenance={selectedEvent.provenance} compact />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {modal.type === "history" && (
+                <>
+                  <header>
+                    <span className="text-[9px] font-medium uppercase tracking-[0.24em] text-foreground/40">
+                      Historico da sessao
+                    </span>
+                    <h3 className="mt-2 pr-8 text-3xl font-semibold leading-none">
+                      {session.name}
+                    </h3>
+                    <p className="mt-3 max-w-3xl text-sm leading-relaxed text-foreground/52">
+                      Registro consolidado dos eventos ao vivo, blocos, atletas associados, devices e metricas captadas.
+                    </p>
+                  </header>
+
+                  <div className="mt-7 grid gap-4 md:grid-cols-4">
+                    {[
+                      ["Duracao", `${session.duration} min`],
+                      ["Campo", session.field],
+                      ["Atletas", session.athleteIds.length],
+                      ["Qualidade", `${session.quality}%`],
+                    ].map(([label, value]) => (
+                      <div key={label} className="rounded-2xl bg-white/[0.04] p-4">
+                        <span className="text-[9px] uppercase tracking-[0.16em] text-foreground/35">{label}</span>
+                        <p className="mt-2 text-lg font-semibold">{value}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-7 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+                    <section>
+                      <h4 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/45">
+                        Eventos captados
+                      </h4>
+                      <div className="mt-4 space-y-3">
+                        {liveCaptureEvents.map((event) => {
+                          const athlete = athletes.find((item) => item.id === event.athleteId) ?? athletes[0]
+                          return (
+                            <button
+                              key={event.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedId(athlete.id)
+                                setModal({ type: "event", id: event.id })
+                              }}
+                              className="flex w-full items-center justify-between gap-4 rounded-2xl bg-white/[0.04] p-4 text-left hover:bg-white/[0.065]"
+                            >
+                              <span>
+                                <span className="block text-sm font-semibold">{event.minute}:00 - {athlete.firstName[0]}. {athlete.lastName}</span>
+                                <span className="text-[10px] uppercase tracking-[0.16em] text-foreground/38">{event.metric} - {event.status}</span>
+                              </span>
+                              <span className="text-right font-semibold">{event.value} <span className="text-xs text-foreground/45">{event.unit}</span></span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </section>
+
+                    <aside className="space-y-6">
+                      <section>
+                        <h4 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/45">
+                          Blocos
+                        </h4>
+                        <div className="mt-4 space-y-3">
+                          {session.blocks.map((block) => (
+                            <div key={block.id} className="rounded-2xl bg-white/[0.04] p-4">
+                              <p className="font-semibold">{block.name}</p>
+                              <p className="mt-1 text-xs text-foreground/45">{block.duration} min - {block.objective}</p>
+                              <p className="mt-2 text-[10px] uppercase tracking-[0.16em] text-foreground/35">{block.valences.join(" / ")} - {block.plannedLoad} UA</p>
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+
+                      <section>
+                        <h4 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/45">
+                          Devices
+                        </h4>
+                        <div className="mt-4 space-y-2">
+                          {deviceAssignments.slice(0, 5).map((device) => {
+                            const athlete = athletes.find((item) => item.id === device.athleteId) ?? athletes[0]
+                            return (
+                              <div key={device.athleteId} className="flex items-center justify-between gap-3 text-xs text-foreground/58">
+                                <span>{athlete.firstName[0]}. {athlete.lastName}</span>
+                                <span className={device.status === "connected" ? "text-good" : device.status === "unstable" ? "text-warn" : "text-alert"}>
+                                  {device.status} {device.connectionQuality}%
+                                </span>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </section>
+                    </aside>
+                  </div>
+                </>
+              )}
+            </motion.section>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }
