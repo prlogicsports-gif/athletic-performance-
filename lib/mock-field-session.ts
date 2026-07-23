@@ -58,8 +58,8 @@ export type FieldEventPoint = {
 export type LiveFieldPlayer = FieldPlayer & {
   active: boolean
   availability: "disponivel" | "monitorar" | "alerta"
-  signal: "online" | "unstable" | "offline"
-  signalQuality: number
+  dataStatus: "validado" | "revisar" | "pendente"
+  dataQualityScore: number
   heartRate: {
     current: number
     average: number
@@ -81,7 +81,7 @@ export type LiveFieldPlayer = FieldPlayer & {
 export type FieldTimelineEvent = {
   id: string
   minute: number
-  type: "period" | "exercise" | "alert" | "signal" | "decision"
+  type: "period" | "exercise" | "alert" | "issue" | "decision"
   label: string
 }
 
@@ -123,14 +123,14 @@ export const liveFieldPlayers: LiveFieldPlayer[] = fieldPlayers.map((player, ind
   const seed = index + 1
   const loadPct = Math.min(98, Math.round((player.catapult.playerLoad / 360) * 100 + seed * 2))
   const targetPct = Math.min(118, Math.round((player.catapult.distance / (player.catapult.distance + 0.8)) * 100 + seed))
-  const signal = index === 3 ? "unstable" : index === 5 ? "offline" : "online"
+  const dataStatus = index === 3 ? "revisar" : index === 5 ? "pendente" : "validado"
 
   return {
     ...player,
-    active: signal !== "offline",
+    active: true,
     availability: player.colorToken === "alert" ? "alerta" : player.colorToken === "warn" ? "monitorar" : "disponivel",
-    signal,
-    signalQuality: signal === "offline" ? 0 : signal === "unstable" ? 64 : 96 - seed,
+    dataStatus,
+    dataQualityScore: dataStatus === "pendente" ? 58 : dataStatus === "revisar" ? 72 : 96 - seed,
     heartRate: {
       current: 132 + seed * 7,
       average: 124 + seed * 5,
@@ -168,8 +168,8 @@ export const fieldSession = {
   activePeriod: "Bloco 2 - comportamento defensivo",
   dataSource: "Catapult + Apollo",
   state: "AO VIVO",
-  catapultStatus: "conectado",
-  apolloStatus: "sincronizado 08:10",
+  catapultStatus: "relatorio lido",
+  apolloStatus: "relatorio lido 08:10",
   dataQuality: "alta",
   lastUpdate: "ha 2 segundos",
   activeAthletes: liveFieldPlayers.filter((player) => player.active).length,
@@ -184,7 +184,7 @@ export const fieldTimelineEvents: FieldTimelineEvent[] = [
   { id: "warmup", minute: 8, type: "exercise", label: "Aquecimento" },
   { id: "block-1", minute: 18, type: "exercise", label: "Pressao alta" },
   { id: "alert-18", minute: 31, type: "alert", label: "Carga 18 acima da meta parcial" },
-  { id: "signal-7", minute: 42, type: "signal", label: "Sinal instavel no 24" },
+  { id: "issue-7", minute: 42, type: "issue", label: "Conflito de leitura no 24" },
   { id: "decision", minute: 53, type: "decision", label: "Reduzir sprint dos atacantes" },
   { id: "end", minute: 64, type: "period", label: "Fim" },
 ]

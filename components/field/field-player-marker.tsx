@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { WifiOff } from "lucide-react"
+import { Database } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { spring } from "@/lib/motion"
 import type { LiveFieldPlayer } from "@/lib/mock-field-session"
@@ -18,12 +18,12 @@ export function FieldPlayerMarker({
   return (
     <motion.button
       type="button"
-      title={`${player.fullName} - ${player.signal}`}
+      title={`${player.fullName} - dados ${player.dataStatus}`}
       onClick={() => onSelect(player.id)}
       className={cn(
         "absolute z-30 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full bg-background/78 px-1.5 py-1 text-left backdrop-blur-md transition-colors",
         selected && "bg-foreground text-background",
-        player.signal === "offline" && "border border-dashed border-foreground/40 opacity-65",
+        player.dataStatus !== "validado" && "border border-dashed border-foreground/40 opacity-75",
       )}
       style={{ left: `${player.fieldPosition.x}%`, top: `${player.fieldPosition.y}%` }}
       animate={{ scale: selected ? 1.18 : 1 }}
@@ -36,7 +36,7 @@ export function FieldPlayerMarker({
         )}
         style={{ backgroundColor: selected ? undefined : `var(--${player.colorToken})` }}
       >
-        {player.signal === "offline" ? <WifiOff className="size-3" /> : player.number}
+        {player.dataStatus === "pendente" ? <Database className="size-3" /> : player.number}
       </span>
       {selected && (
         <span className="pr-1 text-[9px] font-semibold uppercase tracking-[0.12em]">

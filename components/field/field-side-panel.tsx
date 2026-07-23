@@ -85,7 +85,7 @@ export function FieldSidePanel({
             <div>
               <h3 className="text-xl font-semibold leading-none">{selected.name}</h3>
               <span className="mt-1 block text-[10px] uppercase tracking-[0.16em] text-foreground/45">
-                {selected.position} - sinal {selected.signalQuality}%
+                {selected.position} - dados {selected.dataQualityScore}%
               </span>
             </div>
           </div>

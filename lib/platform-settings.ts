@@ -22,7 +22,7 @@ export type PlatformFeature = {
 export const defaultPlatformSettings: PlatformSettings = {
   morningBriefEnabled: true,
   decisionCenterEnabled: true,
-  teamBoardEnabled: true,
+  teamBoardEnabled: false,
   alertsEnabled: true,
   sessionsEnabled: true,
   liveMonitoringEnabled: true,
@@ -47,14 +47,14 @@ export const platformFeatures: PlatformFeature[] = [
   },
   {
     id: "teamBoardEnabled",
-    label: "Team Board",
-    description: "Visao compacta da equipe inteira com status, carga, sprint e wellness.",
+    label: "Equipe / profissionais",
+    description: "Habilita a sessao Equipe para Bruno/Fisiologia cadastrar e consultar profissionais.",
     stage: "V1",
   },
   {
     id: "alertsEnabled",
     label: "Alert Center",
-    description: "Central de alertas de carga, recuperacao, sono, GPS, lesao e sincronizacao.",
+    description: "Central de alertas de carga, recuperacao, sono, dados faltantes, lesao e revisao.",
     stage: "V1",
   },
   {
@@ -90,7 +90,7 @@ export const platformFeatures: PlatformFeature[] = [
   {
     id: "exportsEnabled",
     label: "Exportacoes",
-    description: "Preparacao para PDF, CSV e pacotes de relatorio por atleta ou sessao.",
+    description: "Preparacao para PDF, CSV e dossies de relatorio por atleta ou sessao.",
     stage: "V2",
   },
 ]
@@ -102,7 +102,7 @@ export type DecisionItem = {
   id: string
   athleteId: string
   severity: DecisionSeverity
-  signal: string
+  indicator: string
   summary: string
   suggestedAction: string
   owner: string
@@ -114,7 +114,7 @@ export const decisionItems: DecisionItem[] = [
     id: "decision-goncalo-load",
     athleteId: "goncalo",
     severity: "critico",
-    signal: "Player Load 22% acima",
+    indicator: "Player Load 22% acima",
     summary: "Carga elevada com sprint distance em queda e recuperacao baixa.",
     suggestedAction: "Reduzir carga e revisar bloco final do treino.",
     owner: "Preparador fisico",
@@ -124,7 +124,7 @@ export const decisionItems: DecisionItem[] = [
     id: "decision-giroud-zone",
     athleteId: "giroud",
     severity: "atencao",
-    signal: "Zona 4 recorrente",
+    indicator: "Zona 4 recorrente",
     summary: "Alta exposicao em intensidade com fadiga moderada no Apollo.",
     suggestedAction: "Monitorar aquecimento e limitar tiros longos.",
     owner: "Fisiologia",
@@ -134,7 +134,7 @@ export const decisionItems: DecisionItem[] = [
     id: "decision-alason-wellness",
     athleteId: "alason",
     severity: "atencao",
-    signal: "Sono abaixo do ideal",
+    indicator: "Sono abaixo do ideal",
     summary: "Wellness bom, mas sono reportado abaixo da media individual.",
     suggestedAction: "Reavaliar apos aquecimento antes do bloco principal.",
     owner: "Comissao tecnica",

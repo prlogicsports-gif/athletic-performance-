@@ -2,12 +2,12 @@
 
 import { useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { Copy, FileText, Play, Plus, Radio, Upload } from "lucide-react"
+import { Copy, FileText, Play, Plus, Upload } from "lucide-react"
 import { athleticSessions, getSessionResponsible, type AthleticSession } from "@/lib/session-data"
 import { spring, staggerContainer, staggerItem } from "@/lib/motion"
 import { DataSourceBadge } from "@/components/analytics/data-source-badge"
 import { CreateSessionWizard } from "@/components/sessions/create-session-wizard"
-import { LiveCaptureDialog } from "@/components/sessions/live-capture-dialog"
+import { ImportReportDialog } from "@/components/imports/import-report-dialog"
 import { cn } from "@/lib/utils"
 
 const statusStyle: Record<AthleticSession["status"], string> = {
@@ -22,16 +22,16 @@ const statusStyle: Record<AthleticSession["status"], string> = {
 
 export function SessionsScreen({ onOpenLive }: { onOpenLive: () => void }) {
   const [wizardOpen, setWizardOpen] = useState(false)
-  const [captureSession, setCaptureSession] = useState<AthleticSession | null>(null)
+  const [importSession, setImportSession] = useState<AthleticSession | null>(null)
 
   return (
     <motion.div variants={staggerContainer} initial="initial" animate="animate" className="px-4 pb-16 pt-1 md:px-8">
       <motion.div variants={staggerItem} className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <span className="text-[10px] font-medium uppercase tracking-[0.26em] text-foreground/45">Sessoes</span>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-4xl">Origem, qualidade e revisao</h2>
+          <span className="text-[10px] font-medium uppercase tracking-[0.26em] text-foreground/45">Fontes e importacoes</span>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight md:text-4xl">Leitura e unificacao de relatorios externos</h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-foreground/50">
-            Treinos e jogos conectados a Catapult, Apollo, manual, CSV e mock ao vivo.
+            Catapult e Apollo sao fontes de relatorios processados: importar, interpretar, validar e gerar relatorios unificados.
           </p>
         </div>
         <button type="button" onClick={() => setWizardOpen(true)} className="flex items-center gap-2 self-start rounded-full bg-foreground px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-background md:self-auto">
@@ -62,8 +62,8 @@ export function SessionsScreen({ onOpenLive }: { onOpenLive: () => void }) {
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <button type="button" onClick={() => setCaptureSession(session)} className="flex items-center gap-2 rounded-full bg-surface/70 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-foreground/55 hover:text-foreground">
-                    <Radio className="size-3.5" /> Captacao
+                  <button type="button" onClick={() => setImportSession(session)} className="flex items-center gap-2 rounded-full bg-surface/70 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-foreground/55 hover:text-foreground">
+                    <Upload className="size-3.5" /> Importar
                   </button>
                   <button type="button" className="flex items-center gap-2 rounded-full bg-surface/70 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-foreground/55 hover:text-foreground">
                     <Copy className="size-3.5" /> Duplicar
@@ -76,7 +76,7 @@ export function SessionsScreen({ onOpenLive }: { onOpenLive: () => void }) {
                   </button>
                   {session.status === "live" && (
                     <button type="button" onClick={onOpenLive} className="flex items-center gap-2 rounded-full bg-foreground px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-background">
-                      <Play className="size-3.5" /> Ao vivo
+                      <Play className="size-3.5" /> Fluxo recebido
                     </button>
                   )}
                 </div>
@@ -98,7 +98,7 @@ export function SessionsScreen({ onOpenLive }: { onOpenLive: () => void }) {
 
       <AnimatePresence>
         {wizardOpen && <CreateSessionWizard onClose={() => setWizardOpen(false)} />}
-        {captureSession && <LiveCaptureDialog session={captureSession} onClose={() => setCaptureSession(null)} onStart={() => { setCaptureSession(null); onOpenLive() }} />}
+        {importSession && <ImportReportDialog session={importSession} onClose={() => setImportSession(null)} onStart={() => { setImportSession(null); onOpenLive() }} />}
       </AnimatePresence>
     </motion.div>
   )

@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { Wifi, WifiOff } from "lucide-react"
+import { Database } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { spring } from "@/lib/motion"
 import type { LiveFieldPlayer } from "@/lib/mock-field-session"
@@ -41,7 +41,7 @@ export function FieldAthleteCard({
           <span className="mt-1 block text-[9px] font-semibold uppercase tracking-[0.14em] text-foreground/70">{metric}</span>
         </div>
         <div className="flex flex-col items-end gap-1 text-[9px] uppercase tracking-[0.12em]">
-          {player.signal === "offline" ? <WifiOff className="size-3.5 text-alert" /> : <Wifi className="size-3.5 text-good" />}
+          <Database className={cn("size-3.5", player.dataStatus === "validado" ? "text-good" : player.dataStatus === "revisar" ? "text-warn" : "text-alert")} />
           <span className={cn(player.availability === "alerta" ? "text-alert" : player.availability === "monitorar" ? "text-warn" : "text-good")}>
             {player.availability}
           </span>
