@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
@@ -12,23 +12,39 @@ import { CarouselScreen } from "@/components/screens/carousel-screen"
 import { ProfileScreen } from "@/components/screens/profile-screen"
 import { CalendarScreen } from "@/components/screens/calendar-screen"
 import { ReportsScreen } from "@/components/screens/reports-screen"
+import { MorningBriefScreen } from "@/components/screens/morning-brief-screen"
+import { SettingsScreen } from "@/components/screens/settings-screen"
+import { SessionsScreen } from "@/components/screens/sessions-screen"
+import { LiveViewScreen } from "@/components/screens/live-view-screen"
+import { usePlatformSettings } from "@/hooks/use-platform-settings"
 import type { Screen } from "@/lib/nav"
 import { pageTransition, spring } from "@/lib/motion"
 
 export default function Page() {
   const [screen, setScreen] = useState<Screen>("splash")
   const [athleteId, setAthleteId] = useState("giroud")
+  const [showClassicDashboard, setShowClassicDashboard] = useState(false)
+  const { settings } = usePlatformSettings()
+
+  useEffect(() => {
+    if (!settings.morningBriefEnabled) setShowClassicDashboard(false)
+  }, [settings.morningBriefEnabled])
 
   const selectAthlete = (id: string) => {
     setAthleteId(id)
     setScreen("profile")
   }
 
+  const navigate = (nextScreen: Screen) => {
+    if (nextScreen === "dashboard") setShowClassicDashboard(false)
+    setScreen(nextScreen)
+  }
+
   return (
     <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground">
       <AnimatePresence mode="wait">
         {screen === "splash" ? (
-          <SplashScreen key="splash" onEnter={setScreen} />
+          <SplashScreen key="splash" onEnter={navigate} />
         ) : (
           <motion.div
             key="app"
@@ -37,7 +53,7 @@ export default function Page() {
             transition={spring}
           >
             <SiteHeader />
-            <TabNav screen={screen} onNavigate={setScreen} />
+            <TabNav screen={screen} onNavigate={navigate} />
 
             <AnimatePresence mode="wait">
               <motion.div
@@ -45,12 +61,25 @@ export default function Page() {
                 {...pageTransition}
                 transition={spring}
               >
-                {screen === "dashboard" && <DashboardScreen onSelectAthlete={selectAthlete} />}
+                {screen === "dashboard" && (
+                  settings.morningBriefEnabled && !showClassicDashboard ? (
+                    <MorningBriefScreen
+                      onOpenDashboard={() => setShowClassicDashboard(true)}
+                      onOpenSettings={() => navigate("settings")}
+                      onSelectAthlete={selectAthlete}
+                    />
+                  ) : (
+                    <DashboardScreen onSelectAthlete={selectAthlete} />
+                  )
+                )}
                 {screen === "team" && <TeamScreen />}
                 {screen === "carousel" && <CarouselScreen onSelectAthlete={selectAthlete} />}
-                {screen === "profile" && <ProfileScreen athleteId={athleteId} onBack={setScreen} />}
+                {screen === "profile" && <ProfileScreen athleteId={athleteId} onBack={navigate} />}
+                {screen === "sessions" && <SessionsScreen onOpenLive={() => navigate("live")} />}
+                {screen === "live" && <LiveViewScreen />}
                 {screen === "calendar" && <CalendarScreen />}
                 {screen === "reports" && <ReportsScreen />}
+                {screen === "settings" && <SettingsScreen />}
               </motion.div>
             </AnimatePresence>
             <SiteFooter />

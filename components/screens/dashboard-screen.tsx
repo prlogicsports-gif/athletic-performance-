@@ -16,10 +16,14 @@ import {
 } from "@/lib/data"
 import { MetricIcon } from "../metric-icon"
 import { DonutLoad, Bar, LineChart } from "../viz"
+import { ClickableMetricCard } from "@/components/analytics/clickable-metric-card"
+import { MetricDetailDialog } from "@/components/analytics/metric-detail-dialog"
+import { getMetricAnalysis, type MetricAnalysis } from "@/lib/analytics-data"
 import { cn } from "@/lib/utils"
 import type { Screen } from "@/lib/nav"
 import { spring, staggerContainer, staggerItem } from "@/lib/motion"
 import { AthleticFieldExperience } from "@/components/field/athletic-field-experience"
+import { usePlatformSettings } from "@/hooks/use-platform-settings"
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 18 },
@@ -61,6 +65,8 @@ function SectionLabel({ children, sub }: { children: React.ReactNode; sub?: stri
 
 export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: string) => void }) {
   const [fieldOpen, setFieldOpen] = useState(false)
+  const [analysisOpen, setAnalysisOpen] = useState<MetricAnalysis | null>(null)
+  const { settings } = usePlatformSettings()
 
   return (
     <motion.div variants={staggerContainer} initial="initial" animate="animate" className="px-4 pb-16 pt-1 md:px-8">
@@ -90,25 +96,26 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
       {/* metrics + donut */}
       <div className="mt-6 flex flex-col gap-7 lg:flex-row lg:items-start lg:justify-between">
         <div className="grid flex-1 grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 xl:grid-cols-5">
-          {teamMetrics.map((m, i) => (
-            <motion.div key={m.label} variants={staggerItem} transition={{ ...spring, delay: 0.04 * i }} className="flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <MetricIcon type={m.icon} className="size-4 text-alert" />
-                <span className="text-[10px] uppercase tracking-[0.14em]">{m.label}</span>
-              </div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold tracking-tight"><CountUp value={m.value} /></span>
-                {m.unit && <span className="text-xs text-muted-foreground">{m.unit}</span>}
-              </div>
-              <span className="flex items-center gap-1 text-[11px] text-good">
-                <TrendingUp className="size-3" />
-                {m.delta} <span className="text-muted-foreground">vs semana anterior</span>
-              </span>
-            </motion.div>
+          {teamMetrics.map((m) => (
+            <ClickableMetricCard
+              key={m.label}
+              analysisId={m.icon}
+              icon={<MetricIcon type={m.icon} className="size-4 text-alert" />}
+              label={m.label}
+              value={<CountUp value={m.value} />}
+              unit={m.unit}
+              delta={<span className="flex items-center gap-1"><TrendingUp className="size-3" />{m.delta} <span className="text-muted-foreground">vs semana anterior</span></span>}
+            />
           ))}
         </div>
 
-        <motion.div {...fade(0.2)} className="flex items-center gap-4">
+        <motion.button
+          type="button"
+          onClick={() => setAnalysisOpen(getMetricAnalysis("load"))}
+          {...fade(0.2)}
+          className="group flex items-center gap-4 text-left outline-none focus-visible:ring-1 focus-visible:ring-foreground/45"
+          title="Abrir analise de distribuicao de carga"
+        >
           <DonutLoad
             segments={loadZones.map((z) => ({ pct: z.pct, token: z.token }))}
             centerValue="312"
@@ -126,7 +133,7 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
               </div>
             ))}
           </div>
-        </motion.div>
+        </motion.button>
       </div>
 
       {/* player strip */}
@@ -161,6 +168,7 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
             </motion.button>
           )
         })}
+        {settings.fieldAnalysisEnabled && (
         <motion.div
           variants={staggerItem}
           transition={spring}
@@ -194,12 +202,13 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
             </div>
           </button>
         </motion.div>
+        )}
       </motion.div>
 
       {/* analytics grid */}
       <div className="mt-10 grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-3">
         {/* team comparison */}
-        <motion.div {...fade(0.1)}>
+        <motion.button type="button" onClick={() => setAnalysisOpen(getMetricAnalysis("distance"))} {...fade(0.1)} className="text-left outline-none focus-visible:ring-1 focus-visible:ring-foreground/45">
           <SectionLabel sub="médias">Comparativo da equipe</SectionLabel>
           <div className="flex flex-col gap-4">
             {teamComparison.map((c, i) => (
@@ -212,20 +221,20 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
               </div>
             ))}
           </div>
-        </motion.div>
+        </motion.button>
 
         {/* accumulated load */}
-        <motion.div {...fade(0.15)}>
+        <motion.button type="button" onClick={() => setAnalysisOpen(getMetricAnalysis("load"))} {...fade(0.15)} className="text-left outline-none focus-visible:ring-1 focus-visible:ring-foreground/45">
           <SectionLabel sub="UA">Carga acumulada</SectionLabel>
           <LineChart now={accumulatedLoad.now} prev={accumulatedLoad.prev} days={accumulatedLoad.days} />
           <div className="mt-3 flex gap-4 text-[10px] uppercase tracking-wide text-muted-foreground">
             <span className="flex items-center gap-1.5"><span className="h-px w-4 bg-good" />Esta semana · 312 UA</span>
             <span className="flex items-center gap-1.5"><span className="h-px w-4 border-t border-dashed border-muted-foreground" />Anterior · 268 UA</span>
           </div>
-        </motion.div>
+        </motion.button>
 
         {/* position comparison */}
-        <motion.div {...fade(0.2)}>
+        <motion.button type="button" onClick={() => setAnalysisOpen(getMetricAnalysis("distance"))} {...fade(0.2)} className="text-left outline-none focus-visible:ring-1 focus-visible:ring-foreground/45">
           <SectionLabel sub="distância">Comparativo por posição</SectionLabel>
           <div className="flex flex-col gap-4">
             {positionComparison.map((p, i) => (
@@ -237,10 +246,10 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
               </div>
             ))}
           </div>
-        </motion.div>
+        </motion.button>
 
         {/* thermography */}
-        <motion.div {...fade(0.25)}>
+        <motion.button type="button" onClick={() => setAnalysisOpen(getMetricAnalysis("thermography"))} {...fade(0.25)} className="text-left outline-none focus-visible:ring-1 focus-visible:ring-foreground/45">
           <SectionLabel>Termografia — comparativo</SectionLabel>
           <div className="flex items-end gap-6">
             <div className="flex flex-col items-center gap-2">
@@ -257,10 +266,10 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
             <span className="h-1.5 w-32 rounded-full" style={{ background: "linear-gradient(90deg, var(--info), var(--good), var(--warn), var(--alert))" }} />
             Alta
           </div>
-        </motion.div>
+        </motion.button>
 
         {/* internal ranking */}
-        <motion.div {...fade(0.3)}>
+        <motion.button type="button" onClick={() => setAnalysisOpen(getMetricAnalysis("distance"))} {...fade(0.3)} className="text-left outline-none focus-visible:ring-1 focus-visible:ring-foreground/45">
           <SectionLabel sub="esta semana">Ranking interno</SectionLabel>
           <div className="flex flex-col gap-3">
             {internalRanking.map((r) => (
@@ -272,25 +281,26 @@ export function DashboardScreen({ onSelectAthlete }: { onSelectAthlete: (id: str
               </div>
             ))}
           </div>
-        </motion.div>
+        </motion.button>
 
         {/* alerts */}
         <motion.div {...fade(0.35)}>
           <SectionLabel sub="esta semana">Alertas</SectionLabel>
           <div className="flex flex-col gap-3">
             {weekAlerts.map((a, i) => (
-              <div key={i} className="flex items-center gap-3 text-sm">
+              <button key={i} type="button" onClick={() => setAnalysisOpen(getMetricAnalysis(i === 0 ? "load" : "thermography"))} className="flex items-center gap-3 text-left text-sm outline-none transition-colors hover:text-foreground focus-visible:ring-1 focus-visible:ring-foreground/45">
                 <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: `var(--${a.state})` }} />
                 <span className="text-muted-foreground">{a.text}</span>
-              </div>
+              </button>
             ))}
-            <button className="mt-2 self-start text-xs font-medium text-foreground underline-offset-4 hover:underline">
+            <button type="button" onClick={() => setAnalysisOpen(getMetricAnalysis("load"))} className="mt-2 self-start text-xs font-medium text-foreground underline-offset-4 hover:underline">
               Ver todos os alertas →
             </button>
           </div>
         </motion.div>
       </div>
       <AnimatePresence>
+        {analysisOpen && <MetricDetailDialog analysis={analysisOpen} onClose={() => setAnalysisOpen(null)} />}
         {fieldOpen && <AthleticFieldExperience onClose={() => setFieldOpen(false)} onOpenAthlete={onSelectAthlete} />}
       </AnimatePresence>
     </motion.div>

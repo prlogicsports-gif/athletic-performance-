@@ -53,7 +53,7 @@ export function FieldAthleteCarousel({
       </div>
 
       <div
-        className="relative mx-auto h-28 max-w-6xl overflow-hidden"
+        className="relative mx-auto h-32 max-w-7xl overflow-hidden"
         tabIndex={0}
         onKeyDown={(event) => {
           if (event.key === "ArrowLeft") go(-1)
@@ -74,12 +74,12 @@ export function FieldAthleteCarousel({
               key={player.id}
               className="absolute left-1/2 top-2 -translate-x-1/2"
               animate={{
-                x: offset * 190,
-                scale: selected ? 1 : abs === 1 ? 0.86 : 0.72,
-                opacity: selected ? 1 : abs === 1 ? 0.75 : 0.46,
+                x: offset * 205,
+                scale: selected ? 1.1 : abs === 1 ? 0.88 : 0.74,
+                opacity: selected ? 1 : abs === 1 ? 0.76 : 0.42,
                 zIndex: 40 - abs,
               }}
-              transition={{ ...spring, stiffness: 150, damping: 24 }}
+              transition={{ ...spring, stiffness: 135, damping: 25 }}
             >
               <FieldAthleteCard
                 player={player}
